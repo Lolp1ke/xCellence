@@ -17,7 +17,7 @@ public class mechanism {
     private Servo leftHand = null;
 
     private final double ARM_POWER = 0.7d;
-    private final double SERVO_RESET = 0;
+    private final double HAND_RESET = 0d;
 
     public mechanism(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -33,8 +33,8 @@ public class mechanism {
         this.rightArm.setDirection(DcMotorSimple.Direction.REVERSE);
         this.leftArm.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        this.rightHand.setPosition(this.SERVO_RESET);
-        this.leftHand.setPosition(this.SERVO_RESET);
+        this.rightHand.setPosition(this.HAND_RESET);
+        this.leftHand.setPosition(this.HAND_RESET);
     }
 
     public void run() {
