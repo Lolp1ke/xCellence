@@ -13,12 +13,10 @@ public class main extends LinearOpMode {
 
     @Override()
     public void runOpMode() {
+        this._movement4wd.init();
         this._movement2wd.init();
         this._mechanism.init();
 
-        telemetry.addData("Status: ", "Success");
-        telemetry.update();
-        
         while (opModeInInit()) {
             if (gamepad1.a && gamepad1.dpad_up) this.is4wd = true;
             else if (gamepad1.a && gamepad1.dpad_down) this.is4wd = false;

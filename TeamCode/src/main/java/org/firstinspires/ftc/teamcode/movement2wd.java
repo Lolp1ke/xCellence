@@ -28,11 +28,11 @@ public class movement2wd {
 
         double error = this.targetPosition - avgPosition;
 
-        double propotional = this._config.kP * error;
+        double proportional = this._config.kP * error;
         this.integral += this._config.kI * error;
         double derivative = this._config.kD * (error - this.prevError);
 
-        double output = propotional + this.integral + derivative;
+        double output = proportional + this.integral + derivative;
 
         rightDrivePower = Range.clip(rightDrivePower + output, -1, 1);
         leftDrivePower = Range.clip(leftDrivePower + output, -1, 1);
