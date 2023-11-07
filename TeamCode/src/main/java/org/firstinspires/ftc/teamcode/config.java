@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-public class config {
-    public final double SPEED = 0.6d;
-    public final double BOOST = 0.8d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-    public final double kP = 0.1d;
-    public final double kI = 0.01d;
-    public final double kD = 0.001d;
+@Disabled()
+public class config {
+    public double SPEED = 0.6d;
+    public double BOOST = 0.6d;
 }
