@@ -22,6 +22,7 @@ public class main extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             new Thread(this._movement4wd::run).start();
+
             new Thread(this._mechanism::run).start();
         }
     }
