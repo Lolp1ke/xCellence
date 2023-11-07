@@ -10,44 +10,40 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Disabled
-public class movement {
+public class movement4wd {
     private final LinearOpMode opMode;
+    private final Gamepad gamepad;
+    private final Telemetry telemetry;
+    private final config _config;
 
     private DcMotor rightFront = null;
     private DcMotor leftFront = null;
     private DcMotor rightRear = null;
     private DcMotor leftRear = null;
 
-    private final double SPEED = 0.6d;
-    private final double BOOST = 0.8d;
-
-    private final double kP = 0.1d;
-    private final double kI = 0.01d;
-    private final double kD = 0.001d;
-
     private double targetPosition = 0;
     private double integral = 0;
     private double prevError = 0;
 
-    public movement(LinearOpMode opMode) {
+    public movement4wd(LinearOpMode opMode) {
         this.opMode = opMode;
+        this._config = new config();
+        this.gamepad = this.opMode.gamepad1;
+        this.telemetry = this.opMode.telemetry;
     }
-
+    
     public void runWithPID() {
-        Gamepad gamepad = this.opMode.gamepad1;
-        Telemetry telemetry = this.opMode.telemetry;
-
-        double drivePower = -gamepad.left_stick_y;
-        double turnPower = gamepad.left_stick_x;
+        double drivePower = -this.gamepad.left_stick_y;
+        double turnPower = this.gamepad.left_stick_x;
 
         double currentAvgPosition = (this.rightFront.getCurrentPosition() + this.leftFront.getCurrentPosition() +
                 this.rightRear.getCurrentPosition() + this.leftRear.getCurrentPosition()) / 4.0;
 
         double error = this.targetPosition - currentAvgPosition;
 
-        double proportional = this.kP * error;
-        this.integral += this.kI * error;
-        double derivative = this.kD * (error - this.prevError);
+        double proportional = this._config.kP * error;
+        this.integral += this._config.kI * error;
+        double derivative = this._config.kD * (error - this.prevError);
 
         double output = proportional + this.integral + derivative;
 
@@ -68,19 +64,17 @@ public class movement {
 
         this.prevError = error;
 
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftRearPower, rightRearPower);
-        telemetry.update();
+        this.telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        this.telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftRearPower, rightRearPower);
+        this.telemetry.update();
     }
 
     public void run() {
-        Gamepad gamepad = this.opMode.gamepad1;
-        Telemetry telemetry = this.opMode.telemetry;
         double max;
 
-        double axial = -gamepad.left_stick_y;
-        double lateral = gamepad.left_stick_x;
-        double yaw = gamepad.right_stick_x;
+        double axial = -this.gamepad.left_stick_y;
+        double lateral = this.gamepad.left_stick_x;
+        double yaw = this.gamepad.right_stick_x;
 
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -99,14 +93,14 @@ public class movement {
         }
 
         boolean isBoosted = gamepad.right_bumper;
-        this.rightFront.setPower(rightFrontPower * (isBoosted ? BOOST : SPEED));
-        this.leftFront.setPower(leftFrontPower * (isBoosted ? BOOST : SPEED));
-        this.rightRear.setPower(rightRearPower * (isBoosted ? BOOST : SPEED));
-        this.leftRear.setPower(leftRearPower * (isBoosted ? BOOST : SPEED));
+        this.rightFront.setPower(rightFrontPower * (isBoosted ? this._config.BOOST : this._config.SPEED));
+        this.leftFront.setPower(leftFrontPower * (isBoosted ? this._config.BOOST : this._config.SPEED));
+        this.rightRear.setPower(rightRearPower * (isBoosted ? this._config.BOOST : this._config.SPEED));
+        this.leftRear.setPower(leftRearPower * (isBoosted ? this._config.BOOST : this._config.SPEED));
 
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftRearPower, rightRearPower);
-        telemetry.update();
+        this.telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        this.telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftRearPower, rightRearPower);
+        this.telemetry.update();
     }
 
     public void init() {
@@ -119,6 +113,11 @@ public class movement {
         this.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        this.rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         this.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
