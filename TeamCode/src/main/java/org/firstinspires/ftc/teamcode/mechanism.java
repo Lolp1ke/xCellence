@@ -57,7 +57,7 @@ public class mechanism {
         this.leftHand.setPosition(handPosition);
 
         this.opMode.telemetry.addData("Arm right/left: ", "%.2/%.2", rightArmPower, leftArmPower);
-        this.opMode.telemetry.addData("Hand position: ", "/", this.handPosition);
+        this.opMode.telemetry.addData("Hand position: ", this.handPosition);
         this.opMode.telemetry.update();
     }
 }
