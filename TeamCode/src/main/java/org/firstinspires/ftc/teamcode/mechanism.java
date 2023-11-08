@@ -18,46 +18,46 @@ public class mechanism {
 
     private double handPosition = 0d;
 
-    public mechanism(LinearOpMode opMode) {
-        this.opMode = opMode;
+    public mechanism(LinearOpMode _opMode) {
+        opMode = _opMode;
     }
 
     public void init() {
-        this.rightArm = this.opMode.hardwareMap.get(DcMotor.class, "right_arm");
-        this.leftArm = this.opMode.hardwareMap.get(DcMotor.class, "left_arm");
+        rightArm = opMode.hardwareMap.get(DcMotor.class, "right_arm");
+        leftArm = opMode.hardwareMap.get(DcMotor.class, "left_arm");
 
-        this.rightHand = this.opMode.hardwareMap.get(Servo.class, "right_hand");
-        this.leftHand = this.opMode.hardwareMap.get(Servo.class, "left_hand");
+        rightHand = opMode.hardwareMap.get(Servo.class, "right_hand");
+        leftHand = opMode.hardwareMap.get(Servo.class, "left_hand");
 
-        this.rightArm.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightArm.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.rightHand.setPosition(this.handPosition);
-        this.leftHand.setPosition(this.handPosition);
+        rightHand.setPosition(handPosition);
+        leftHand.setPosition(handPosition);
     }
 
     public void run() {
-        boolean isBoosted = this.opMode.gamepad2.right_bumper;
+        boolean isBoosted = opMode.gamepad2.right_bumper;
 
-        double rightArmPower = -this.opMode.gamepad2.right_stick_y * (isBoosted ? this._config.ARM_BOOST : this._config.ARM_SPEED);
-        double leftArmPower = -this.opMode.gamepad2.left_stick_y * (isBoosted ? this._config.ARM_BOOST : this._config.ARM_SPEED);
+        double rightArmPower = -opMode.gamepad2.right_stick_y * (isBoosted ? _config.ARM_BOOST : _config.ARM_SPEED);
+        double leftArmPower = -opMode.gamepad2.left_stick_y * (isBoosted ? _config.ARM_BOOST : _config.ARM_SPEED);
 
-        if (this.opMode.gamepad2.x) {
-            this.handPosition = 1.0d;
-        } else if (this.opMode.gamepad2.a) {
-            this.handPosition = 0.5d;
-        } else if (this.opMode.gamepad2.b) {
-            this.handPosition = 0.0d;
+        if (opMode.gamepad2.x) {
+            handPosition = 1.0d;
+        } else if (opMode.gamepad2.a) {
+            handPosition = 0.5d;
+        } else if (opMode.gamepad2.b) {
+            handPosition = 0.0d;
         }
 
-        this.rightArm.setPower(rightArmPower);
-        this.leftArm.setPower(leftArmPower);
+        rightArm.setPower(rightArmPower);
+        leftArm.setPower(leftArmPower);
 
-        this.rightHand.setPosition(handPosition);
-        this.leftHand.setPosition(handPosition);
+        rightHand.setPosition(handPosition);
+        leftHand.setPosition(handPosition);
 
-        this.opMode.telemetry.addData("Arm right/left: ", "%.2/%.2", rightArmPower, leftArmPower);
-        this.opMode.telemetry.addData("Hand position: ", this.handPosition);
-        this.opMode.telemetry.update();
+        opMode.telemetry.addData("Arm right/left: ", "%.2/%.2", rightArmPower, leftArmPower);
+        opMode.telemetry.addData("Hand position: ", handPosition);
+        opMode.telemetry.update();
     }
 }

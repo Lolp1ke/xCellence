@@ -13,26 +13,19 @@ public class main extends LinearOpMode {
 
     @Override()
     public void runOpMode() {
-        this._movement4wd.init();
-        this._movement2wd.init();
-        this._mechanism.init();
+        _movement2wd.init();
 
         while (opModeInInit()) {
-            if (gamepad1.a && gamepad1.dpad_up) this.is4wd = true;
-            else if (gamepad1.a && gamepad1.dpad_down) this.is4wd = false;
+            if (gamepad1.a && gamepad1.dpad_up) is4wd = true;
+            else if (gamepad1.a && gamepad1.dpad_down) is4wd = false;
 
-            telemetry.addData("Drive type: ", this.is4wd ? "4wd" : "2wd");
+            telemetry.addData("Drive type: ", is4wd ? "4wd" : "2wd");
             telemetry.update();
         }
 
         waitForStart();
         while (opModeIsActive()) {
-            if (is4wd)
-                new Thread(this._movement4wd::run).start();
-            else
-                new Thread(this._movement2wd::run).start();
-
-            new Thread(this._mechanism::run).start();
+            _movement2wd._run();
         }
     }
 }
