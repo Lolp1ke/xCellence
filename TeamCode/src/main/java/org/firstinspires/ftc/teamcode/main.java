@@ -16,7 +16,7 @@ public class main extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             _mechanism.run();
-            _movement2wd.run();
+            _movement2wd.car();
 
             telemetry.update();
         }
