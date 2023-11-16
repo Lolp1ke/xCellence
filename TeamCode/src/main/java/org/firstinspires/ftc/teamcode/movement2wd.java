@@ -33,7 +33,6 @@ public class movement2wd {
         opMode.telemetry.addData("r pos: ", rightDrive.getCurrentPosition());
         opMode.telemetry.addData("l pos: ", leftDrive.getCurrentPosition());
         opMode.telemetry.addData("Boost: ", isBoosted);
-        opMode.telemetry.update();
     }
 
     public void _run() {
@@ -50,7 +49,6 @@ public class movement2wd {
         opMode.telemetry.addData("r pos: ", rightDrive.getCurrentPosition());
         opMode.telemetry.addData("l pos: ", leftDrive.getCurrentPosition());
         opMode.telemetry.addData("Boost: ", isBoosted);
-        opMode.telemetry.update();
     }
 
     public void init() {

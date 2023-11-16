@@ -9,38 +9,36 @@ public class mechanism {
     private final LinearOpMode opMode;
     private final config _config = new config();
 
-    private DcMotor rightArm;
-    private DcMotor leftArm;
+    private DcMotor right_arm;
+    private DcMotor left_arm;
 
-    private Servo rightHand;
-    private Servo leftHand;
+    private Servo hand;
+    private Servo claw;
 
-
-    private double handPosition = 0d;
+    private double handPosition = 0.0d;
 
     public mechanism(LinearOpMode _opMode) {
         opMode = _opMode;
     }
 
     public void init() {
-        rightArm = opMode.hardwareMap.get(DcMotor.class, "right_arm");
-        leftArm = opMode.hardwareMap.get(DcMotor.class, "left_arm");
+        right_arm = opMode.hardwareMap.get(DcMotor.class, "right_arm");
+        left_arm = opMode.hardwareMap.get(DcMotor.class, "left_arm");
 
-        rightHand = opMode.hardwareMap.get(Servo.class, "right_hand");
-        leftHand = opMode.hardwareMap.get(Servo.class, "left_hand");
+        hand = opMode.hardwareMap.get(Servo.class, "hand");
+        claw = opMode.hardwareMap.get(Servo.class, "claw");
 
-        rightArm.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        right_arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        left_arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        rightHand.setPosition(handPosition);
-        leftHand.setPosition(handPosition);
+        hand.setPosition(0);
+        claw.setPosition(0);
     }
 
     public void run() {
         boolean isBoosted = opMode.gamepad2.right_bumper;
 
-        double rightArmPower = -opMode.gamepad2.right_stick_y * (isBoosted ? _config.ARM_BOOST : _config.ARM_SPEED);
-        double leftArmPower = -opMode.gamepad2.left_stick_y * (isBoosted ? _config.ARM_BOOST : _config.ARM_SPEED);
+        double armPower = -opMode.gamepad2.right_stick_y * (isBoosted ? _config.ARM_BOOST : _config.ARM_SPEED);
 
         if (opMode.gamepad2.x) {
             handPosition = 1.0d;
@@ -50,14 +48,14 @@ public class mechanism {
             handPosition = 0.0d;
         }
 
-        rightArm.setPower(rightArmPower);
-        leftArm.setPower(leftArmPower);
+        right_arm.setPower(armPower);
+        left_arm.setPower(armPower);
 
-        rightHand.setPosition(handPosition);
-        leftHand.setPosition(handPosition);
+        hand.setPosition(handPosition);
+        claw.setPosition(opMode.gamepad2.y ? 0.8 : 0.6);
 
-        opMode.telemetry.addData("Arm right/left: ", "%.2/%.2", rightArmPower, leftArmPower);
-        opMode.telemetry.addData("Hand position: ", handPosition);
-        opMode.telemetry.update();
+        opMode.telemetry.addData("Arm: ", armPower);
+
+        opMode.telemetry.addData("Hand: ", handPosition);
     }
 }
