@@ -18,35 +18,39 @@ public class movement2wd {
     }
 
     public void car() {
-        double leftPower;
-        double rightPower;
+        boolean isBoosted = opmode.gamepad1.right_bumper;
+        boolean isSlowed = opmode.gamepad1.left_bumper;
 
         double drive = -opmode.gamepad1.left_stick_y;
         double turn = opmode.gamepad1.right_stick_x;
-        
-        leftPower = Range.clip(drive + turn, -1.0, 1.0);
-        rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
-        leftDrive.setPower(leftPower * _config.SPEED);
-        rightDrive.setPower(rightPower * _config.SPEED);
+        double rightPower = Range.clip(drive - turn, -1.0, 1.0);
+        double leftPower = Range.clip(drive + turn, -1.0, 1.0);
+
+        double speedMultiplier = isBoosted ? _config.ACCELERATION : (isSlowed ? _config.DECELERATION : _config.SPEED);
+        rightDrive.setPower(rightPower * speedMultiplier);
+        leftDrive.setPower(leftPower * speedMultiplier);
 
         opmode.telemetry.addData("Left: ", leftPower);
-        opmode.telemetry.addData("Right: ", rightDrive);
+        opmode.telemetry.addData("Right: ", rightPower);
+        opmode.telemetry.addData("Boost: ", isBoosted);
     }
 
 
     public void tank() {
+        boolean isBoosted = opmode.gamepad1.right_bumper;
+        boolean isSlowed = opmode.gamepad1.left_bumper;
+
         double leftPower = -opmode.gamepad1.left_stick_y;
         double rightPower = opmode.gamepad1.right_stick_x;
 
-        leftPower = Range.clip(leftPower, -1.0, 1.0);
-        rightPower = Range.clip(rightPower, -1.0, 1.0);
-
-        leftDrive.setPower(leftPower * _config.SPEED);
-        rightDrive.setPower(rightPower * _config.SPEED);
+        double speedMultiplier = isBoosted ? _config.ACCELERATION : (isSlowed ? _config.DECELERATION : _config.SPEED);
+        leftDrive.setPower(leftPower * speedMultiplier);
+        rightDrive.setPower(rightPower * speedMultiplier);
 
         opmode.telemetry.addData("Left: ", leftPower);
-        opmode.telemetry.addData("Right: ", rightDrive);
+        opmode.telemetry.addData("Right: ", rightPower);
+        opmode.telemetry.addData("Boost: ", isBoosted);
     }
 
     public void init() {
@@ -55,14 +59,5 @@ public class movement2wd {
 
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
