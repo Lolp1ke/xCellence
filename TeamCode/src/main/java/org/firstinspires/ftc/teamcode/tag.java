@@ -17,20 +17,31 @@ public class tag {
     private VisionPortal _visionPortal;
     private AprilTagProcessor _tag;
 
+
     public tag(LinearOpMode _opmode) {
         opmode = _opmode;
     }
+
 
     public void detection() {
         List<AprilTagDetection> detections = _tag.getDetections();
         opmode.telemetry.addData("Detections: ", detections);
 
         for (AprilTagDetection detection : detections) {
-            if (detection == null) {
-                opmode.telemetry.addData("?", "There is nothing we can do.");
-                continue;
+            if (detection != null) {
+                opmode.telemetry.addData("there is something i can do", detection.id);
+            } else {
+                opmode.telemetry.addLine("There is nothing we can do.");
+                opmode.telemetry.addLine("Dans mon esprit tout divague\n" +
+                        "Je me perds dans tes yeux\n" +
+                        "Je me noie dans la vague\n" +
+                        "De ton regard amoureux\n" +
+                        "Je ne veux que ton âme\n" +
+                        "Divaguant sur ma peau\n" +
+                        "Une fleur, une femme\n" +
+                        "Dans ton cœur Roméo\n" +
+                        "Je ne suis que ton ombre");
             }
-            opmode.telemetry.addData("aaa", "there is something");
         }
     }
 
@@ -41,7 +52,7 @@ public class tag {
 
         _visionPortal = new VisionPortal
                 .Builder()
-                .setCamera(opmode.hardwareMap.get(WebcamName.class, "camera"))
+                .setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(_tag)
                 .enableLiveView(true)
                 .build();
