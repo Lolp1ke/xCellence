@@ -28,6 +28,7 @@ public class movement2wd {
         double leftPower = Range.clip(drive + turn, -1.0, 1.0);
 
         double speedMultiplier = isBoosted ? _config.ACCELERATION : (isSlowed ? _config.DECELERATION : _config.SPEED);
+        
         rightDrive.setPower(rightPower * speedMultiplier);
         leftDrive.setPower(leftPower * speedMultiplier);
 

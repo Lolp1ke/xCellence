@@ -5,10 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "autonomous", group = "!xCellence")
 public class autonomous extends LinearOpMode {
-    @Override()
+    private final tag _tag = new tag(this);
+
+    @Override
     public void runOpMode() {
+        _tag.init();
+
         waitForStart();
         while (opModeIsActive()) {
+            _tag.detection();
+
+            telemetry.update();
         }
     }
 }
