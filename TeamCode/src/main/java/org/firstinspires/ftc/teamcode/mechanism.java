@@ -13,9 +13,12 @@ public class mechanism {
     private DcMotor left_arm;
 
     private Servo hand;
-    private Servo claw;
+
+    private Servo right_claw;
+    private Servo left_claw;
 
     private double handPosition = 1.0d;
+    private boolean clawClosed = false;
 
     public mechanism(LinearOpMode _opMode) {
         opmode = _opMode;
@@ -39,16 +42,18 @@ public class mechanism {
             armPower = -0.1d;
         }
 
-        if (avgPosition > -30) {
+        if (avgPosition < -15) {
             right_arm.setPower(armPower);
             left_arm.setPower(armPower);
         } else {
-            right_arm.setPower(0); // + is up?
-            left_arm.setPower(0);
+            right_arm.setPower(-.3d);
+            left_arm.setPower(-.3d);
         }
 
         hand.setPosition(handPosition);
-        claw.setPosition(opmode.gamepad2.y ? 0.8d : 0.6d);
+
+        right_claw.setPosition(opmode.gamepad2.y ? 0.5d : (opmode.gamepad2.dpad_up ? .5d : 0.0d));
+        left_claw.setPosition(opmode.gamepad2.y ? 0.5d : (opmode.gamepad2.dpad_down ? .5d : 0.0d));
 
         opmode.telemetry.addData("Arm: ", armPower);
         opmode.telemetry.addData("Hand: ", handPosition);
@@ -62,12 +67,14 @@ public class mechanism {
         left_arm = opmode.hardwareMap.get(DcMotor.class, "left_arm");
 
         hand = opmode.hardwareMap.get(Servo.class, "hand");
-        claw = opmode.hardwareMap.get(Servo.class, "claw");
+        right_claw = opmode.hardwareMap.get(Servo.class, "right_claw");
+        left_claw = opmode.hardwareMap.get(Servo.class, "left_claw");
 
         right_arm.setDirection(DcMotorSimple.Direction.FORWARD);
         left_arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         hand.setPosition(handPosition);
-        claw.setPosition(0.0d);
+        right_claw.setPosition(0.0d);
+        left_claw.setPosition(0.0d);
     }
 }
