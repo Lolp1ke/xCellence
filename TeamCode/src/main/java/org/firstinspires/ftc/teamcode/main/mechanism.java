@@ -8,77 +8,81 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.config;
 
 public class mechanism {
-    private final LinearOpMode opmode;
-    private final config _config = new config();
+	private final LinearOpMode opmode;
+	private final config _config = new config();
 
-    private DcMotor right_arm;
-    private DcMotor left_arm;
+	private DcMotor right_arm;
+	private DcMotor left_arm;
 
-    private Servo hand;
+	private Servo hand;
 
-    private Servo right_claw;
-    private Servo left_claw;
+	private Servo right_claw;
+	private Servo left_claw;
 
-    private double handPosition = _config.HAND_GROUND;
+	private double handPosition = _config.HAND_GROUND;
 
-    public mechanism(LinearOpMode _opMode) {
-        opmode = _opMode;
-    }
+	public mechanism(LinearOpMode _opMode) {
+		opmode = _opMode;
+	}
 
-    public void run() {
-        double armPower = opmode.gamepad2.left_stick_y * _config.ARM_SPEED;
-        double avgPosition = (right_arm.getCurrentPosition() + left_arm.getCurrentPosition()) / 2.0d;
+	public void run() {
+		double armPower = opmode.gamepad2.left_stick_y * _config.ARM_SPEED;
+		double avgPosition = (right_arm.getCurrentPosition() + left_arm.getCurrentPosition()) / 2.0d;
 
-        if (opmode.gamepad2.x) {
-            handPosition = _config.HAND_CLOSE;
-        } else if (opmode.gamepad2.a) {
-            handPosition = _config.HAND_GROUND;
-        }
+		if (opmode.gamepad2.x) {
+			handPosition = _config.HAND_CLOSE;
+		} else if (opmode.gamepad2.a) {
+			handPosition = _config.HAND_GROUND;
+		}
 
-        if (opmode.gamepad2.right_bumper) {
-            armPower = 0.1d;
-        } else if (opmode.gamepad2.left_bumper) {
-            armPower = -0.1d;
-        }
+		if (opmode.gamepad2.right_bumper) {
+			armPower = 0.1d;
+		} else if (opmode.gamepad2.left_bumper) {
+			armPower = -0.1d;
+		}
 
-//        if (avgPosition < -5) {
-        right_arm.setPower(armPower);
-        left_arm.setPower(armPower);
+		// deprecated
+//        if (avgPosition < -15) {
+//            right_arm.setPower(armPower);
+//            left_arm.setPower(armPower);
 //        } else {
 //            right_arm.setPower(-0.3d);
 //            left_arm.setPower(-0.3d);
 //        }
 
-        hand.setPosition(handPosition);
-        right_claw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
-        left_claw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_left ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
+		right_arm.setPower(armPower);
+		left_arm.setPower(armPower);
 
-        opmode.telemetry.addData("Arm: ", armPower);
-        opmode.telemetry.addData("Hand: ", handPosition);
-        opmode.telemetry.addData("Claw: ", opmode.gamepad2.y);
-        opmode.telemetry.addData("Right claw: ", opmode.gamepad2.dpad_up);
-        opmode.telemetry.addData("Left claw: ", opmode.gamepad2.dpad_down);
+		hand.setPosition(handPosition);
+		right_claw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
+		left_claw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_left ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
 
-        opmode.telemetry.addLine("Dev:");
-        opmode.telemetry.addData("Average arm position: ", avgPosition);
-    }
+		opmode.telemetry.addData("Arm: ", armPower);
+		opmode.telemetry.addData("Hand: ", handPosition);
+		opmode.telemetry.addData("Claw: ", opmode.gamepad2.y);
+		opmode.telemetry.addData("Right claw: ", opmode.gamepad2.dpad_up);
+		opmode.telemetry.addData("Left claw: ", opmode.gamepad2.dpad_down);
 
-    public void init() {
-        right_arm = opmode.hardwareMap.get(DcMotor.class, "right_arm");
-        left_arm = opmode.hardwareMap.get(DcMotor.class, "left_arm");
+		opmode.telemetry.addLine("Dev:");
+		opmode.telemetry.addData("Average arm position: ", avgPosition);
+	}
 
-        hand = opmode.hardwareMap.get(Servo.class, "hand");
-        right_claw = opmode.hardwareMap.get(Servo.class, "right_claw");
-        left_claw = opmode.hardwareMap.get(Servo.class, "left_claw");
+	public void init() {
+		right_arm = opmode.hardwareMap.get(DcMotor.class, "right_arm");
+		left_arm = opmode.hardwareMap.get(DcMotor.class, "left_arm");
 
-        right_arm.setDirection(DcMotorSimple.Direction.FORWARD);
-        left_arm.setDirection(DcMotorSimple.Direction.REVERSE);
+		hand = opmode.hardwareMap.get(Servo.class, "hand");
+		right_claw = opmode.hardwareMap.get(Servo.class, "right_claw");
+		left_claw = opmode.hardwareMap.get(Servo.class, "left_claw");
 
-        right_claw.setDirection(Servo.Direction.FORWARD);
-        left_claw.setDirection(Servo.Direction.REVERSE);
+		right_arm.setDirection(DcMotorSimple.Direction.FORWARD);
+		left_arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        hand.setPosition(handPosition);
-        right_claw.setPosition(_config.CLAW_OPEN);
-        left_claw.setPosition(_config.CLAW_OPEN);
-    }
+		right_claw.setDirection(Servo.Direction.FORWARD);
+		left_claw.setDirection(Servo.Direction.REVERSE);
+
+		hand.setPosition(handPosition);
+		right_claw.setPosition(_config.CLAW_OPEN);
+		left_claw.setPosition(_config.CLAW_OPEN);
+	}
 }

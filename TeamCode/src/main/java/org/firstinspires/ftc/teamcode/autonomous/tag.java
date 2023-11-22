@@ -12,21 +12,21 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 public class tag {
-    private final LinearOpMode opmode;
+	private final LinearOpMode opmode;
 
-    private VisionPortal _visionPortal;
-    private AprilTagProcessor _tag;
+	private VisionPortal _visionPortal;
+	private AprilTagProcessor _tag;
 
-    public tag(LinearOpMode _opmode) {
-        opmode = _opmode;
-    }
+	public tag(LinearOpMode _opmode) {
+		opmode = _opmode;
+	}
 
 
-    public List<AprilTagDetection> detection() {
-        List<AprilTagDetection> detections = _tag.getDetections();
-        opmode.telemetry.addData("Tag detections: ", detections);
+	public List<AprilTagDetection> detection() {
+		List<AprilTagDetection> detections = _tag.getDetections();
+		opmode.telemetry.addData("Tag detections: ", detections);
 
-        return detections;
+		return detections;
 //        opmode.telemetry.addLine("There is nothing we can do.\n");
 //        opmode.telemetry.addLine("Dans mon esprit tout divague\n" +
 //                "Je me perds dans tes yeux\n" +
@@ -37,18 +37,18 @@ public class tag {
 //                "Une fleur, une femme\n" +
 //                "Dans ton cœur Roméo\n" +
 //                "Je ne suis que ton ombre");
-    }
+	}
 
-    public void init() {
-        _tag = new AprilTagProcessor.Builder()
-                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
-                .build();
+	public void init() {
+		_tag = new AprilTagProcessor.Builder()
+			.setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+			.build();
 
-        _visionPortal = new VisionPortal
-                .Builder()
-                .setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(_tag)
-                .enableLiveView(true)
-                .build();
-    }
+		_visionPortal = new VisionPortal
+			.Builder()
+			.setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
+			.addProcessor(_tag)
+			.enableLiveView(true)
+			.build();
+	}
 }
