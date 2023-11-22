@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.main;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.config;
 
 public class mechanism {
     private final LinearOpMode opmode;
@@ -50,12 +52,6 @@ public class mechanism {
         hand.setPosition(handPosition);
         right_claw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
         left_claw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_left ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
-
-//        right_claw.setPosition(opmode.gamepad2.y ?
-//                1.0d : (opmode.gamepad2.dpad_up ? 1.0d : 0.3d));
-//
-//        left_claw.setPosition(opmode.gamepad2.y ?
-//                0 : (opmode.gamepad2.dpad_up ? 0.3d : 1.0d));
 
         opmode.telemetry.addData("Arm: ", armPower);
         opmode.telemetry.addData("Hand: ", handPosition);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.main;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,6 +13,9 @@ public class main extends LinearOpMode {
         _mechanism.init();
         _movement2wd.init();
 
+        telemetry.addData("Status: ", "vroom vroom");
+        telemetry.update();
+        
         waitForStart();
         while (opModeIsActive()) {
             _mechanism.run();

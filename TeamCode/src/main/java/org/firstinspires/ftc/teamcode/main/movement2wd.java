@@ -1,17 +1,20 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.main;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.config;
+
 @Disabled
 public class movement2wd {
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    private final LinearOpMode opmode;
     private final config _config = new config();
 
-    private final LinearOpMode opmode;
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
+
 
     public movement2wd(LinearOpMode _opmode) {
         opmode = _opmode;
@@ -36,9 +39,9 @@ public class movement2wd {
         opmode.telemetry.addData("Boosted?: ", isBoosted);
         opmode.telemetry.addData("Slowed?: ", isSlowed);
     }
-
-
-    public void tank() { // deprecated
+    
+    @Deprecated
+    public void tank() {
         boolean isBoosted = opmode.gamepad1.right_bumper;
         boolean isSlowed = opmode.gamepad1.left_bumper;
         double speedMultiplier = isBoosted ? _config.ACCELERATION : (isSlowed ? _config.DECELERATION : _config.SPEED);
