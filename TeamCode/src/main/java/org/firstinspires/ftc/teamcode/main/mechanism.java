@@ -33,6 +33,8 @@ public class mechanism {
 			handPosition = _config.HAND_CLOSE;
 		} else if (opmode.gamepad2.a) {
 			handPosition = _config.HAND_GROUND;
+		} else if (opmode.gamepad2.b) {
+			handPosition = _config.HAND_MID;
 		}
 
 		if (opmode.gamepad2.right_bumper) {
@@ -40,15 +42,6 @@ public class mechanism {
 		} else if (opmode.gamepad2.left_bumper) {
 			armPower = -0.1d;
 		}
-
-		// deprecated
-//        if (avgPosition < -15) {
-//            right_arm.setPower(armPower);
-//            left_arm.setPower(armPower);
-//        } else {
-//            right_arm.setPower(-0.3d);
-//            left_arm.setPower(-0.3d);
-//        }
 
 		right_arm.setPower(armPower);
 		left_arm.setPower(armPower);

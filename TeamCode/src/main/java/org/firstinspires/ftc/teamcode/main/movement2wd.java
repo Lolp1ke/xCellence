@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.main;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.config;
 
-@Disabled
 public class movement2wd {
 	private final LinearOpMode opmode;
 	private final config _config = new config();

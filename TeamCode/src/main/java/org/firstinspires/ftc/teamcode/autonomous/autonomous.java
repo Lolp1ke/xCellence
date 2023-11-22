@@ -11,6 +11,7 @@ import java.util.List;
 @Autonomous(name = "autonomous", group = "!xCellence")
 public class autonomous extends LinearOpMode {
 	private final tag _tag = new tag(this);
+
 	private boolean napoleonFound = false;
 	private boolean napoleonLaunched = false;
 
