@@ -13,7 +13,7 @@ public class movement4wd {
 	private DcMotor rightRear;
 	private DcMotor leftRear;
 
-	public movement4wd(LinearOpMode _opMode) {
+	public movement4wd(final LinearOpMode _opMode) {
 		opMode = _opMode;
 	}
 
@@ -54,18 +54,13 @@ public class movement4wd {
 
 	public void init() {
 		rightFront = opMode.hardwareMap.get(DcMotor.class, "right_front");
-		leftFront = opMode.hardwareMap.get(DcMotor.class, "right_front");
-		rightRear = opMode.hardwareMap.get(DcMotor.class, "right_front");
-		leftRear = opMode.hardwareMap.get(DcMotor.class, "right_front");
+		leftFront = opMode.hardwareMap.get(DcMotor.class, "left_front");
+		rightRear = opMode.hardwareMap.get(DcMotor.class, "right_rear");
+		leftRear = opMode.hardwareMap.get(DcMotor.class, "left_rear");
 
 		rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 		rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
-		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 	}
 }
