@@ -8,6 +8,8 @@ public class main extends LinearOpMode {
 	private final movement2wd _movement2wd = new movement2wd(this);
 	private final mechanism _mechanism = new mechanism(this);
 
+	private boolean isTank = false;
+
 	@Override
 	public void runOpMode() {
 		_mechanism.init();
@@ -16,12 +18,29 @@ public class main extends LinearOpMode {
 		telemetry.addData("Status: ", "vroom vroom");
 		telemetry.update();
 
-		waitForStart();
-		while (opModeIsActive()) {
-			_mechanism.run();
-			_movement2wd.car();
+		while (opModeInInit()) {
+			if (gamepad1.dpad_up) {
+				isTank = true;
+			} else if (gamepad1.dpad_down) {
+				isTank = false;
+			}
+		}
 
-			telemetry.update();
+		waitForStart();
+		if (!isTank) {
+			while (opModeIsActive()) {
+				_mechanism.run();
+				_movement2wd.car();
+
+				telemetry.update();
+			}
+		} else {
+			while (opModeIsActive()) {
+				_mechanism.run();
+				_movement2wd.tank();
+
+				telemetry.update();
+			}
 		}
 	}
 }

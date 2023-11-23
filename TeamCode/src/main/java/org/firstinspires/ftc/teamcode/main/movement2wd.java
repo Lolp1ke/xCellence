@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.config;
-
 public class movement2wd {
 	private final LinearOpMode opmode;
 	private final config _config = new config();
 
-	private DcMotor leftDrive = null;
-	private DcMotor rightDrive = null;
+	private DcMotor leftDrive;
+	private DcMotor rightDrive;
 
 
 	public movement2wd(LinearOpMode _opmode) {
@@ -38,7 +36,6 @@ public class movement2wd {
 		opmode.telemetry.addData("Slowed?: ", isSlowed);
 	}
 
-	@Deprecated
 	public void tank() {
 		boolean isBoosted = opmode.gamepad1.right_bumper;
 		boolean isSlowed = opmode.gamepad1.left_bumper;
