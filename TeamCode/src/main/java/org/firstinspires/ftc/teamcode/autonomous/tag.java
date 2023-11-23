@@ -17,7 +17,7 @@ public class tag {
 	private VisionPortal _visionPortal;
 	private AprilTagProcessor _tag;
 
-	public tag(LinearOpMode _opmode) {
+	public tag(final LinearOpMode _opmode) {
 		opmode = _opmode;
 	}
 

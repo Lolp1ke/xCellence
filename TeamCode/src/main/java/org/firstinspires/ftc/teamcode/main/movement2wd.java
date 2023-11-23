@@ -12,7 +12,7 @@ public class movement2wd {
 	private DcMotor rightDrive;
 
 
-	public movement2wd(LinearOpMode _opmode) {
+	public movement2wd(final LinearOpMode _opmode) {
 		opmode = _opmode;
 	}
 
@@ -42,7 +42,7 @@ public class movement2wd {
 		double speedMultiplier = isBoosted ? _config.ACCELERATION : (isSlowed ? _config.DECELERATION : _config.SPEED);
 
 		double leftPower = -opmode.gamepad1.left_stick_y * speedMultiplier;
-		double rightPower = opmode.gamepad1.right_stick_x * speedMultiplier;
+		double rightPower = opmode.gamepad1.right_stick_y * speedMultiplier;
 
 		leftDrive.setPower(leftPower);
 		rightDrive.setPower(rightPower);

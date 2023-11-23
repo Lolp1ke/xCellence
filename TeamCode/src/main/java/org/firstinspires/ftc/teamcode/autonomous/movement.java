@@ -27,11 +27,11 @@ public class movement {
 	private int rightTarget = 0;
 	private int leftTarget = 0;
 
-	public movement(LinearOpMode _opmode) {
+	public movement(final LinearOpMode _opmode) {
 		opmode = _opmode;
 	}
 
-	public void straight(double driveSpeed, double distance, double heading) {
+	public void straight(final double driveSpeed, final double distance, final double heading) {
 		if (!opmode.opModeIsActive()) return;
 
 		int target = (int) (distance * _config.COUNTS_PER_CM);
@@ -62,7 +62,7 @@ public class movement {
 		opmode.sleep(1000);
 	}
 
-	public void turnToHeading(double maxTurnSpeed, double heading) {
+	public void turnToHeading(final double maxTurnSpeed, final double heading) {
 		proportionalController(heading, _config.P_DRIVE_GAIN);
 
 		while (opmode.opModeIsActive() && (Math.abs(headingError) > _config.HEADING_THRESHOLD)) {
@@ -78,7 +78,7 @@ public class movement {
 		moveRobot(0, 0);
 	}
 
-	public double proportionalController(double desiredHeading, double proportionalGain) {
+	public double proportionalController(final double desiredHeading, final double proportionalGain) {
 		targetHeading = desiredHeading;
 
 		headingError = targetHeading - getHeading();
@@ -94,7 +94,7 @@ public class movement {
 	}
 
 
-	public void moveRobot(double drive, double turn) {
+	public void moveRobot(final double drive, final double turn) {
 		driveSpeed = drive;
 		turnSpeed = turn;
 
@@ -111,7 +111,7 @@ public class movement {
 		rightDrive.setPower(rightSpeed);
 	}
 
-	private void sendTelemetry(boolean straight) {
+	private void sendTelemetry(final boolean straight) {
 		if (straight) {
 			opmode.telemetry.addData("Target right: ", rightTarget);
 			opmode.telemetry.addData("Target left: ", leftTarget);

@@ -21,12 +21,11 @@ public class mechanism {
 
 	private double handPosition = _config.HAND_CLOSE;
 
-	public mechanism(LinearOpMode _opMode) {
+	public mechanism(final LinearOpMode _opMode) {
 		opmode = _opMode;
 	}
 
 	public void run() {
-//		double armPower = opmode.gamepad2.left_stick_y * (opmode.gamepad2.left_trigger > 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
 		double armPower = opmode.gamepad2.left_stick_y * (opmode.gamepad2.left_trigger != 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
 		opmode.telemetry.addData("LT: ", opmode.gamepad2.left_trigger);
 //		double avgPosition = (right_arm.getCurrentPosition() + left_arm.getCurrentPosition()) / 2.0d;
