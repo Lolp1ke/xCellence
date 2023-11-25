@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -62,10 +63,27 @@ public class movement {
 		opmode.sleep(1000);
 	}
 
-	public void turnToHeading(final double maxTurnSpeed, final double heading) {
+	public void turn(final double maxTurnSpeed, final double heading) {
 		proportionalController(heading, _config.P_DRIVE_GAIN);
 
 		while (opmode.opModeIsActive() && (Math.abs(headingError) > _config.HEADING_THRESHOLD)) {
+			turnSpeed = proportionalController(heading, _config.P_TURN_GAIN);
+
+			turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+			moveRobot(0, turnSpeed);
+
+			sendTelemetry(false);
+		}
+
+		moveRobot(0, 0);
+	}
+
+	public void turnFix(double maxTurnSpeed, double heading, double holdTime) {
+		ElapsedTime holdTimer = new ElapsedTime();
+		holdTimer.reset();
+
+		while (opmode.opModeIsActive() && (holdTimer.time() < holdTime)) {
 			turnSpeed = proportionalController(heading, _config.P_TURN_GAIN);
 
 			turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
@@ -111,7 +129,7 @@ public class movement {
 		rightDrive.setPower(rightSpeed);
 	}
 
-	private void sendTelemetry(final boolean straight) {
+	public void sendTelemetry(final boolean straight) {
 		if (straight) {
 			opmode.telemetry.addData("Target right: ", rightTarget);
 			opmode.telemetry.addData("Target left: ", leftTarget);
@@ -138,7 +156,7 @@ public class movement {
 		leftDrive = opmode.hardwareMap.get(DcMotor.class, "left_drive");
 
 		rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

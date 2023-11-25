@@ -8,8 +8,8 @@ public class movement2wd {
 	private final LinearOpMode opmode;
 	private final config _config = new config();
 
-	private DcMotor leftDrive;
 	private DcMotor rightDrive;
+	private DcMotor leftDrive;
 
 
 	public movement2wd(final LinearOpMode _opmode) {
