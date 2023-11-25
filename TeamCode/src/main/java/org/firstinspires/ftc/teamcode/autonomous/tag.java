@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -46,6 +48,8 @@ public class tag {
 
 		_visionPortal = new VisionPortal
 			.Builder()
+			.enableLiveView(true)
+			.setCameraResolution(new Size(1280, 720))
 			.setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
 			.addProcessor(_tag)
 			.enableLiveView(true)
