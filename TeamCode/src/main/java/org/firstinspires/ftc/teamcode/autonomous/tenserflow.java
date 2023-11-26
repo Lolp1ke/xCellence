@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +26,7 @@ public class tenserflow {
 		opmode = _opmode;
 	}
 
-	public void detection() {
+	public List<Recognition> detection() {
 		List<Recognition> objects = objectDetection.getRecognitions();
 		opmode.telemetry.addData("Object detections: ", objects.size());
 
@@ -32,6 +34,8 @@ public class tenserflow {
 			opmode.telemetry.addData("Label: ", object.getLabel());
 			opmode.telemetry.addData("Confidence: ", object.getConfidence());
 		}
+
+		return objects;
 	}
 
 	public void init() {
@@ -42,6 +46,7 @@ public class tenserflow {
 		visionPortal = new VisionPortal
 			.Builder()
 			.setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
+			.setCameraResolution(new Size(1280, 720))
 			.addProcessor(objectDetection)
 			.build();
 	}

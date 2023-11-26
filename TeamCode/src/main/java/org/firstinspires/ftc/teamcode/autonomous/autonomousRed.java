@@ -4,10 +4,6 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.List;
-
 @Autonomous(name = "Red", group = "!xCellence")
 public class autonomousRed extends LinearOpMode {
 	private final tag _tag = new tag(this);
@@ -18,13 +14,12 @@ public class autonomousRed extends LinearOpMode {
 	private boolean napoleonFound = false;
 	private boolean napoleonLaunched = false;
 
-	private int tagId = 0;
-	private double tagX;
+	private double tagX = 0;
 	private double tagZ;
 
 	@Override
 	public void runOpMode() {
-		_tag.init();
+//		_tag.init();
 		_mechanism.init();
 		_movement.init();
 
@@ -38,37 +33,36 @@ public class autonomousRed extends LinearOpMode {
 			napoleonLaunched = true;
 		}
 
-		while (opModeInInit()) {
-			List<AprilTagDetection> tags = _tag.detection();
-			if (tags.size() > 0) {
-				AprilTagDetection detectedTag = tags.get(0);
-				tagId = detectedTag.id;
-				tagX = detectedTag.rawPose.x;
-				tagZ = detectedTag.rawPose.z;
+//		while (opModeInInit()) {
+//			List<AprilTagDetection> tags = _tag.detection();
+//			if (tags.size() > 0) {
+//				AprilTagDetection detectedTag = tags.get(0);
+//				tagX = detectedTag.rawPose.x;
+//				tagZ = detectedTag.rawPose.z;
+//
+//				telemetry.addData("id: ", detectedTag.id);
+//				telemetry.addData("x: ", String.valueOf(detectedTag.rawPose.x));
+//				telemetry.addData("y: ", String.valueOf(detectedTag.rawPose.y));
+//				telemetry.addData("z: ", String.valueOf(detectedTag.rawPose.z));
+//				telemetry.update();
+//				break;
+//			}
+		_movement.sendTelemetry(true);
+//		}
 
-				telemetry.addData("id: ", detectedTag.id);
-				telemetry.addData("x: ", String.valueOf(detectedTag.rawPose.x));
-				telemetry.addData("y: ", String.valueOf(detectedTag.rawPose.y));
-				telemetry.addData("z: ", String.valueOf(detectedTag.rawPose.z));
-				telemetry.update();
-				break;
-			}
-
-			_movement.sendTelemetry(true);
-		}
-
-		telemetry.addData("tagZ: ", tagZ);
-		telemetry.addData("tagX: ", tagX);
-		telemetry.update();
+//		telemetry.addData("tagZ: ", tagZ);
+//		telemetry.addData("tagX: ", tagX);
+//		telemetry.update();
 
 		waitForStart();
-		if (tagX > 0) {
-			right();
-		} else if (tagX < 0) {
-			middle();
-		} else {
-			left();
-		}
+		middle();
+//		if (tagX > 0) {
+//			right();
+//		} else if (tagX < 0) {
+//			middle();
+//		} else {
+//			left();
+//		}
 	}
 
 	private void right() {
