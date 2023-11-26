@@ -20,6 +20,7 @@ public class mechanism {
 	private Servo rocket;
 
 	private double handPosition = _config.HAND_CLOSE;
+	private boolean hang = false;
 
 	public mechanism(final LinearOpMode _opMode) {
 		opmode = _opMode;
@@ -43,14 +44,20 @@ public class mechanism {
 			armPower = -0.1d;
 		}
 
+		if (opmode.gamepad2.dpad_up) {
+			hang = true;
+		} else if (opmode.gamepad2.dpad_down) {
+			hang = false;
+		}
+
 		if (opmode.gamepad2.left_bumper && opmode.gamepad2.right_bumper && opmode.gamepad2.a) {
 			rocket.setPosition(_config.ROCKET_LAUNCHED);
 		} else if (opmode.gamepad2.left_bumper && opmode.gamepad2.right_bumper && opmode.gamepad2.b) {
 			rocket.setPosition(_config.ROCKET_CLOSED);
 		}
 
-		rightArm.setPower(armPower);
-		leftArm.setPower(armPower);
+		rightArm.setPower(hang ? 0.85d : armPower);
+		leftArm.setPower(hang ? 0.85d : armPower);
 
 		hand.setPosition(handPosition);
 		rightClaw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);

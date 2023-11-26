@@ -15,7 +15,7 @@ public class config {
 	public final double HAND_MID = 0.65d;
 	public final double HAND_CLOSE = 1.0d;
 
-	public final double CLAW_OPEN = 0.0d;
+	public final double CLAW_OPEN = 0.05d;
 	public final double CLAW_CLOSE = 0.3d;
 
 	public final double ROCKET_CLOSED = 0.0d;

@@ -4,10 +4,6 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.List;
-
 @Autonomous(name = "Blue", group = "!xCellence")
 public class autonomousBlue extends LinearOpMode {
 	private final tag _tag = new tag(this);
@@ -18,8 +14,7 @@ public class autonomousBlue extends LinearOpMode {
 	private boolean napoleonFound = false;
 	private boolean napoleonLaunched = false;
 
-	private int tagId = 0;
-	private double tagX;
+	private double tagX = 0;
 	private double tagZ;
 
 	@Override
@@ -38,37 +33,37 @@ public class autonomousBlue extends LinearOpMode {
 			napoleonLaunched = true;
 		}
 
-		while (opModeInInit()) {
-			List<AprilTagDetection> tags = _tag.detection();
-			if (tags.size() > 0) {
-				AprilTagDetection detectedTag = tags.get(0);
-				tagId = detectedTag.id;
-				tagX = detectedTag.rawPose.x;
-				tagZ = detectedTag.rawPose.z;
+//		while (opModeInInit()) {
+//			List<AprilTagDetection> tags = _tag.detection();
+//			if (tags.size() > 0) {
+//				AprilTagDetection detectedTag = tags.get(0);
+//				tagX = detectedTag.rawPose.x;
+//				tagZ = detectedTag.rawPose.z;
+//
+//				telemetry.addData("id: ", detectedTag.id);
+//				telemetry.addData("x: ", String.valueOf(detectedTag.rawPose.x));
+//				telemetry.addData("y: ", String.valueOf(detectedTag.rawPose.y));
+//				telemetry.addData("z: ", String.valueOf(detectedTag.rawPose.z));
+//				telemetry.update();
+//				break;
+//			}
 
-				telemetry.addData("id: ", detectedTag.id);
-				telemetry.addData("x: ", String.valueOf(detectedTag.rawPose.x));
-				telemetry.addData("y: ", String.valueOf(detectedTag.rawPose.y));
-				telemetry.addData("z: ", String.valueOf(detectedTag.rawPose.z));
-				telemetry.update();
-				break;
-			}
+		_movement.sendTelemetry(true);
+//		}
 
-			_movement.sendTelemetry(true);
-		}
-
-		telemetry.addData("tagZ: ", tagZ);
-		telemetry.addData("tagX: ", tagX);
-		telemetry.update();
-
+//		telemetry.addData("tagZ: ", tagZ);
+//		telemetry.addData("tagX: ", tagX);
+//		telemetry.update();
+//
 		waitForStart();
-		if (tagX == 0) {
-			left();
-		} else if (tagX < 3) {
-			middle();
-		} else if (tagX > 0) {
-			right();
-		}
+		middle();
+//		if (tagX == 0) {
+//			left();
+//		} else if (tagX < 3) {
+//			middle();
+//		} else if (tagX > 0) {
+//			right();
+//		}
 	}
 
 	private void right() {
@@ -135,9 +130,9 @@ public class autonomousBlue extends LinearOpMode {
 		_movement.turn(_config.TURN, 90);
 		_movement.turnFix(_config.TURN, 90, 1.5);
 
-		_movement.straight(_config.SPEED, -30, 90);
-		_movement.turn(_config.TURN, 90);
-		_movement.turnFix(_config.TURN, 90, 1.5);
+//		_movement.straight(_config.SPEED, -30, 90);
+//		_movement.turn(_config.TURN, 90);
+//		_movement.turnFix(_config.TURN, 90, 1.5);
 
 		_mechanism.placeYellow();
 		_mechanism.resetHand();
