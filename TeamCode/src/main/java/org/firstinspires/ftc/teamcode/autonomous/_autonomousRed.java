@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
+
 public class _autonomousRed extends LinearOpMode {
 	private final tenserflow _tenserflow = new tenserflow(this);
 
