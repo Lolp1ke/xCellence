@@ -16,4 +16,7 @@ public class config {
 	public final double P_DRIVE_GAIN = 0.03d;
 	public final double P_TURN_GAIN = 0.02d;
 	public final double HEADING_THRESHOLD = 1.0d;
+
+	public final int CAMERA_WIDTH = 1280;
+	public final int CAMERA_HEIGHT = 720;
 }

@@ -19,6 +19,42 @@ public class movement4wd {
 
 
 	public void run() {
+		double x = opMode.gamepad1.left_stick_x;
+		double y = -opMode.gamepad1.left_stick_y;
+		double turn = opMode.gamepad1.right_stick_x;
+
+		double angle = Math.atan2(y, x);
+		double power = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+		double sin = Math.sin(angle - Math.PI / 4);
+		double cos = Math.sin(angle - Math.PI / 4);
+		double max = Math.max(Math.abs(sin), Math.abs(cos));
+
+		double rightFrontPower = power * sin / max - turn;
+		double leftFrontPower = power * cos / max + turn;
+		double rightRearPower = power * cos / max - turn;
+		double leftRearPower = power * sin / max + turn;
+
+		if ((power + Math.abs(turn)) > 1) {
+			rightFrontPower /= power + turn;
+			leftFrontPower /= power + turn;
+			rightRearPower /= power + turn;
+			leftRearPower /= power + turn;
+		}
+
+		rightFront.setPower(rightFrontPower);
+		leftFront.setPower(leftFrontPower);
+		rightRear.setPower(rightRearPower);
+		leftRear.setPower(leftRearPower);
+
+
+		opMode.telemetry.addData("Right front", rightFrontPower);
+		opMode.telemetry.addData("Left front", leftFrontPower);
+		opMode.telemetry.addData("Right rear", rightRearPower);
+		opMode.telemetry.addData("Left rear", leftRearPower);
+	}
+
+	public void _run() {
 		double normalizer;
 
 		double x = opMode.gamepad1.left_stick_x;

@@ -12,6 +12,8 @@ public class mechanism {
 	private DcMotor rightArm;
 	private DcMotor leftArm;
 
+	private DcMotor lift;
+
 	private Servo hand;
 
 	private Servo rightClaw;
@@ -28,6 +30,7 @@ public class mechanism {
 
 	public void run() {
 		double armPower = opmode.gamepad2.left_stick_y * (opmode.gamepad2.left_trigger != 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
+		double liftPower = opmode.gamepad2.right_stick_y * (opmode.gamepad2.right_trigger != 0 ? _config.LIFT_BOOST : _config.LIFT_SPEED);
 		double avgPosition = (rightArm.getCurrentPosition() + leftArm.getCurrentPosition()) / 2.0d;
 
 		if (opmode.gamepad2.x) {
@@ -58,6 +61,7 @@ public class mechanism {
 
 		rightArm.setPower(hang ? 0.85d : armPower);
 		leftArm.setPower(hang ? 0.85d : armPower);
+		lift.setPower(liftPower);
 
 		hand.setPosition(handPosition);
 		rightClaw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
@@ -76,6 +80,7 @@ public class mechanism {
 	public void init() {
 		rightArm = opmode.hardwareMap.get(DcMotor.class, "right_arm");
 		leftArm = opmode.hardwareMap.get(DcMotor.class, "left_arm");
+		lift = opmode.hardwareMap.get(DcMotor.class, "lift");
 
 		hand = opmode.hardwareMap.get(Servo.class, "hand");
 		rightClaw = opmode.hardwareMap.get(Servo.class, "right_claw");
@@ -85,6 +90,7 @@ public class mechanism {
 
 		rightArm.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
+		lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
 		hand.setDirection(Servo.Direction.REVERSE);
 		rightClaw.setDirection(Servo.Direction.FORWARD);
