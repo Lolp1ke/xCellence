@@ -11,18 +11,19 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class openCV {
 	private final LinearOpMode opMode;
+	public final pipeline _pipeline;
 	private final config _config = new config();
 	private OpenCvWebcam cvWebcam;
 
-	public openCV(final LinearOpMode _opMode) {
+	public openCV(final LinearOpMode _opMode, final Boolean _isRed) {
 		opMode = _opMode;
+		_pipeline = new pipeline(_isRed);
 	}
 
 	public void init() {
 		cvWebcam = OpenCvCameraFactory.getInstance().createWebcam(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"));
-		cvWebcam.setPipeline(new pipeline());
+		cvWebcam.setPipeline(_pipeline);
 		cvWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-
 			@Override
 			public void onOpened() {
 				cvWebcam.startStreaming(

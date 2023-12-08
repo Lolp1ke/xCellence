@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class mechanism {
-	private final LinearOpMode opmode;
+	private final LinearOpMode opMode;
+	private final config _config = new config();
 	private DcMotor rightArm;
 	private DcMotor leftArm;
 	private Servo hand;
@@ -15,31 +16,89 @@ public class mechanism {
 
 	private ElapsedTime runtime = new ElapsedTime();
 
-	private final double COUNTS_PER_MOTOR_REV = 288;
-	private final double DRIVE_GEAR_REDUCTION = 1.0;
-	private final double WHEEL_DIAMETER_INCHES = 9.5 / 2.54;
-	private final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-		(WHEEL_DIAMETER_INCHES * 3.1415);
-	private final double DRIVE_SPEED = 0.6;
-	private final double TURN_SPEED = 0.5;
+	public mechanism(final LinearOpMode _opMode) {
+		opMode = _opMode;
+	}
 
-	private final double HAND_GROUND = 0.0d;
-	private final double HAND_CLOSE = 1.0d;
+	public void placePurple() {
+		hand.setPosition(_config.HAND_GROUND);
+		opMode.sleep(1000);
 
-	private final double CLAW_OPENED = 0.1d;
-	private final double CLAW_CLOSED = 0.3d;
+		leftClaw.setPosition(_config.CLAW_OPENED + .05d);
+		opMode.sleep(1000);
 
-	public mechanism(final LinearOpMode _opmode) {
-		opmode = _opmode;
+		hand.setPosition(_config.HAND_CLOSE);
+		opMode.sleep(1000);
+	}
+
+	public void placeYellow() {
+		encoderDrive(_config.ARM_SPEED, -17, -17, 3.0);
+		opMode.sleep(1000);
+
+		hand.setPosition(_config.HAND_CLOSE);
+		opMode.sleep(1000);
+
+		rightClaw.setPosition(_config.CLAW_OPENED);
+		opMode.sleep(1000);
+	}
+
+	public void resetHand() {
+		encoderDrive(1, 20, 20, 3);
+	}
+
+	public void encoderDrive(double speed,
+		double leftInches,
+		double rightInches,
+		double timeoutS) {
+		int newLeftTarget;
+		int newRightTarget;
+
+		if (opMode.opModeIsActive()) {
+			newRightTarget = rightArm.getCurrentPosition() + (int) (rightInches * _config.ARM_COUNTS_PER_INCH);
+			newLeftTarget = leftArm.getCurrentPosition() + (int) (leftInches * _config.ARM_COUNTS_PER_INCH);
+			rightArm.setTargetPosition(newRightTarget);
+			leftArm.setTargetPosition(newLeftTarget);
+
+			rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+			runtime.reset();
+			rightArm.setPower(Math.abs(speed));
+			leftArm.setPower(Math.abs(speed));
+
+			while (opMode.opModeIsActive() &&
+				(runtime.seconds() < timeoutS) &&
+				(rightArm.isBusy() &&
+					leftArm.isBusy())) {
+
+				opMode.telemetry.addLine("Running to: ");
+				opMode.telemetry.addData("Right: ", newRightTarget);
+				opMode.telemetry.addData("Left: ", newLeftTarget);
+
+				opMode.telemetry.addLine("Currently at: ");
+				opMode.telemetry.addData("Right: ", rightArm.getCurrentPosition());
+				opMode.telemetry.addData("Left: ", leftArm.getCurrentPosition());
+
+				opMode.telemetry.update();
+			}
+
+			rightArm.setPower(0);
+			leftArm.setPower(0);
+
+			rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+			leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+			opMode.sleep(250);
+		}
 	}
 
 	public void init() {
-		rightArm = opmode.hardwareMap.get(DcMotor.class, "right_arm");
-		leftArm = opmode.hardwareMap.get(DcMotor.class, "left_arm");
+		rightArm = opMode.hardwareMap.get(DcMotor.class, "right_arm");
+		leftArm = opMode.hardwareMap.get(DcMotor.class, "left_arm");
 
-		hand = opmode.hardwareMap.get(Servo.class, "hand");
-		leftClaw = opmode.hardwareMap.get(Servo.class, "left_claw");
-		rightClaw = opmode.hardwareMap.get(Servo.class, "right_claw");
+		hand = opMode.hardwareMap.get(Servo.class, "hand");
+		leftClaw = opMode.hardwareMap.get(Servo.class, "left_claw");
+		rightClaw = opMode.hardwareMap.get(Servo.class, "right_claw");
 
 		rightArm.setDirection(DcMotor.Direction.FORWARD);
 		leftArm.setDirection(DcMotor.Direction.REVERSE);
@@ -54,73 +113,7 @@ public class mechanism {
 		rightClaw.setDirection(Servo.Direction.FORWARD);
 		leftClaw.setDirection(Servo.Direction.REVERSE);
 
-		rightClaw.setPosition(CLAW_CLOSED);
-		leftClaw.setPosition(CLAW_CLOSED);
-	}
-
-	public void placePurple() {
-		hand.setPosition(HAND_GROUND);
-		opmode.sleep(1000);
-
-		leftClaw.setPosition(CLAW_OPENED + .05d);
-		opmode.sleep(1000);
-
-		hand.setPosition(HAND_CLOSE);
-		opmode.sleep(1000);
-	}
-
-	public void placeYellow() {
-		encoderDrive(DRIVE_SPEED, -17, -17, 3.0);
-		opmode.sleep(1000);
-
-		hand.setPosition(HAND_CLOSE);
-		opmode.sleep(1000);
-
-		rightClaw.setPosition(CLAW_OPENED);
-		opmode.sleep(1000);
-	}
-
-	public void resetHand() {
-		encoderDrive(1, 20, 20, 3);
-	}
-
-
-	public void encoderDrive(double speed,
-		double leftInches, double rightInches,
-		double timeoutS) {
-		int newLeftTarget;
-		int newRightTarget;
-
-		if (opmode.opModeIsActive()) {
-			newRightTarget = rightArm.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-			newLeftTarget = leftArm.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-			rightArm.setTargetPosition(newRightTarget);
-			leftArm.setTargetPosition(newLeftTarget);
-
-			rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-			runtime.reset();
-			rightArm.setPower(Math.abs(speed));
-			leftArm.setPower(Math.abs(speed));
-
-			while (opmode.opModeIsActive() &&
-				(runtime.seconds() < timeoutS) &&
-				(rightArm.isBusy() && leftArm.isBusy())) {
-
-				opmode.telemetry.addData("Running to", " %7d :%7d", newLeftTarget, newRightTarget);
-				opmode.telemetry.addData("Currently at", " at %7d :%7d",
-					leftArm.getCurrentPosition(), rightArm.getCurrentPosition());
-				opmode.telemetry.update();
-			}
-
-			rightArm.setPower(0);
-			leftArm.setPower(0);
-
-			rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-			leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-			opmode.sleep(250);
-		}
+		rightClaw.setPosition(_config.CLAW_CLOSED);
+		leftClaw.setPosition(_config.CLAW_CLOSED);
 	}
 }

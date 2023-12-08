@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.autonomous.openCV.openCV;
 
 @Autonomous(name = "Autonomous Red", group = "!RED")
 public class autonomous extends LinearOpMode {
-	private final openCV _openCV = new openCV(this);
+	private final openCV _openCV = new openCV(this, true);
 	private final movement _movement = new movement(this);
 	private final mechanism _mechanism = new mechanism(this);
 
@@ -18,6 +18,7 @@ public class autonomous extends LinearOpMode {
 		_mechanism.init();
 
 		waitForStart();
+		_movement.resetYaw();
 		while (opModeInInit()) {
 		}
 	}

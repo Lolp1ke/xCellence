@@ -12,10 +12,23 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class pipeline extends OpenCvPipeline {
 	private final config _config = new config();
+	private final Boolean isRed;
 	Mat mat = new Mat();
 	Mat lowMask = new Mat();
 	Mat highMask = new Mat();
 	Mat full = new Mat();
+
+	private final Scalar redLow1 = _config.RED_LOW_HSV_LOWER_BOUNDARY;
+	private final Scalar redLow2 = _config.RED_LOW_HSV_HIGHER_BOUNDARY;
+	private final Scalar redHigh1 = _config.RED_HIGH_HSV_LOWER_BOUNDARY;
+	private final Scalar redHigh2 = _config.RED_HIGH_HSV_HIGHER_BOUNDARY;
+
+	private final Scalar blueLow = _config.BLUE_HSV_LOWER_BOUNDARY;
+	private final Scalar blueHigh = _config.BLUE_HSV_HIGH_BOUNDARY;
+
+	public pipeline(final Boolean _isRed) {
+		isRed = _isRed;
+	}
 
 	private final Rect CENTER_RECT = new Rect(
 		new Point(130, 80),
@@ -31,27 +44,29 @@ public class pipeline extends OpenCvPipeline {
 	public Mat processFrame(Mat input) {
 		Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-		redDetector();
+		if (isRed) redDetector();
+		else blueDetector();
 
 		Imgproc.rectangle(mat, CENTER_RECT, COLOR);
 		Imgproc.rectangle(mat, RIGHT_RECT, COLOR);
+
+		Imgproc.cvtColor(full, mat, Imgproc.COLOR_GRAY2RGB);
 		return mat;
 	}
 
 	private void redDetector() {
-		Scalar low1 = _config.RED_LOW_HSV_LOWER_BOUNDARY;
-		Scalar low2 = _config.RED_LOW_HSV_HIGHER_BOUNDARY;
-		Scalar high1 = _config.RED_HIGH_HSV_LOWER_BOUNDARY;
-		Scalar high2 = _config.RED_HIGH_HSV_HIGHER_BOUNDARY;
-
-		Core.inRange(mat, low1, high1, lowMask);
-		Core.inRange(mat, low2, high2, highMask);
+		Core.inRange(mat, redLow1, redHigh1, lowMask);
+		Core.inRange(mat, redLow2, redHigh2, highMask);
 		Core.add(lowMask, highMask, full);
-
-		Imgproc.cvtColor(full, mat, Imgproc.COLOR_GRAY2RGB);
 
 		lowMask.release();
 		highMask.release();
+		full.release();
+	}
+
+	private void blueDetector() {
+		Core.inRange(mat, blueLow, blueHigh, full);
+
 		full.release();
 	}
 }
