@@ -12,27 +12,24 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 @Deprecated
-public class tenserflow {
-	private final LinearOpMode opmode;
+public class tensorflow {
+	private final LinearOpMode opMode;
 
 	private VisionPortal visionPortal;
 	private TfodProcessor objectDetection;
 
-	private final String[] labels = {
-		"Pixel"
-	};
 
-	public tenserflow(LinearOpMode _opmode) {
-		opmode = _opmode;
+	public tensorflow(LinearOpMode _opmode) {
+		opMode = _opmode;
 	}
 
 	public List<Recognition> detection() {
 		List<Recognition> objects = objectDetection.getRecognitions();
-		opmode.telemetry.addData("Object detections: ", objects.size());
+		opMode.telemetry.addData("Object detections: ", objects.size());
 
 		for (Recognition object : objects) {
-			opmode.telemetry.addData("Label: ", object.getLabel());
-			opmode.telemetry.addData("Confidence: ", object.getConfidence());
+			opMode.telemetry.addData("Label: ", object.getLabel());
+			opMode.telemetry.addData("Confidence: ", object.getConfidence());
 		}
 
 		return objects;
@@ -45,7 +42,7 @@ public class tenserflow {
 
 		visionPortal = new VisionPortal
 			.Builder()
-			.setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
+			.setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"))
 			.setCameraResolution(new Size(1280, 720))
 			.addProcessor(objectDetection)
 			.build();

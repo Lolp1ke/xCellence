@@ -22,6 +22,7 @@ public class mechanism {
 	private Servo rocket;
 
 	private double handPosition = _config.HAND_CLOSE;
+	private double rocketPosition = _config.ROCKET_CLOSED;
 	private boolean hang = false;
 
 	public mechanism(final LinearOpMode _opMode) {
@@ -31,7 +32,6 @@ public class mechanism {
 	public void run() {
 		double armPower = opmode.gamepad2.left_stick_y * (opmode.gamepad2.left_trigger != 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
 		double liftPower = opmode.gamepad2.right_stick_y * (opmode.gamepad2.right_trigger != 0 ? _config.LIFT_BOOST : _config.LIFT_SPEED);
-		double avgPosition = (rightArm.getCurrentPosition() + leftArm.getCurrentPosition()) / 2.0d;
 
 		if (opmode.gamepad2.x) {
 			handPosition = _config.HAND_CLOSE;
@@ -53,10 +53,10 @@ public class mechanism {
 			hang = false;
 		}
 
-		if (opmode.gamepad2.left_bumper && opmode.gamepad2.right_bumper && opmode.gamepad2.a) {
-			rocket.setPosition(_config.ROCKET_LAUNCHED);
-		} else if (opmode.gamepad2.left_bumper && opmode.gamepad2.right_bumper && opmode.gamepad2.b) {
-			rocket.setPosition(_config.ROCKET_CLOSED);
+		if (opmode.gamepad2.dpad_right && opmode.gamepad2.a) {
+			rocketPosition = _config.ROCKET_LAUNCHED;
+		} else if (opmode.gamepad2.dpad_right && opmode.gamepad2.b) {
+			rocketPosition = _config.ROCKET_LAUNCHED;
 		}
 
 		rightArm.setPower(hang ? 0.85d : armPower);
@@ -67,14 +67,14 @@ public class mechanism {
 		rightClaw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
 		leftClaw.setPosition(opmode.gamepad2.y ? _config.CLAW_CLOSE : opmode.gamepad2.dpad_left ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
 
+		rocket.setPosition(rocketPosition);
+
 		opmode.telemetry.addData("Arm: ", armPower);
 		opmode.telemetry.addData("Hand: ", handPosition);
 		opmode.telemetry.addData("Claw: ", opmode.gamepad2.y);
 		opmode.telemetry.addData("Right claw: ", opmode.gamepad2.dpad_up);
 		opmode.telemetry.addData("Left claw: ", opmode.gamepad2.dpad_down);
-
-		opmode.telemetry.addLine("Dev:");
-		opmode.telemetry.addData("Average arm position: ", avgPosition);
+		opmode.telemetry.addData("Rocket: ", rocketPosition);
 	}
 
 	public void init() {

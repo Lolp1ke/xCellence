@@ -173,7 +173,7 @@ public class movement {
 			new IMU.Parameters(
 				new RevHubOrientationOnRobot(
 					RevHubOrientationOnRobot.LogoFacingDirection.UP,
-					RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
+					RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
 				)
 			)
 		);

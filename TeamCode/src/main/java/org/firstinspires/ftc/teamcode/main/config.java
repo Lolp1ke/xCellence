@@ -21,6 +21,6 @@ public class config {
 	public final double CLAW_OPEN = 0.05d;
 	public final double CLAW_CLOSE = 0.3d;
 
-	public final double ROCKET_CLOSED = 0.0d;
-	public final double ROCKET_LAUNCHED = 1.0d;
+	public final double ROCKET_CLOSED = 0.45d;
+	public final double ROCKET_LAUNCHED = 0.0d;
 }
