@@ -14,31 +14,21 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 public class tag {
-	private final LinearOpMode opmode;
+	private final LinearOpMode opMode;
 
-	private VisionPortal _visionPortal;
+	private VisionPortal visionPortal;
 	private AprilTagProcessor _tag;
 
-	public tag(final LinearOpMode _opmode) {
-		opmode = _opmode;
+	public tag(final LinearOpMode _opMode) {
+		this.opMode = _opMode;
 	}
 
 
 	public List<AprilTagDetection> detection() {
 		List<AprilTagDetection> detections = _tag.getDetections();
-		opmode.telemetry.addData("Tag detections: ", detections);
+		opMode.telemetry.addData("Tag detections: ", detections);
 
 		return detections;
-//        opmode.telemetry.addLine("There is nothing we can do.\n");
-//        opmode.telemetry.addLine("Dans mon esprit tout divague\n" +
-//                "Je me perds dans tes yeux\n" +
-//                "Je me noie dans la vague\n" +
-//                "De ton regard amoureux\n" +
-//                "Je ne veux que ton âme\n" +
-//                "Divaguant sur ma peau\n" +
-//                "Une fleur, une femme\n" +
-//                "Dans ton cœur Roméo\n" +
-//                "Je ne suis que ton ombre");
 	}
 
 	public void init() {
@@ -46,11 +36,10 @@ public class tag {
 			.setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
 			.build();
 
-		_visionPortal = new VisionPortal
+		visionPortal = new VisionPortal
 			.Builder()
-			.enableLiveView(true)
 			.setCameraResolution(new Size(1280, 720))
-			.setCamera(opmode.hardwareMap.get(WebcamName.class, "Webcam 1"))
+			.setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"))
 			.addProcessor(_tag)
 			.enableLiveView(true)
 			.build();

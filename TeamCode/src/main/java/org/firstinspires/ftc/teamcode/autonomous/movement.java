@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class movement {
-	private final LinearOpMode opmode;
+	private final LinearOpMode opMode;
 	private final config _config = new config();
 
 	private DcMotor rightDrive;
@@ -28,12 +28,12 @@ public class movement {
 	private int rightTarget = 0;
 	private int leftTarget = 0;
 
-	public movement(final LinearOpMode _opmode) {
-		opmode = _opmode;
+	public movement(final LinearOpMode _opMode) {
+		opMode = _opMode;
 	}
 
 	public void straight(final double driveSpeed, final double distance, final double heading) {
-		if (!opmode.opModeIsActive()) return;
+		if (!opMode.opModeIsActive()) return;
 
 		int target = (int) (distance * _config.COUNTS_PER_CM);
 		rightTarget = rightDrive.getCurrentPosition() + target;
@@ -46,7 +46,7 @@ public class movement {
 		leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 		moveRobot(Math.abs(driveSpeed), 0);
-		while (opmode.opModeIsActive() && rightDrive.isBusy() && leftDrive.isBusy()) {
+		while (opMode.opModeIsActive() && rightDrive.isBusy() && leftDrive.isBusy()) {
 			turnSpeed = proportionalController(heading, _config.P_DRIVE_GAIN);
 
 			if (distance < 0)
@@ -60,13 +60,13 @@ public class movement {
 		moveRobot(0, 0);
 		leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		opmode.sleep(1000);
+		opMode.sleep(1000);
 	}
 
 	public void turn(final double maxTurnSpeed, final double heading) {
 		proportionalController(heading, _config.P_DRIVE_GAIN);
 
-		while (opmode.opModeIsActive() && (Math.abs(headingError) > _config.HEADING_THRESHOLD)) {
+		while (opMode.opModeIsActive() && (Math.abs(headingError) > _config.HEADING_THRESHOLD)) {
 			turnSpeed = proportionalController(heading, _config.P_TURN_GAIN);
 
 			turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
@@ -79,11 +79,11 @@ public class movement {
 		moveRobot(0, 0);
 	}
 
-	public void turnFix(double maxTurnSpeed, double heading, double holdTime) {
+	public void turnFix(final double maxTurnSpeed, final double heading, final double holdTime) {
 		ElapsedTime holdTimer = new ElapsedTime();
 		holdTimer.reset();
 
-		while (opmode.opModeIsActive() && (holdTimer.time() < holdTime)) {
+		while (opMode.opModeIsActive() && (holdTimer.time() < holdTime)) {
 			turnSpeed = proportionalController(heading, _config.P_TURN_GAIN);
 
 			turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
@@ -131,29 +131,33 @@ public class movement {
 
 	public void sendTelemetry(final boolean straight) {
 		if (straight) {
-			opmode.telemetry.addData("Target right: ", rightTarget);
-			opmode.telemetry.addData("Target left: ", leftTarget);
+			opMode.telemetry.addData("Target right: ", rightTarget);
+			opMode.telemetry.addData("Target left: ", leftTarget);
 
-			opmode.telemetry.addData("Current right: ", rightDrive.getCurrentPosition());
-			opmode.telemetry.addData("Current left: ", leftDrive.getCurrentPosition());
+			opMode.telemetry.addData("Current right: ", rightDrive.getCurrentPosition());
+			opMode.telemetry.addData("Current left: ", leftDrive.getCurrentPosition());
 		}
 
-		opmode.telemetry.addLine("Heading");
-		opmode.telemetry.addData("Target: ", targetHeading);
-		opmode.telemetry.addData("Current: ", getHeading());
+		opMode.telemetry.addLine("Heading");
+		opMode.telemetry.addData("Target: ", targetHeading);
+		opMode.telemetry.addData("Current: ", getHeading());
 
-		opmode.telemetry.addData("Error:", headingError);
-		opmode.telemetry.addData("Steer:", turnSpeed);
+		opMode.telemetry.addData("Error:", headingError);
+		opMode.telemetry.addData("Steer:", turnSpeed);
 
-		opmode.telemetry.addData("Speed right: ", rightSpeed);
-		opmode.telemetry.addData("Speed left: ", leftSpeed);
+		opMode.telemetry.addData("Speed right: ", rightSpeed);
+		opMode.telemetry.addData("Speed left: ", leftSpeed);
 
-		opmode.telemetry.update();
+		opMode.telemetry.update();
+	}
+
+	public void resetYaw() {
+		imu.resetYaw();
 	}
 
 	public void init() {
-		rightDrive = opmode.hardwareMap.get(DcMotor.class, "right_drive");
-		leftDrive = opmode.hardwareMap.get(DcMotor.class, "left_drive");
+		rightDrive = opMode.hardwareMap.get(DcMotor.class, "right_drive");
+		leftDrive = opMode.hardwareMap.get(DcMotor.class, "left_drive");
 
 		rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -167,13 +171,13 @@ public class movement {
 		rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-		imu = opmode.hardwareMap.get(IMU.class, "imu");
+		imu = opMode.hardwareMap.get(IMU.class, "imu");
 
 		imu.initialize(
 			new IMU.Parameters(
 				new RevHubOrientationOnRobot(
 					RevHubOrientationOnRobot.LogoFacingDirection.UP,
-					RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
+					RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
 				)
 			)
 		);
