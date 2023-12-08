@@ -4,23 +4,30 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class config {
+	// - Movement config
 	public final double SPEED = 0.5d;
 	public final double ACCELERATION = 0.75d;
 	public final double DECELERATION = 0.3d;
 
+	// - Mechanism config
+	// - - Arm
 	public final double ARM_SPEED = 0.5d;
 	public final double ARM_BOOST = 0.8d;
 
+	// - - Lift
 	public final double LIFT_SPEED = 0.5d;
 	public final double LIFT_BOOST = 0.8d;
 
-	public final double HAND_GROUND = 0.27d;
+	// - - Hand
+	public final double HAND_GROUND = 0.4d;
 	public final double HAND_MID = 0.65d;
-	public final double HAND_CLOSE = 0.8d;
+	public final double HAND_SCORE = 0.9d;
 
+	// - - Claw
 	public final double CLAW_OPEN = 0.05d;
 	public final double CLAW_CLOSE = 0.3d;
 
+	// - - Rocket
 	public final double ROCKET_CLOSED = 0.45d;
 	public final double ROCKET_LAUNCHED = 0.0d;
 }

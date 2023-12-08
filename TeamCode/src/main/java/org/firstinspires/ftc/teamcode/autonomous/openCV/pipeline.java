@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous.openCV;
 
-
 import org.firstinspires.ftc.teamcode.autonomous.config;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -13,60 +12,83 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class pipeline extends OpenCvPipeline {
 	private final config _config = new config();
 	private final Boolean isRed;
-	Mat mat = new Mat();
-	Mat lowMask = new Mat();
-	Mat highMask = new Mat();
-	Mat full = new Mat();
 
-	private final Scalar redLow1 = _config.RED_LOW_HSV_LOWER_BOUNDARY;
-	private final Scalar redLow2 = _config.RED_LOW_HSV_HIGHER_BOUNDARY;
-	private final Scalar redHigh1 = _config.RED_HIGH_HSV_LOWER_BOUNDARY;
-	private final Scalar redHigh2 = _config.RED_HIGH_HSV_HIGHER_BOUNDARY;
+	private final Mat mat = new Mat();
+	private final Mat lowMask = new Mat();
+	private final Mat highMask = new Mat();
+	private final Mat full = new Mat();
 
-	private final Scalar blueLow = _config.BLUE_HSV_LOWER_BOUNDARY;
-	private final Scalar blueHigh = _config.BLUE_HSV_HIGH_BOUNDARY;
+	private final Scalar RED_LOW_1 = _config.RED_HSV_LOW1_BOUNDARY;
+	private final Scalar RED_HIGH_1 = _config.RED_HSV_HIGH1_BOUNDARY;
+	private final Scalar RED_LOW_2 = _config.RED_HSV_LOW2_BOUNDARY;
+	private final Scalar RED_HIGH_2 = _config.RED_HSV_HIGH2_BOUNDARY;
+
+	private final Scalar BLUE_LOW = _config.BLUE_HSV_LOW_BOUNDARY;
+	private final Scalar BLUE_HIGH = _config.BLUE_HSV_HIGH_BOUNDARY;
+
+
+	private final Rect RIGHT_RECT = new Rect(
+		new Point(_config.RIGHT_X_POS - _config.RECT_SIZE, _config.RIGHT_Y_POS - _config.RECT_SIZE),
+		new Point(_config.RIGHT_X_POS + _config.RECT_SIZE, _config.RIGHT_Y_POS + _config.RECT_SIZE)
+	);
+	private final Rect CENTER_RECT = new Rect(
+		new Point(_config.CENTER_X_POS - _config.RECT_SIZE, _config.CENTER_Y_POS - _config.RECT_SIZE),
+		new Point(_config.CENTER_X_POS + _config.RECT_SIZE, _config.CENTER_Y_POS + _config.RECT_SIZE)
+	);
+	private final Rect LEFT_RECT = new Rect(
+		new Point(_config.LEFT_X_PIS - _config.RECT_SIZE, _config.LEFT_Y_POS - _config.RECT_SIZE),
+		new Point(_config.LEFT_X_PIS + _config.RECT_SIZE, _config.LEFT_Y_POS + _config.RECT_SIZE)
+	);
+
+	private final Scalar RED_COLOR = new Scalar(255.0d, 0.0d, 0.0d);
+	private final Scalar BLUE_COLOR = new Scalar(0.0d, 0.0d, 255.0d);
+
+
+	public int _location = -1;
+
 
 	public pipeline(final Boolean _isRed) {
 		isRed = _isRed;
 	}
 
-	private final Rect CENTER_RECT = new Rect(
-		new Point(130, 80),
-		new Point(210, 160)
-	);
-	private final Rect RIGHT_RECT = new Rect(
-		new Point(),
-		new Point()
-	);
-	private final Scalar COLOR = new Scalar(255, 0, 0);
-
 	@Override
 	public Mat processFrame(Mat input) {
 		Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-		if (isRed) redDetector();
-		else blueDetector();
-
-		Imgproc.rectangle(mat, CENTER_RECT, COLOR);
-		Imgproc.rectangle(mat, RIGHT_RECT, COLOR);
+		if (isRed) {
+			Core.inRange(mat, RED_LOW_1, RED_HIGH_1, lowMask);
+			Core.inRange(mat, RED_LOW_2, RED_HIGH_2, highMask);
+			Core.add(lowMask, highMask, full);
+		} else {
+			Core.inRange(mat, BLUE_LOW, BLUE_HIGH, full);
+		}
 
 		Imgproc.cvtColor(full, mat, Imgproc.COLOR_GRAY2RGB);
-		return mat;
-	}
+		Imgproc.rectangle(mat, RIGHT_RECT, isRed ? RED_COLOR : BLUE_COLOR);
+		Imgproc.rectangle(mat, CENTER_RECT, isRed ? RED_COLOR : BLUE_COLOR);
+		Imgproc.rectangle(mat, LEFT_RECT, isRed ? RED_COLOR : BLUE_COLOR);
 
-	private void redDetector() {
-		Core.inRange(mat, redLow1, redHigh1, lowMask);
-		Core.inRange(mat, redLow2, redHigh2, highMask);
-		Core.add(lowMask, highMask, full);
+		getLocation();
 
 		lowMask.release();
 		highMask.release();
 		full.release();
+		return mat;
 	}
 
-	private void blueDetector() {
-		Core.inRange(mat, blueLow, blueHigh, full);
+	public void getLocation() {
+		double rightConfidence = Core.mean(new Mat(mat, RIGHT_RECT)).val[0];
+		double centerConfidence = Core.mean(new Mat(mat, CENTER_RECT)).val[0];
+		double leftConfidence = Core.mean(new Mat(mat, LEFT_RECT)).val[0];
 
-		full.release();
+		if (rightConfidence > leftConfidence && rightConfidence > centerConfidence)
+			_location = 1;
+		else if (centerConfidence > rightConfidence && centerConfidence > leftConfidence)
+			_location = 2;
+		else if (leftConfidence > rightConfidence && leftConfidence > centerConfidence)
+			_location = 3;
+
+		if (rightConfidence < 0.3d && centerConfidence < 0.3d && leftConfidence < 0.3d)
+			_location = -1;
 	}
 }

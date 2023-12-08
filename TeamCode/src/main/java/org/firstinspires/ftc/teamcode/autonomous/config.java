@@ -40,12 +40,24 @@ public class config {
 	public final int CAMERA_HEIGHT = 240;
 
 	// - - Red color in HSV color range
-	public final Scalar RED_LOW_HSV_LOWER_BOUNDARY = new Scalar(0.0d, 100.0d, 20.0d);
-	public final Scalar RED_HIGH_HSV_LOWER_BOUNDARY = new Scalar(160.0d, 100.0d, 20.0d);
-	public final Scalar RED_LOW_HSV_HIGHER_BOUNDARY = new Scalar(10.0d, 255.0d, 255.0d);
-	public final Scalar RED_HIGH_HSV_HIGHER_BOUNDARY = new Scalar(179.0d, 255.0d, 255.0d);
+	public final Scalar RED_HSV_LOW1_BOUNDARY = new Scalar(0.0d, 100.0d, 20.0d);
+	public final Scalar RED_HSV_LOW2_BOUNDARY = new Scalar(160.0d, 100.0d, 20.0d);
+	public final Scalar RED_HSV_HIGH1_BOUNDARY = new Scalar(10.0d, 255.0d, 255.0d);
+	public final Scalar RED_HSV_HIGH2_BOUNDARY = new Scalar(179.0d, 255.0d, 255.0d);
 
 	// - - Blue color in HSV color range
-	public final Scalar BLUE_HSV_LOWER_BOUNDARY = new Scalar(0.0d, 0.0d, 0.0d);
-	public final Scalar BLUE_HSV_HIGH_BOUNDARY = new Scalar(0.0d, 0.0d, 0.0d);
+	public final Scalar BLUE_HSV_LOW_BOUNDARY = new Scalar(90.0d, 50.0d, 70.0d);
+	public final Scalar BLUE_HSV_HIGH_BOUNDARY = new Scalar(128.0d, 255.0d, 255.0d);
+
+	// - - Rectangles position and size
+	public final int RECT_SIZE = 30;
+
+	public final int RIGHT_X_POS = CAMERA_WIDTH / 4;
+	public final int RIGHT_Y_POS = CAMERA_HEIGHT / 2;
+
+	public final int CENTER_X_POS = CAMERA_WIDTH / 2;
+	public final int CENTER_Y_POS = CAMERA_HEIGHT / 2;
+
+	public final int LEFT_X_PIS = CAMERA_WIDTH * 3 / 4;
+	public final int LEFT_Y_POS = CAMERA_HEIGHT / 2;
 }

@@ -15,9 +15,9 @@ public class openCV {
 	private final config _config = new config();
 	private OpenCvWebcam cvWebcam;
 
-	public openCV(final LinearOpMode _opMode, final Boolean _isRed) {
+	public openCV(final LinearOpMode _opMode, final Boolean isRed) {
 		opMode = _opMode;
-		_pipeline = new pipeline(_isRed);
+		_pipeline = new pipeline(isRed);
 	}
 
 	public void init() {
