@@ -19,16 +19,16 @@ public class movement2wd {
 	public void car() {
 		boolean isBoosted = opMode.gamepad1.right_bumper;
 		boolean isSlowed = opMode.gamepad1.left_bumper;
-		double speedMultiplier = isBoosted ? _config.ACCELERATION : (isSlowed ? _config.DECELERATION : _config.SPEED);
 
 		double drive = -opMode.gamepad1.left_stick_y;
 		double turn = opMode.gamepad1.right_stick_x;
 
-		double rightPower = Range.clip(drive - turn, -1.0, 1.0) * speedMultiplier;
-		double leftPower = Range.clip(drive + turn, -1.0, 1.0) * speedMultiplier;
+		double rightPower = Range.clip(drive - turn, -1.0, 1.0);
+		double leftPower = Range.clip(drive + turn, -1.0, 1.0);
 
-		rightDrive.setPower(rightPower);
-		leftDrive.setPower(leftPower);
+		double speedMultiplier = isBoosted ? (turn > 0.2d ? _config.SPEED : _config.ACCELERATION) : (isSlowed ? _config.DECELERATION : _config.SPEED);
+		rightDrive.setPower(rightPower * speedMultiplier);
+		leftDrive.setPower(leftPower * speedMultiplier);
 
 		opMode.telemetry.addData("Left: ", leftPower);
 		opMode.telemetry.addData("Right: ", rightPower);

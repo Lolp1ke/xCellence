@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class config {
 	// - Movement config
 	public final double SPEED = 0.5d;
-	public final double ACCELERATION = 0.75d;
+	public final double ACCELERATION = 0.65d;
 	public final double DECELERATION = 0.3d;
 
 	// - Mechanism config

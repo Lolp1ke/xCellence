@@ -48,7 +48,7 @@ public class mechanism {
 		if (opMode.gamepad2.dpad_right && opMode.gamepad2.a)
 			rocketPosition = _config.ROCKET_LAUNCHED;
 		else if (opMode.gamepad2.dpad_right && opMode.gamepad2.b)
-			rocketPosition = _config.ROCKET_LAUNCHED;
+			rocketPosition = _config.ROCKET_CLOSED;
 
 
 		rightArm.setPower(hang ? 0.85d : armPower);
