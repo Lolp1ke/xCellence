@@ -16,7 +16,6 @@ public class config {
 
 	// - - Lift
 	public final double LIFT_SPEED = 0.5d;
-	public final double LIFT_BOOST = 0.8d;
 
 	// - - Hand
 	public final double HAND_GROUND = 0.4d;

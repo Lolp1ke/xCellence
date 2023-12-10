@@ -40,4 +40,8 @@ public class openCV {
 			}
 		});
 	}
+
+	public void cameraOff() {
+		cvWebcam.stopStreaming();
+	}
 }
