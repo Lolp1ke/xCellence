@@ -16,16 +16,16 @@ public class main extends LinearOpMode {
 
 	@Override
 	public void runOpMode() {
-		_mechanism.init();
 		_movement2wd.init();
+		_mechanism.init();
 
 		telemetry.addData("Status: ", "vroom vroom");
 		telemetry.update();
 
 		waitForStart();
 		while (opModeIsActive()) {
-			_mechanism.run();
 			_movement2wd.car();
+			_mechanism.run();
 
 			telemetry.update();
 		}

@@ -11,7 +11,6 @@ public class mechanism {
 
 	private DcMotor rightArm;
 	private DcMotor leftArm;
-
 	private DcMotor lift;
 
 	private Servo hand;
@@ -22,6 +21,8 @@ public class mechanism {
 	private Servo rocket;
 
 	private double handPosition = _config.HAND_SCORE;
+	private double rightClawPosition = _config.CLAW_OPEN;
+	private double leftClawPosition = _config.CLAW_OPEN;
 	private double rocketPosition = _config.ROCKET_CLOSED;
 	private boolean hang = false;
 
@@ -30,8 +31,9 @@ public class mechanism {
 	}
 
 	public void run() {
-		double armPower = opMode.gamepad2.left_stick_y * (opMode.gamepad2.left_trigger != 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
-		double liftPower = -opMode.gamepad2.right_stick_y * _config.LIFT_SPEED;
+		double armPower = opMode.gamepad2.left_stick_y *
+			(opMode.gamepad2.left_trigger != 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
+		double liftPower = opMode.gamepad2.right_stick_y * _config.LIFT_SPEED;
 
 		if (opMode.gamepad2.x) handPosition = _config.HAND_SCORE;
 		else if (opMode.gamepad2.a) handPosition = _config.HAND_GROUND;
@@ -50,23 +52,34 @@ public class mechanism {
 		else if (opMode.gamepad2.dpad_right && opMode.gamepad2.b)
 			rocketPosition = _config.ROCKET_CLOSED;
 
+		if (opMode.gamepad2.right_trigger > 0.4d) {
+			rightClawPosition = _config.CLAW_CLOSE;
+			leftClawPosition = _config.CLAW_CLOSE;
+		} else if (opMode.gamepad2.dpad_right)
+			rightClawPosition = _config.CLAW_CLOSE;
+		else if (opMode.gamepad2.dpad_left)
+			leftClawPosition = _config.CLAW_CLOSE;
+		else {
+			rightClawPosition = _config.CLAW_CLOSE;
+			leftClawPosition = _config.CLAW_CLOSE;
+		}
 
-		rightArm.setPower(hang ? 0.85d : armPower);
-		leftArm.setPower(hang ? 0.85d : armPower);
-		lift.setPower(liftPower);
+		rightArm.setPower(hang ? -0.2d : armPower);
+		leftArm.setPower(hang ? -0.2d : armPower);
+		lift.setPower(hang ? 0.2d : liftPower);
 
 		hand.setPosition(handPosition);
-		rightClaw.setPosition(opMode.gamepad2.right_trigger > 0.4 ? _config.CLAW_CLOSE : opMode.gamepad2.dpad_right ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
-		leftClaw.setPosition(opMode.gamepad2.right_trigger > 0.4 ? _config.CLAW_CLOSE : opMode.gamepad2.dpad_left ? _config.CLAW_CLOSE : _config.CLAW_OPEN);
-
+		rightClaw.setPosition(rightClawPosition);
+		leftClaw.setPosition(leftClawPosition);
 		rocket.setPosition(rocketPosition);
 
+		opMode.telemetry.addLine("Mechanism");
 		opMode.telemetry.addData("Arm: ", armPower);
 		opMode.telemetry.addData("Hand: ", handPosition);
-		opMode.telemetry.addData("Claw: ", opMode.gamepad2.y);
-		opMode.telemetry.addData("Right claw: ", opMode.gamepad2.dpad_up);
-		opMode.telemetry.addData("Left claw: ", opMode.gamepad2.dpad_down);
+		opMode.telemetry.addData("Right claw: ", rightClawPosition);
+		opMode.telemetry.addData("Left claw: ", leftClawPosition);
 		opMode.telemetry.addData("Rocket: ", rocketPosition);
+		opMode.telemetry.addLine();
 	}
 
 	public void init() {
@@ -91,9 +104,9 @@ public class mechanism {
 		rocket.setDirection(Servo.Direction.FORWARD);
 
 		hand.setPosition(handPosition);
-		rightClaw.setPosition(_config.CLAW_OPEN);
-		leftClaw.setPosition(_config.CLAW_OPEN);
+		rightClaw.setPosition(leftClawPosition);
+		leftClaw.setPosition(rightClawPosition);
 
-		rocket.setPosition(_config.ROCKET_CLOSED);
+		rocket.setPosition(rocketPosition);
 	}
 }

@@ -26,14 +26,15 @@ public class movement2wd {
 		double rightPower = Range.clip(drive - turn, -1.0, 1.0);
 		double leftPower = Range.clip(drive + turn, -1.0, 1.0);
 
-		double speedMultiplier = isBoosted ? (turn > 0.2d ? _config.SPEED : _config.ACCELERATION) : (isSlowed ? _config.DECELERATION : _config.SPEED);
+		double speedMultiplier = isBoosted ? (Math.abs(turn) > 0.2d ? _config.SPEED : _config.ACCELERATION) : (isSlowed ? _config.DECELERATION : _config.SPEED);
 		rightDrive.setPower(rightPower * speedMultiplier);
 		leftDrive.setPower(leftPower * speedMultiplier);
 
+		opMode.telemetry.addLine("Movement");
 		opMode.telemetry.addData("Left: ", leftPower);
 		opMode.telemetry.addData("Right: ", rightPower);
-		opMode.telemetry.addData("Boosted?: ", isBoosted);
-		opMode.telemetry.addData("Slowed?: ", isSlowed);
+		opMode.telemetry.addData("Speed multiplier: ", speedMultiplier);
+		opMode.telemetry.addLine();
 	}
 
 	public void init() {

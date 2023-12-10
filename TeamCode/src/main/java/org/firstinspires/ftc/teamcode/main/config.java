@@ -12,10 +12,10 @@ public class config {
 	// - Mechanism config
 	// - - Arm
 	public final double ARM_SPEED = 0.5d;
-	public final double ARM_BOOST = 0.8d;
+	public final double ARM_BOOST = 0.65d;
 
 	// - - Lift
-	public final double LIFT_SPEED = 0.5d;
+	public final double LIFT_SPEED = 0.6d;
 
 	// - - Hand
 	public final double HAND_GROUND = 0.4d;
