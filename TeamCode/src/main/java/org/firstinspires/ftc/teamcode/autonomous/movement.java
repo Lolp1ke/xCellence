@@ -28,6 +28,10 @@ public class movement {
 	private int rightTarget = 0;
 	private int leftTarget = 0;
 
+	private double oldError = 0.0d;
+	private double errorSum = 0.0d;
+
+
 	public movement(final LinearOpMode _opMode) {
 		opMode = _opMode;
 	}
@@ -98,13 +102,14 @@ public class movement {
 
 	public double proportionalController(final double desiredHeading, final double proportionalGain) {
 		targetHeading = desiredHeading;
-
 		headingError = targetHeading - getHeading();
 
 		while (headingError > 180) headingError -= 360;
 		while (headingError <= -180) headingError += 360;
 
-		return Range.clip(headingError * proportionalGain, -1, 1);
+		oldError = headingError;
+		errorSum += headingError;
+		return Range.clip(headingError * proportionalGain + (headingError - oldError) * _config.D_TURN_GAIN, -1, 1);
 	}
 
 	public double getHeading() {
@@ -143,7 +148,8 @@ public class movement {
 		opMode.telemetry.addData("Current: ", getHeading());
 
 		opMode.telemetry.addData("Error:", headingError);
-		opMode.telemetry.addData("Steer:", turnSpeed);
+		opMode.telemetry.addData("Old error:", oldError);
+		opMode.telemetry.addData("Error sum:", errorSum);
 
 		opMode.telemetry.addData("Speed right: ", rightSpeed);
 		opMode.telemetry.addData("Speed left: ", leftSpeed);

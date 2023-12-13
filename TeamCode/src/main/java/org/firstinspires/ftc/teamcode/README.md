@@ -33,7 +33,7 @@ Read comments in file main/movement4wd.java
 
 ### Autonomous
 
-What the fuck HSV is?
+What the ? HSV is?
 HSV is one of the many color ranges like RGB or RGBA.
 ![img.png](https://th.bing.com/th/id/OIP.Jo4grR3nNkNXlovu5-iWAgHaHa?rs=1&pid=ImgDetMain)
 First and last reason you must use HSV instead RGB is you just have to. HSV does not depends on

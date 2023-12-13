@@ -44,7 +44,10 @@ public class pipeline extends OpenCvPipeline {
 	private final Scalar BLUE_COLOR = new Scalar(0.0d, 0.0d, 255.0d);
 
 
-	public int _location = -1;
+	public double rightConfidence = 0.0d;
+	public double centerConfidence = 0.0d;
+	public double leftConfidence = 0.0d;
+	public int _location = 1;
 
 
 	public pipeline(final Boolean _isRed) {
@@ -64,11 +67,11 @@ public class pipeline extends OpenCvPipeline {
 		}
 
 		Imgproc.cvtColor(full, mat, Imgproc.COLOR_GRAY2RGB);
-		Imgproc.rectangle(mat, RIGHT_RECT, isRed ? RED_COLOR : BLUE_COLOR);
+//		Imgproc.rectangle(mat, RIGHT_RECT, isRed ? RED_COLOR : BLUE_COLOR, 3);
 		Imgproc.rectangle(mat, CENTER_RECT, isRed ? RED_COLOR : BLUE_COLOR);
 		Imgproc.rectangle(mat, LEFT_RECT, isRed ? RED_COLOR : BLUE_COLOR);
 
-		getLocation();
+		setLocation();
 
 		lowMask.release();
 		highMask.release();
@@ -76,19 +79,20 @@ public class pipeline extends OpenCvPipeline {
 		return mat;
 	}
 
-	public void getLocation() {
-		double rightConfidence = Core.mean(new Mat(mat, RIGHT_RECT)).val[0];
-		double centerConfidence = Core.mean(new Mat(mat, CENTER_RECT)).val[0];
-		double leftConfidence = Core.mean(new Mat(mat, LEFT_RECT)).val[0];
+	public void setLocation() {
+		final double CONFIDENCE = 30.0d;
 
-		if (rightConfidence > leftConfidence && rightConfidence > centerConfidence)
-			_location = 1;
-		else if (centerConfidence > rightConfidence && centerConfidence > leftConfidence)
+//		rightConfidence = Core.mean(new Mat(mat, RIGHT_RECT)).val[0] / 255 * 100;
+//		rightConfidence = 0;
+		centerConfidence = Core.mean(new Mat(mat, CENTER_RECT)).val[0] / 255 * 100;
+		leftConfidence = Core.mean(new Mat(mat, LEFT_RECT)).val[0] / 255 * 100;
+
+//		if (rightConfidence > leftConfidence && rightConfidence > centerConfidence && rightConfidence > CONFIDENCE)
+//			_location = 1;
+		if (centerConfidence > rightConfidence && centerConfidence > leftConfidence && centerConfidence > CONFIDENCE)
 			_location = 2;
-		else if (leftConfidence > rightConfidence && leftConfidence > centerConfidence)
+		else if (leftConfidence > rightConfidence && leftConfidence > centerConfidence && leftConfidence > CONFIDENCE)
 			_location = 3;
-
-		if (rightConfidence < 0.3d && centerConfidence < 0.3d && leftConfidence < 0.3d)
-			_location = -1;
+		else _location = 1;
 	}
 }

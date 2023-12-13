@@ -35,7 +35,7 @@ public class openCV {
 
 			@Override
 			public void onError(int errorCode) {
-				opMode.telemetry.addData("Error: ", errorCode);
+				opMode.telemetry.addData("Camera init error: ", errorCode);
 				opMode.telemetry.update();
 			}
 		});

@@ -7,16 +7,19 @@ import org.opencv.core.Scalar;
 @Config
 public class config {
 	// - Movement config part
-	public final double SPEED = 0.4d;
-	public final double TURN = 0.2d;
+	public final double SPEED = 0.35d;
+	public final double TURN = 0.15d;
 
 	private final double COUNTS_PER_MOTOR_REV = 28.0d;
-	private final double DRIVE_GEAR_REDUCTION = 8.0d;
+	private final double DRIVE_GEAR_REDUCTION = 12.0d;
 	public final double WHEEL_DIAMETER_CM = 9.0d;
 	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI);
 
+
+	// - - PID Control
 	public final double P_DRIVE_GAIN = 0.03d;
-	public final double P_TURN_GAIN = 0.02d;
+	public final double P_TURN_GAIN = 0.028d;
+	public final double D_TURN_GAIN = 0.15d;
 	public final double HEADING_THRESHOLD = 1.0d;
 
 	// - Mechanism config part
@@ -29,9 +32,9 @@ public class config {
 	public final double ARM_SPEED = 0.6d;
 
 	public final double HAND_GROUND = 0.0d;
-	public final double HAND_CLOSE = 1.0d;
+	public final double HAND_SCORE = 0.55d;
 
-	public final double CLAW_OPENED = 0.1d;
+	public final double CLAW_OPENED = 0.05d;
 	public final double CLAW_CLOSED = 0.3d;
 
 
@@ -52,12 +55,12 @@ public class config {
 	// - - Rectangles position and size
 	public final int RECT_SIZE = 30;
 
-	public final int RIGHT_X_POS = CAMERA_WIDTH / 4;
+	public final int RIGHT_X_POS = CAMERA_WIDTH * 4 / 5;
 	public final int RIGHT_Y_POS = CAMERA_HEIGHT / 2;
 
-	public final int CENTER_X_POS = CAMERA_WIDTH / 2;
+	public final int CENTER_X_POS = CAMERA_WIDTH * 6 / 7;
 	public final int CENTER_Y_POS = CAMERA_HEIGHT / 2;
 
-	public final int LEFT_X_PIS = CAMERA_WIDTH * 3 / 4;
+	public final int LEFT_X_PIS = CAMERA_WIDTH / 5;
 	public final int LEFT_Y_POS = CAMERA_HEIGHT / 2;
 }

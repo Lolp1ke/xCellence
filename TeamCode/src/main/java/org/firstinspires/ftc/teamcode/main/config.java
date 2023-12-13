@@ -15,12 +15,12 @@ public class config {
 	public final double ARM_BOOST = 0.65d;
 
 	// - - Lift
-	public final double LIFT_SPEED = 0.6d;
+	public final double LIFT_SPEED = 0.65d;
 
 	// - - Hand
-	public final double HAND_GROUND = 0.4d;
-	public final double HAND_MID = 0.65d;
-	public final double HAND_SCORE = 0.9d;
+	public final double HAND_GROUND = 0.05d;
+	public final double HAND_MID = 0.25d;
+	public final double HAND_SCORE = 0.55d;
 
 	// - - Claw
 	public final double CLAW_OPEN = 0.05d;

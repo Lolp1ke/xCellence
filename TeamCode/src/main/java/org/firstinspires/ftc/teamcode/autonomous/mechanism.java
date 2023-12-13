@@ -13,6 +13,7 @@ public class mechanism {
 	private Servo hand;
 	private Servo leftClaw;
 	private Servo rightClaw;
+	private Servo rocket;
 
 	private ElapsedTime runtime = new ElapsedTime();
 
@@ -22,28 +23,43 @@ public class mechanism {
 
 	public void placePurple() {
 		hand.setPosition(_config.HAND_GROUND);
-		opMode.sleep(1000);
+		opMode.sleep(500);
 
 		leftClaw.setPosition(_config.CLAW_OPENED + .05d);
-		opMode.sleep(1000);
+		opMode.sleep(500);
 
-		hand.setPosition(_config.HAND_CLOSE);
-		opMode.sleep(1000);
+		hand.setPosition(_config.HAND_SCORE);
+		opMode.sleep(500);
 	}
 
 	public void placeYellow() {
-		encoderDrive(_config.ARM_SPEED, -17, -17, 3.0);
-		opMode.sleep(1000);
+		encoderDrive(_config.ARM_SPEED, -19, -19, 1.5);
 
-		hand.setPosition(_config.HAND_CLOSE);
-		opMode.sleep(1000);
+		hand.setPosition(_config.HAND_SCORE);
+		opMode.sleep(500);
 
 		rightClaw.setPosition(_config.CLAW_OPENED);
-		opMode.sleep(1000);
+		opMode.sleep(500);
 	}
 
+	public void placeYellow(final double distance) {
+		encoderDrive(_config.ARM_SPEED, distance, distance, 3.0d);
+
+		hand.setPosition(_config.HAND_SCORE);
+		opMode.sleep(500);
+
+		rightClaw.setPosition(_config.CLAW_OPENED);
+		opMode.sleep(500);
+	}
+
+
 	public void resetHand() {
-		encoderDrive(1, 20, 20, 3);
+		encoderDrive(1, 20, 20, 1.5);
+	}
+
+	public void arm(final double power) {
+		rightArm.setPower(power);
+		leftArm.setPower(power);
 	}
 
 	public void encoderDrive(double speed,
@@ -100,6 +116,8 @@ public class mechanism {
 		leftClaw = opMode.hardwareMap.get(Servo.class, "left_claw");
 		rightClaw = opMode.hardwareMap.get(Servo.class, "right_claw");
 
+		rocket = opMode.hardwareMap.get(Servo.class, "rocket");
+
 		rightArm.setDirection(DcMotor.Direction.FORWARD);
 		leftArm.setDirection(DcMotor.Direction.REVERSE);
 
@@ -113,7 +131,11 @@ public class mechanism {
 		rightClaw.setDirection(Servo.Direction.FORWARD);
 		leftClaw.setDirection(Servo.Direction.REVERSE);
 
+		rocket.setDirection(Servo.Direction.FORWARD);
+
 		rightClaw.setPosition(_config.CLAW_CLOSED);
 		leftClaw.setPosition(_config.CLAW_CLOSED);
+
+		rocket.setPosition(0.45d);
 	}
 }

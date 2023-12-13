@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.autonomous.mechanism;
 import org.firstinspires.ftc.teamcode.autonomous.movement;
 import org.firstinspires.ftc.teamcode.autonomous.tag;
 
-@Autonomous(name = "Red Right", group = "!xCellence")
-@Deprecated
+@Autonomous(name = "Red Right", group = "xCellence")
 @Disabled
+@Deprecated
 public class autonomousRedRight extends LinearOpMode {
 	private final tag _tag = new tag(this);
 	private final movement _movement = new movement(this);
