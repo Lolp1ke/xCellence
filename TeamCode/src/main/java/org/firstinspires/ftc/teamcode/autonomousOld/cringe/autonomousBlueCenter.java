@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.autonomous.cringe;
+package org.firstinspires.ftc.teamcode.autonomousOld.cringe;
 
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.autonomous.config;
-import org.firstinspires.ftc.teamcode.autonomous.mechanism;
-import org.firstinspires.ftc.teamcode.autonomous.movement;
-import org.firstinspires.ftc.teamcode.autonomous.tag;
+import org.firstinspires.ftc.teamcode.autonomousOld.config;
+import org.firstinspires.ftc.teamcode.autonomousOld.mechanism;
+import org.firstinspires.ftc.teamcode.autonomousOld.movement;
+import org.firstinspires.ftc.teamcode.autonomousOld.tag;
 
 @Autonomous(name = "Blue Center", group = "xCellence")
 @Disabled

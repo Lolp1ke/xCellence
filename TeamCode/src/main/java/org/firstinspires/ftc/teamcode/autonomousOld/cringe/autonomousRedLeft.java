@@ -1,19 +1,19 @@
-package org.firstinspires.ftc.teamcode.autonomous.cringe;
+package org.firstinspires.ftc.teamcode.autonomousOld.cringe;
 
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.autonomous.config;
-import org.firstinspires.ftc.teamcode.autonomous.mechanism;
-import org.firstinspires.ftc.teamcode.autonomous.movement;
-import org.firstinspires.ftc.teamcode.autonomous.tag;
+import org.firstinspires.ftc.teamcode.autonomousOld.config;
+import org.firstinspires.ftc.teamcode.autonomousOld.mechanism;
+import org.firstinspires.ftc.teamcode.autonomousOld.movement;
+import org.firstinspires.ftc.teamcode.autonomousOld.tag;
 
-@Autonomous(name = "Red Center", group = "xCellence")
+@Autonomous(name = "Red Left", group = "xCellence")
 @Disabled
 @Deprecated
-public class autonomousRedCenter extends LinearOpMode {
+public class autonomousRedLeft extends LinearOpMode {
 	private final tag _tag = new tag(this);
 	private final movement _movement = new movement(this);
 	private final mechanism _mechanism = new mechanism(this);
@@ -63,7 +63,7 @@ public class autonomousRedCenter extends LinearOpMode {
 //		telemetry.update();
 
 		waitForStart();
-		middle();
+		left();
 //		if (tagX > 0) {
 //			right();
 //		} else if (tagX < 0) {

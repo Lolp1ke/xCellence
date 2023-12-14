@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.autonomous.blue;
+package org.firstinspires.ftc.teamcode.autonomousOld.blue;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.autonomous.config;
-import org.firstinspires.ftc.teamcode.autonomous.mechanism;
-import org.firstinspires.ftc.teamcode.autonomous.movement;
-import org.firstinspires.ftc.teamcode.autonomous.openCV.openCV;
+import org.firstinspires.ftc.teamcode.autonomousOld.config;
+import org.firstinspires.ftc.teamcode.autonomousOld.mechanism;
+import org.firstinspires.ftc.teamcode.autonomousOld.movement;
+import org.firstinspires.ftc.teamcode.autonomousOld.openCV.openCV;
 
-@Autonomous(name = "Blue Close KcellTech", group = "!BLUE")
-public class closeKcellTech extends LinearOpMode {
+@Autonomous(name = "Blue Close", group = "!BLUE")
+public class close extends LinearOpMode {
 	private final config _config = new config();
 	private final openCV _openCV = new openCV(this, false);
 	private final movement _movement = new movement(this);
@@ -57,13 +57,13 @@ public class closeKcellTech extends LinearOpMode {
 		_mechanism.placePurple();
 		sleep(1000);
 
-//		_movement.turn(_config.TURN, 83);
-//		_movement.turnFix(_config.TURN, 83, 2);
-//		_movement.straight(_config.SPEED, -85, 83);
-//
-//		_mechanism.placeYellow(-21);
-//		sleep(1000);
-//		_mechanism.resetHand();
+		_movement.turn(_config.TURN, 83);
+		_movement.turnFix(_config.TURN, 83, 2);
+		_movement.straight(_config.SPEED, -85, 83);
+
+		_mechanism.placeYellow(-21);
+		sleep(1000);
+		_mechanism.resetHand();
 	}
 
 	private void center() {
@@ -78,10 +78,10 @@ public class closeKcellTech extends LinearOpMode {
 		_movement.turn(_config.TURN, 90);
 		_movement.turnFix(_config.TURN, 90, 3.0d);
 
-//		_movement.straight(_config.SPEED, -80, 90);
-//		_mechanism.placeYellow(-21);
-//		sleep(1000);
-//		_mechanism.resetHand();
+		_movement.straight(_config.SPEED, -80, 90);
+		_mechanism.placeYellow(-21);
+		sleep(1000);
+		_mechanism.resetHand();
 	}
 
 	private void left() {
@@ -94,11 +94,12 @@ public class closeKcellTech extends LinearOpMode {
 		_mechanism.placePurple();
 		sleep(500);
 
-//		_movement.turn(_config.TURN, 95);
-//		_movement.turnFix(_config.TURN, 95, 2.0d);
-//		_movement.straight(_config.SPEED, -30, 95);
-//
-//		_mechanism.placeYellow(-25);
-//		_mechanism.resetHand();
+		_movement.turn(_config.TURN, 95);
+		_movement.turnFix(_config.TURN, 95, 2.0d);
+		_movement.straight(_config.SPEED, -30, 95);
+
+//		_movement.turnFix(_config.TURN, 90, 2.0d);
+		_mechanism.placeYellow(-25);
+		_mechanism.resetHand();
 	}
 }
