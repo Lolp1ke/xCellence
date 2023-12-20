@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "F1", group = "!!!F1")
+@TeleOp(name = "F1", group = "!!!!!F1")
 @Disabled
 public class f1 extends LinearOpMode {
 	private final config _config = new config();

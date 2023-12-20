@@ -47,6 +47,7 @@ public class movement4wd {
 			leftRearPower /= power + Math.abs(turn);
 		}
 
+		// Power up motors
 		rightFront.setPower(rightFrontPower);
 		leftFront.setPower(leftFrontPower);
 		rightRear.setPower(rightRearPower);

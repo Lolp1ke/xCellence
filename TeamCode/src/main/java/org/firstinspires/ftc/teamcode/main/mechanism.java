@@ -25,7 +25,9 @@ public class mechanism {
 
 	private double rocketPosition = _config.ROCKET_CLOSED;
 
-	private boolean hang = false;
+//	private boolean hang = false;
+
+	private double lastArmPower = 0d;
 
 	public mechanism(final LinearOpMode _opMode) {
 		opMode = _opMode;
@@ -33,13 +35,25 @@ public class mechanism {
 
 	public void run() {
 		double armPower = opMode.gamepad2.left_stick_y *
-			(opMode.gamepad2.left_trigger != 0 ? _config.ARM_BOOST : _config.ARM_SPEED);
+			(opMode.gamepad2.left_trigger >= 0.4d ? _config.ARM_BOOST : _config.ARM_SPEED);
 		double liftPower = opMode.gamepad2.right_stick_y * _config.LIFT_SPEED;
-		double liftPosition = lift.getCurrentPosition(); // -1251
+		int armPosition = (rightArm.getCurrentPosition() + leftArm.getCurrentPosition()) / 2;
+		int liftPosition = lift.getCurrentPosition();
 
+		if (armPower == 0 && lastArmPower != armPower) {
+			rightArm.setTargetPosition(armPosition);
+			leftArm.setTargetPosition(armPosition);
 
-		if (opMode.gamepad2.left_bumper) armPower = -0.1d;
+			rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+			rightArm.setPower(1d);
+			leftArm.setPower(1d);
+		} else {
+			rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+			leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		}
+		lastArmPower = armPower;
 
 		double handOffset = liftPosition / 10000;
 		if (opMode.gamepad2.x) handPosition = _config.HAND_SCORE;
@@ -64,13 +78,14 @@ public class mechanism {
 			rocketPosition = _config.ROCKET_LAUNCHED;
 
 
-		if (opMode.gamepad2.dpad_up) hang = true;
-		else if (opMode.gamepad2.dpad_down) hang = false;
+//		if (opMode.gamepad2.dpad_up) hang = true;
+//		else if (opMode.gamepad2.dpad_down) hang = false;
 
+		rightArm.setPower(armPower);
+		leftArm.setPower(armPower);
+		lift.setPower(liftPower);
 
-		rightArm.setPower(hang ? 0.2d : armPower);
-		leftArm.setPower(hang ? 0.2d : armPower);
-		lift.setPower(hang ? 0.0566d : liftPower);
+		//		lift.setPower(hang ? 0.0566d : liftPower);
 
 
 		hand.setPosition(handPosition);
@@ -80,6 +95,7 @@ public class mechanism {
 
 		opMode.telemetry.addLine("Mechanism");
 		opMode.telemetry.addData("Arm: ", armPower);
+		opMode.telemetry.addData("Arm position: ", armPosition);
 		opMode.telemetry.addData("Lift: ", liftPower);
 		opMode.telemetry.addData("Lift position: ", liftPosition);
 		opMode.telemetry.addData("Hand: ", handPosition);
@@ -105,8 +121,16 @@ public class mechanism {
 		leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
 		lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
+		rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+		rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		hand.setDirection(Servo.Direction.REVERSE);
 		rightClaw.setDirection(Servo.Direction.FORWARD);
@@ -120,10 +144,4 @@ public class mechanism {
 
 		rocket.setPosition(rocketPosition);
 	}
-
-//	private double mapping(double min, double max, double value) {
-//		value = ;
-//
-//		return value;
-//	}
 }

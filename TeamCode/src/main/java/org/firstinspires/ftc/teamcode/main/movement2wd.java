@@ -11,6 +11,9 @@ public class movement2wd {
 	private DcMotor rightDrive;
 	private DcMotor leftDrive;
 
+	private boolean driveModeToggle = false;
+	private boolean lastDriveModeToggle = false;
+
 
 	public movement2wd(final LinearOpMode _opMode) {
 		opMode = _opMode;
@@ -30,10 +33,17 @@ public class movement2wd {
 		rightDrive.setPower(rightPower * speedMultiplier);
 		leftDrive.setPower(leftPower * speedMultiplier);
 
+		if ((driveModeToggle = opMode.gamepad1.y) && !lastDriveModeToggle) {
+			rightDrive.setZeroPowerBehavior(rightDrive.getZeroPowerBehavior() == DcMotor.ZeroPowerBehavior.BRAKE ? DcMotor.ZeroPowerBehavior.FLOAT : DcMotor.ZeroPowerBehavior.BRAKE);
+			leftDrive.setZeroPowerBehavior(leftDrive.getZeroPowerBehavior() == DcMotor.ZeroPowerBehavior.BRAKE ? DcMotor.ZeroPowerBehavior.FLOAT : DcMotor.ZeroPowerBehavior.BRAKE);
+		}
+		lastDriveModeToggle = driveModeToggle;
+
 		opMode.telemetry.addLine("Movement");
 		opMode.telemetry.addData("Left: ", leftPower);
 		opMode.telemetry.addData("Right: ", rightPower);
 		opMode.telemetry.addData("Speed multiplier: ", speedMultiplier);
+		opMode.telemetry.addData("Drive mode: ", rightDrive.getZeroPowerBehavior());
 		opMode.telemetry.addLine();
 	}
 
@@ -43,5 +53,8 @@ public class movement2wd {
 
 		rightDrive.setDirection(DcMotor.Direction.FORWARD);
 		leftDrive.setDirection(DcMotor.Direction.REVERSE);
+
+		rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 	}
 }

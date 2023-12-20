@@ -8,6 +8,18 @@ import org.opencv.core.Scalar;
 
 @Config
 public class config {
+	public final double SPEED = 0.35d;
+	public final double TURN = 0.15d;
+
+	private final double COUNTS_PER_MOTOR_REV = 28.0d;
+	private final double DRIVE_GEAR_REDUCTION = 12.0d;
+	public final double WHEEL_DIAMETER_CM = 9.0d;
+	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI);
+
+	public double P_GAIN = 0.03d;
+	public double I_GAIN = 0.0001d;
+	public double D_GAIN = 0.06d;
+
 	public final int CAMERA_WIDTH = 320;
 	public final int CAMERA_HEIGHT = 240;
 	public final Scalar RED_HSV_LOW1_BOUNDARY = new Scalar(0d, 100d, 20d);
@@ -16,13 +28,13 @@ public class config {
 	public final Scalar RED_HSV_HIGH2_BOUNDARY = new Scalar(179d, 255d, 255d);
 	public final Scalar BLUE_HSV_LOW_BOUNDARY = new Scalar(90d, 50d, 70d);
 	public final Scalar BLUE_HSV_HIGH_BOUNDARY = new Scalar(128d, 255d, 255d);
-	
+
 	private final int RECT_SIZE = 30;
 	public final Rect CENTER_RECT = new Rect(
-			new Point((CAMERA_WIDTH * 6d) / 7d - RECT_SIZE, CAMERA_HEIGHT / 2d - RECT_SIZE),
-			new Point((CAMERA_WIDTH * 6d) / 7d + RECT_SIZE, CAMERA_HEIGHT / 2d + RECT_SIZE));
-	
+		new Point((CAMERA_WIDTH * 6d) / 7d - RECT_SIZE, CAMERA_HEIGHT / 2d - RECT_SIZE),
+		new Point((CAMERA_WIDTH * 6d) / 7d + RECT_SIZE, CAMERA_HEIGHT / 2d + RECT_SIZE));
+
 	public final Rect LEFT_RECT = new Rect(
-			new Point((CAMERA_WIDTH / 5d) - RECT_SIZE, CAMERA_HEIGHT / 2d - RECT_SIZE),
-			new Point((CAMERA_WIDTH / 5d) + RECT_SIZE, CAMERA_HEIGHT / 2d + RECT_SIZE));
+		new Point((CAMERA_WIDTH / 5d) - RECT_SIZE, CAMERA_HEIGHT / 2d - RECT_SIZE),
+		new Point((CAMERA_WIDTH / 5d) + RECT_SIZE, CAMERA_HEIGHT / 2d + RECT_SIZE));
 }
