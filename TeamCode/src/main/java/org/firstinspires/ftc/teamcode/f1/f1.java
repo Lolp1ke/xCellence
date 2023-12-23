@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "F1", group = "!!!F1")
+@TeleOp(name = "F1 STILL IN TEST", group = "!!!F1")
 public class f1 extends LinearOpMode {
 	private final config _config = new config();
 	
@@ -84,8 +84,17 @@ public class f1 extends LinearOpMode {
 		this.telemetry.addLine("Engine power");
 		this.telemetry.addData("Right: ", this.rightPower);
 		this.telemetry.addData("Left: ", this.leftPower);
+		this.telemetry.addData("Drive: ", this.drive);
+		this.telemetry.addData("Turn: ", this.turn);
 		
-		this.telemetry.addData("Heading: ", getHeading());
+		this.telemetry.addLine("Errors");
+		this.telemetry.addData("Current error: ", this.headingError);
+		this.telemetry.addData("Error sum: ", this.errorSum);
+		this.telemetry.addData("Previous error: ", this.oldError);
+		
+		this.telemetry.addLine();
+		this.telemetry.addData("Heading: ", this.getHeading());
+		this.telemetry.addData("Target heading: ", this.targetHeading);
 	}
 	
 	private void startEngine() {
@@ -98,7 +107,7 @@ public class f1 extends LinearOpMode {
 		this.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		this.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		
-		this.imu = hardwareMap.get(IMU.class, "imu");
+		this.imu = this.hardwareMap.get(IMU.class, "imu");
 		
 		this.imu.initialize(new IMU.Parameters(
 				new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,
