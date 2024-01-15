@@ -17,8 +17,8 @@ public class config {
 	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI);
 
 	public double P_GAIN = 0.03d;
-	public double I_GAIN = 0.0001d;
-	public double D_GAIN = 0.06d;
+	public double I_GAIN = 0.001d;
+	public double D_GAIN = 0d;
 
 	public final int CAMERA_WIDTH = 320;
 	public final int CAMERA_HEIGHT = 240;

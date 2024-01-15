@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Deprecated
 public class movement4wd {
 	private final LinearOpMode opMode;
+	private final config _config = new config();
 
 	private DcMotor rightFront;
 	private DcMotor leftFront;
@@ -19,27 +19,22 @@ public class movement4wd {
 
 
 	public void run() {
-		// Imagine coordinate plane
 		double x = opMode.gamepad1.left_stick_x;
 		double y = -opMode.gamepad1.left_stick_y;
 		double turn = opMode.gamepad1.right_stick_x;
 
-		// Tangent of the vector which goes through P(0, 0) to P(x, y) is angle to rotate a robot
 		double angle = Math.atan2(y, x);
-		double power = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // Power is just a hypothesis
+		double power = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 
-		// y axe represents robots movement forward and backward, also initial heading of the robot is 0
 		double sin = Math.sin(angle - Math.PI / 4);
 		double cos = Math.cos(angle - Math.PI / 4);
 		double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-		// Check how mecanum wheel work in youtube or ask your engineers
 		double rightFrontPower = power * sin / max - turn;
 		double leftFrontPower = power * cos / max + turn;
 		double rightRearPower = power * cos / max - turn;
 		double leftRearPower = power * sin / max + turn;
 
-		// In case if power is exceeds value one
 		if ((power + Math.abs(turn)) > 1) {
 			rightFrontPower /= power + Math.abs(turn);
 			leftFrontPower /= power + Math.abs(turn);
@@ -47,12 +42,10 @@ public class movement4wd {
 			leftRearPower /= power + Math.abs(turn);
 		}
 
-		// Power up motors
 		rightFront.setPower(rightFrontPower);
 		leftFront.setPower(leftFrontPower);
 		rightRear.setPower(rightRearPower);
 		leftRear.setPower(leftRearPower);
-
 
 		opMode.telemetry.addData("Right front", rightFrontPower);
 		opMode.telemetry.addData("Left front", leftFrontPower);
@@ -60,7 +53,6 @@ public class movement4wd {
 		opMode.telemetry.addData("Left rear", leftRearPower);
 	}
 
-	// This one is also should work but I am not sure
 	public void _run() {
 		double normalizer;
 
