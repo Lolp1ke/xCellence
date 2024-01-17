@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class config {
 	// - Movement config
-	public final double SPEED = 0.5d;
-	public final double ACCELERATION = 0.65d;
+	public final double SPEED = 0.4d;
+	public final double ACCELERATION = 0.7d;
 	public final double DECELERATION = 0.3d;
 
 	// - Mechanism config
@@ -18,12 +18,12 @@ public class config {
 	public final double LIFT_SPEED = 0.75d;
 
 	// - - Hand
-	public final double HAND_GROUND = 0.05d;
+	public final double HAND_GROUND = 0d;
 	public final double HAND_MID = 0.25d;
-	public final double HAND_SCORE = 0.55d;
+	public final double HAND_SCORE = 0.45d;
 
 	// - - Claw
-	public final double CLAW_OPEN = 0.05d;
+	public final double CLAW_OPEN = 0d;
 	public final double CLAW_CLOSE = 0.3d;
 
 	// - - Rocket

@@ -34,7 +34,7 @@ public class mechanism {
 	}
 
 	public void run() {
-		double armPower = opMode.gamepad2.left_stick_y *
+		double armPower = -opMode.gamepad2.left_stick_y *
 			(opMode.gamepad2.left_trigger >= 0.4d ? _config.ARM_BOOST : _config.ARM_SPEED);
 		double liftPower = opMode.gamepad2.right_stick_y * _config.LIFT_SPEED;
 		int armPosition = (rightArm.getCurrentPosition() + leftArm.getCurrentPosition()) / 2;
@@ -132,7 +132,7 @@ public class mechanism {
 		leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-		hand.setDirection(Servo.Direction.REVERSE);
+		hand.setDirection(Servo.Direction.FORWARD);
 		rightClaw.setDirection(Servo.Direction.FORWARD);
 		leftClaw.setDirection(Servo.Direction.REVERSE);
 

@@ -13,7 +13,7 @@ public class config {
 
 	private final double COUNTS_PER_MOTOR_REV = 28.0d;
 	private final double DRIVE_GEAR_REDUCTION = 12.0d;
-	public final double WHEEL_DIAMETER_CM = 9.0d;
+	public final double WHEEL_DIAMETER_CM = 9.8d;
 	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI);
 
 	public double P_GAIN = 0.03d;

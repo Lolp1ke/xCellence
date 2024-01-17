@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class movement {
+public class movement2wd {
 	private final LinearOpMode opMode;
 	private final config _config = new config();
 
@@ -30,7 +30,7 @@ public class movement {
 	private double errorSum = 0.0d;
 
 
-	public movement(final LinearOpMode _opMode) {
+	public movement2wd(final LinearOpMode _opMode) {
 		opMode = _opMode;
 	}
 
