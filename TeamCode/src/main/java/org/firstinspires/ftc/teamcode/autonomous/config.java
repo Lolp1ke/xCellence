@@ -11,14 +11,16 @@ public class config {
 	public final double SPEED = 0.35d;
 	public final double TURN = 0.15d;
 
-	private final double COUNTS_PER_MOTOR_REV = 28.0d;
-	private final double DRIVE_GEAR_REDUCTION = 12.0d;
-	public final double WHEEL_DIAMETER_CM = 9.8d;
-	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI);
+	private final double COUNTS_PER_MOTOR_REV = 28d;
+	private final double DRIVE_GEAR_REDUCTION = 10d;
+	public final double WHEEL_RADIUS_CM = 4.8d;
+	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (2d * WHEEL_RADIUS_CM * Math.PI);
 
-	public double P_GAIN = 0.03d;
+	public double P_GAIN = 0.02d;
 	public double I_GAIN = 0.001d;
-	public double D_GAIN = 0d;
+	public double D_GAIN = 0.04d;
+
+	public double HEADING_THRESHOLD = 0.5d;
 
 	public final int CAMERA_WIDTH = 320;
 	public final int CAMERA_HEIGHT = 240;

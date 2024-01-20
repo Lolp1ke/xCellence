@@ -39,7 +39,7 @@ public class movement extends LinearOpMode {
 		while (opModeIsActive()) {
 			if ((dpadUp = gamepad1.dpad_up) && !isDpadUpPressed && speed < 1d) {
 				speed += 0.1d;
-			} else if ((dpadDown = gamepad1.dpad_down) && !isDpadDownPressed && speed > 0d) {
+			} else if ((dpadDown = gamepad1.dpad_down) && !isDpadDownPressed && speed > -1d) {
 				speed -= 0.1d;
 			}
 			isDpadUpPressed = dpadUp;

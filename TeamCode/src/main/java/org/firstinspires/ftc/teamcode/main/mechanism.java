@@ -27,37 +27,36 @@ public class mechanism {
 
 //	private boolean hang = false;
 
-	private double lastArmPower = 0d;
 
 	public mechanism(final LinearOpMode _opMode) {
 		opMode = _opMode;
 	}
 
 	public void run() {
-		double armPower = -opMode.gamepad2.left_stick_y *
+		double armPower = opMode.gamepad2.left_stick_y *
 			(opMode.gamepad2.left_trigger >= 0.4d ? _config.ARM_BOOST : _config.ARM_SPEED);
 		double liftPower = opMode.gamepad2.right_stick_y * _config.LIFT_SPEED;
 		int armPosition = (rightArm.getCurrentPosition() + leftArm.getCurrentPosition()) / 2;
 		int liftPosition = lift.getCurrentPosition();
 
-		if (armPower == 0 && lastArmPower != armPower) {
-			rightArm.setTargetPosition(armPosition);
-			leftArm.setTargetPosition(armPosition);
+//		if (Math.abs(armPower) == 0d && lastArmPower != armPower) {
+//			rightArm.setTargetPosition(armPosition);
+//			leftArm.setTargetPosition(armPosition);
+//
+//			rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//			leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//			rightArm.setPower(1d);
+//			leftArm.setPower(1d);
+//		} else {
+//			rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//			leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//		}
 
-			rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-			rightArm.setPower(1d);
-			leftArm.setPower(1d);
-		} else {
-			rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-			leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		}
-		lastArmPower = armPower;
-
-		double handOffset = liftPosition / 10000;
+//		double handOffset = liftPosition / 10000d;
 		if (opMode.gamepad2.x) handPosition = _config.HAND_SCORE;
-		else if (opMode.gamepad2.a) handPosition = _config.HAND_GROUND + handOffset;
+		else if (opMode.gamepad2.a) handPosition = _config.HAND_GROUND; // + handOffset;
 		else if (opMode.gamepad2.b) handPosition = _config.HAND_MID;
 
 
@@ -87,7 +86,6 @@ public class mechanism {
 
 		//		lift.setPower(hang ? 0.0566d : liftPower);
 
-
 		hand.setPosition(handPosition);
 		rightClaw.setPosition(rightClawPosition);
 		leftClaw.setPosition(leftClawPosition);
@@ -101,7 +99,7 @@ public class mechanism {
 		opMode.telemetry.addData("Hand: ", handPosition);
 		opMode.telemetry.addData("Right claw: ", rightClawPosition);
 		opMode.telemetry.addData("Left claw: ", leftClawPosition);
-		opMode.telemetry.addData("Claw offset: ", handOffset);
+//		opMode.telemetry.addData("Hand offset: ", handOffset);
 		opMode.telemetry.addData("Rocket: ", rocketPosition);
 		opMode.telemetry.addLine();
 	}

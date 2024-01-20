@@ -20,37 +20,50 @@ public class movement4wd {
 
 	private IMU imu;
 
+
 	public movement4wd(final LinearOpMode _opMode) {
 		opMode = _opMode;
 	}
 
 
-	public void test() {
-		double x = opMode.gamepad1.left_stick_x;
+	public void fieldCentric() {
+		boolean isBoosted = opMode.gamepad1.right_bumper;
+		boolean isSlowed = opMode.gamepad1.left_bumper;
+		double speedMultiplier = isBoosted ? _config.ACCELERATION : isSlowed ? _config.DECELERATION : _config.SPEED;
+
 		double y = -opMode.gamepad1.left_stick_y;
+		double x = opMode.gamepad1.left_stick_x;
 		double rx = opMode.gamepad1.right_stick_x;
 
-		double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+		if (opMode.gamepad1.a) {
+			resetHeading();
+		}
 
-		if (opMode.gamepad1.a)
-			imu.resetYaw();
 
-		double rotX = x * Math.cos(heading - Math.PI / 4) - y * Math.sin(heading - Math.PI / 4);
-		double rotY = x * Math.sin(heading - Math.PI / 4) + y * Math.cos(heading - Math.PI / 4);
+		double heading = -Math.toRadians(getHeading());
 
-		double power = (rotY + rotX + rx) * 0.5d;
+		double rotX = x * Math.cos(heading) - y * Math.sin(heading);
+		double rotY = x * Math.sin(heading) + y * Math.cos(heading);
+
 		double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-		double leftFrontPower = power / denominator;
-		double leftRearPower = power / denominator;
-		double rightFrontPower = power / denominator;
-		double rightRearPower = power / denominator;
+		double rightRearPower = (rotY + rotX - rx) / denominator;
+		double leftRearPower = (rotY - rotX + rx) / denominator;
+		double rightFrontPower = (rotY - rotX - rx) / denominator;
+		double leftFrontPower = (rotY + rotX + rx) / denominator;
 
-		rightFront.setPower(rightFrontPower);
-		leftFront.setPower(leftFrontPower);
+		rightRearPower *= speedMultiplier;
+		leftRearPower *= speedMultiplier;
+		rightFrontPower *= speedMultiplier;
+		leftFrontPower *= speedMultiplier;
+
 		rightRear.setPower(rightRearPower);
 		leftRear.setPower(leftRearPower);
+		rightFront.setPower(rightFrontPower);
+		leftFront.setPower(leftFrontPower);
 
+		opMode.telemetry.addLine("Movement");
 		opMode.telemetry.addData("Heading: ", heading);
+		opMode.telemetry.addData("Speed multiplier: ", speedMultiplier);
 		opMode.telemetry.addData("Right front", rightFrontPower);
 		opMode.telemetry.addData("Left front", leftFrontPower);
 		opMode.telemetry.addData("Right rear", rightRearPower);
@@ -61,7 +74,6 @@ public class movement4wd {
 		boolean isBoosted = opMode.gamepad1.right_bumper;
 		boolean isSlowed = opMode.gamepad1.left_bumper;
 		double speedMultiplier = isBoosted ? _config.ACCELERATION : isSlowed ? _config.DECELERATION : _config.SPEED;
-
 
 		double x = opMode.gamepad1.left_stick_x;
 		double y = -opMode.gamepad1.left_stick_y;
@@ -74,30 +86,23 @@ public class movement4wd {
 		double cos = Math.cos(angle - Math.PI / 4);
 		double max = Math.max(Math.abs(sin), Math.abs(cos));
 
+
 		double rightFrontPower = (power * sin / max - turn) * speedMultiplier;
 		double leftFrontPower = (power * cos / max + turn) * speedMultiplier;
 		double rightRearPower = (power * cos / max - turn) * speedMultiplier;
 		double leftRearPower = (power * sin / max + turn) * speedMultiplier;
-
-//		if ((power + Math.abs(turn)) > 1) {
-//			rightFrontPower /= power + Math.abs(turn);
-//			leftFrontPower /= power + Math.abs(turn);
-//			rightRearPower /= power + Math.abs(turn);
-//			leftRearPower /= power + Math.abs(turn);
-//		}
 
 		rightFrontPower = Range.clip(rightFrontPower, -1d, 1d);
 		leftFrontPower = Range.clip(leftFrontPower, -1d, 1d);
 		rightRearPower = Range.clip(rightRearPower, -1d, 1d);
 		leftRearPower = Range.clip(leftRearPower, -1d, 1d);
 
-
 		rightFront.setPower(rightFrontPower);
 		leftFront.setPower(leftFrontPower);
 		rightRear.setPower(rightRearPower);
 		leftRear.setPower(leftRearPower);
 
-		opMode.telemetry.addData("Angle: ", angle * 180d / 3.14d);
+		opMode.telemetry.addData("Angle: ", angle * 180d / Math.PI);
 		opMode.telemetry.addData("Speed multiplier: ", speedMultiplier);
 		opMode.telemetry.addData("Right front", rightFrontPower);
 		opMode.telemetry.addData("Left front", leftFrontPower);
@@ -105,39 +110,13 @@ public class movement4wd {
 		opMode.telemetry.addData("Left rear", leftRearPower);
 	}
 
-	public void _run() {
-		double normalizer;
 
-		double x = opMode.gamepad1.left_stick_x;
-		double y = -opMode.gamepad1.left_stick_y;
-		double angle = opMode.gamepad1.right_stick_x;
+	private double getHeading() {
+		return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+	}
 
-		double rightFrontPower = (-x + y - angle) * _config.SPEED;
-		double leftFrontPower = (x + y + angle) * _config.SPEED;
-		double rightRearPower = (x + y - angle) * _config.SPEED;
-		double leftRearPower = (-x + y + angle) * _config.SPEED;
-
-		normalizer = Math.max(
-			Math.max(Math.abs(rightFrontPower), Math.abs(leftFrontPower)),
-			Math.max(Math.abs(rightRearPower), Math.abs(leftRearPower))
-		);
-
-		if (normalizer > 1) {
-			rightFrontPower /= normalizer;
-			leftFrontPower /= normalizer;
-			rightRearPower /= normalizer;
-			leftRearPower /= normalizer;
-		}
-
-		rightFront.setPower(rightFrontPower);
-		leftFront.setPower(leftFrontPower);
-		rightRear.setPower(rightRearPower);
-		leftRear.setPower(leftRearPower);
-
-		opMode.telemetry.addData("Right front", rightFrontPower);
-		opMode.telemetry.addData("Left front", leftFrontPower);
-		opMode.telemetry.addData("Right rear", rightRearPower);
-		opMode.telemetry.addData("Left rear", leftRearPower);
+	private void resetHeading() {
+		imu.resetYaw();
 	}
 
 	public void init() {
@@ -145,12 +124,6 @@ public class movement4wd {
 		leftFront = opMode.hardwareMap.get(DcMotor.class, "left_front");
 		rightRear = opMode.hardwareMap.get(DcMotor.class, "right_rear");
 		leftRear = opMode.hardwareMap.get(DcMotor.class, "left_rear");
-
-//		rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//		leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-//		rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-//		leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
-
 
 		rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);

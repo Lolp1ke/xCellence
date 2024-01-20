@@ -17,7 +17,6 @@ public class main extends LinearOpMode {
 
 	@Override
 	public void runOpMode() {
-//		_movement2wd.init();
 		_movement4wd.init();
 		_mechanism.init();
 
@@ -26,8 +25,7 @@ public class main extends LinearOpMode {
 
 		waitForStart();
 		while (opModeIsActive()) {
-//			_movement2wd.car();
-			_movement4wd.run();
+			_movement4wd.fieldCentric();
 			_mechanism.run();
 
 			telemetry.update();
