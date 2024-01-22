@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous.openCV;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.config;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,20 +22,24 @@ public class openCV {
 		_pipeline = new pipeline(isRed);
 	}
 
-	public void telemetry() {
-		opMode.telemetry.addData("Camera FPS: ", cvWebcam.getFps());
-		opMode.telemetry.addData("Pipeline Max FPS: ", cvWebcam.getCurrentPipelineMaxFps());
-		opMode.telemetry.addData("Pipeline Latency: ", cvWebcam.getPipelineTimeMs());
+	public void telemetry(final Telemetry telemetry) {
+		telemetry.addData("Camera FPS: ", cvWebcam.getFps());
+		telemetry.addData("Pipeline Max FPS: ", cvWebcam.getCurrentPipelineMaxFps());
+		telemetry.addData("Pipeline Latency: ", cvWebcam.getPipelineTimeMs());
 	}
 
 	public void cameraOff() {
-		cvWebcam.stopStreaming();
-		cvWebcam.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
-			@Override
-			public void onClose() {
-				opMode.telemetry.addLine("Camera device is now empty");
-			}
-		});
+		try {
+			cvWebcam.stopStreaming();
+			cvWebcam.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
+				@Override
+				public void onClose() {
+					opMode.telemetry.addLine("Camera device is now empty");
+				}
+			});
+		} catch (Exception error) {
+			opMode.telemetry.addLine("Camera is not connected");
+		}
 	}
 
 	public void init() {

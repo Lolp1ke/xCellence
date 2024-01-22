@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.main;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class movement4wd {
-	private final LinearOpMode opMode;
 	private final config _config = new config();
 
 	private DcMotor rightFront;
@@ -18,66 +20,62 @@ public class movement4wd {
 	private DcMotor rightRear;
 	private DcMotor leftRear;
 
+	private Servo rocket;
+
 	private IMU imu;
 
+	private double rightRearPower = 0d;
+	private double leftRearPower = 0d;
+	private double rightFrontPower = 0d;
+	private double leftFrontPower = 0d;
+	private double speedMultiplier = 1d;
 
-	public movement4wd(final LinearOpMode _opMode) {
-		opMode = _opMode;
-	}
+	private double rocketPosition = this._config.ROCKET_CLOSED;
 
 
-	public void fieldCentric() {
-		boolean isBoosted = opMode.gamepad1.right_bumper;
-		boolean isSlowed = opMode.gamepad1.left_bumper;
-		double speedMultiplier = isBoosted ? _config.ACCELERATION : isSlowed ? _config.DECELERATION : _config.SPEED;
+	public void fieldCentric(final Gamepad gamepad) {
+		boolean isBoosted = gamepad.right_bumper;
+		boolean isSlowed = gamepad.left_bumper;
+		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
 
-		double y = -opMode.gamepad1.left_stick_y;
-		double x = opMode.gamepad1.left_stick_x;
-		double rx = opMode.gamepad1.right_stick_x;
+		double y = -gamepad.left_stick_y;
+		double x = gamepad.left_stick_x;
+		double rx = gamepad.right_stick_x;
 
-		if (opMode.gamepad1.a) {
-			resetHeading();
+		if (gamepad.a) {
+			this.resetHeading();
 		}
 
-
-		double heading = -Math.toRadians(getHeading());
+		double heading = -Math.toRadians(this.getHeading());
 
 		double rotX = x * Math.cos(heading) - y * Math.sin(heading);
 		double rotY = x * Math.sin(heading) + y * Math.cos(heading);
 
 		double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-		double rightRearPower = (rotY + rotX - rx) / denominator;
-		double leftRearPower = (rotY - rotX + rx) / denominator;
-		double rightFrontPower = (rotY - rotX - rx) / denominator;
-		double leftFrontPower = (rotY + rotX + rx) / denominator;
+		this.rightRearPower = (rotY + rotX - rx) / denominator;
+		this.leftRearPower = (rotY - rotX + rx) / denominator;
+		this.rightFrontPower = (rotY - rotX - rx) / denominator;
+		this.leftFrontPower = (rotY + rotX + rx) / denominator;
 
-		rightRearPower *= speedMultiplier;
-		leftRearPower *= speedMultiplier;
-		rightFrontPower *= speedMultiplier;
-		leftFrontPower *= speedMultiplier;
+		this.rightRearPower *= this.speedMultiplier;
+		this.leftRearPower *= this.speedMultiplier;
+		this.rightFrontPower *= this.speedMultiplier;
+		this.leftFrontPower *= this.speedMultiplier;
 
-		rightRear.setPower(rightRearPower);
-		leftRear.setPower(leftRearPower);
-		rightFront.setPower(rightFrontPower);
-		leftFront.setPower(leftFrontPower);
-
-		opMode.telemetry.addLine("Movement");
-		opMode.telemetry.addData("Heading: ", heading);
-		opMode.telemetry.addData("Speed multiplier: ", speedMultiplier);
-		opMode.telemetry.addData("Right front", rightFrontPower);
-		opMode.telemetry.addData("Left front", leftFrontPower);
-		opMode.telemetry.addData("Right rear", rightRearPower);
-		opMode.telemetry.addData("Left rear", leftRearPower);
+		this.rightRear.setPower(this.rightRearPower);
+		this.leftRear.setPower(this.leftRearPower);
+		this.rightFront.setPower(this.rightFrontPower);
+		this.leftFront.setPower(this.leftFrontPower);
 	}
 
-	public void run() {
-		boolean isBoosted = opMode.gamepad1.right_bumper;
-		boolean isSlowed = opMode.gamepad1.left_bumper;
-		double speedMultiplier = isBoosted ? _config.ACCELERATION : isSlowed ? _config.DECELERATION : _config.SPEED;
+	public void run(final Gamepad gamepad) {
+		boolean isBoosted = gamepad.right_bumper;
+		boolean isSlowed = gamepad.left_bumper;
+		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
 
-		double x = opMode.gamepad1.left_stick_x;
-		double y = -opMode.gamepad1.left_stick_y;
-		double turn = opMode.gamepad1.right_stick_x;
+		double x = gamepad.left_stick_x;
+		double y = -gamepad.left_stick_y;
+		double turn = gamepad.right_stick_x;
 
 		double angle = Math.atan2(y, x);
 		double power = Math.hypot(x, y);
@@ -86,64 +84,80 @@ public class movement4wd {
 		double cos = Math.cos(angle - Math.PI / 4);
 		double max = Math.max(Math.abs(sin), Math.abs(cos));
 
+		this.rightFrontPower = (power * sin / max - turn) * this.speedMultiplier;
+		this.leftFrontPower = (power * cos / max + turn) * this.speedMultiplier;
+		this.rightRearPower = (power * cos / max - turn) * this.speedMultiplier;
+		this.leftRearPower = (power * sin / max + turn) * this.speedMultiplier;
 
-		double rightFrontPower = (power * sin / max - turn) * speedMultiplier;
-		double leftFrontPower = (power * cos / max + turn) * speedMultiplier;
-		double rightRearPower = (power * cos / max - turn) * speedMultiplier;
-		double leftRearPower = (power * sin / max + turn) * speedMultiplier;
+		this.rightFrontPower = Range.clip(this.rightFrontPower, -1d, 1d);
+		this.leftFrontPower = Range.clip(this.leftFrontPower, -1d, 1d);
+		this.rightRearPower = Range.clip(this.rightRearPower, -1d, 1d);
+		this.leftRearPower = Range.clip(this.leftRearPower, -1d, 1d);
 
-		rightFrontPower = Range.clip(rightFrontPower, -1d, 1d);
-		leftFrontPower = Range.clip(leftFrontPower, -1d, 1d);
-		rightRearPower = Range.clip(rightRearPower, -1d, 1d);
-		leftRearPower = Range.clip(leftRearPower, -1d, 1d);
 
-		rightFront.setPower(rightFrontPower);
-		leftFront.setPower(leftFrontPower);
-		rightRear.setPower(rightRearPower);
-		leftRear.setPower(leftRearPower);
+		if (gamepad.a && gamepad.x)
+			this.rocketPosition = this._config.ROCKET_LAUNCHED;
 
-		opMode.telemetry.addData("Angle: ", angle * 180d / Math.PI);
-		opMode.telemetry.addData("Speed multiplier: ", speedMultiplier);
-		opMode.telemetry.addData("Right front", rightFrontPower);
-		opMode.telemetry.addData("Left front", leftFrontPower);
-		opMode.telemetry.addData("Right rear", rightRearPower);
-		opMode.telemetry.addData("Left rear", leftRearPower);
+		this.rocket.setPosition(this.rocketPosition);
+
+		this.rightFront.setPower(this.rightFrontPower);
+		this.leftFront.setPower(this.leftFrontPower);
+		this.rightRear.setPower(this.rightRearPower);
+		this.leftRear.setPower(this.leftRearPower);
 	}
 
 
 	private double getHeading() {
-		return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+		return this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 	}
 
 	private void resetHeading() {
-		imu.resetYaw();
+		this.imu.resetYaw();
 	}
 
-	public void init() {
-		rightFront = opMode.hardwareMap.get(DcMotor.class, "right_front");
-		leftFront = opMode.hardwareMap.get(DcMotor.class, "left_front");
-		rightRear = opMode.hardwareMap.get(DcMotor.class, "right_rear");
-		leftRear = opMode.hardwareMap.get(DcMotor.class, "left_rear");
+	public void telemetry(final Telemetry telemetry) {
+		telemetry.addLine("Movement");
+		telemetry.addData("Speed multiplier: ", this.speedMultiplier);
+		telemetry.addData("Heading: ", this.getHeading());
+		telemetry.addData("Right front", this.rightFrontPower);
+		telemetry.addData("Left front", this.leftFrontPower);
+		telemetry.addData("Right rear", this.rightRearPower);
+		telemetry.addData("Left rear", this.leftRearPower);
+		telemetry.addData("Rocket status: ", this.rocketPosition == this._config.ROCKET_LAUNCHED ? "Launched" : "Waiting");
+		telemetry.addLine();
+	}
 
-		rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-		rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+	public void init(final HardwareMap hardwareMap) {
+		this.rightFront = hardwareMap.get(DcMotor.class, "right_front");
+		this.leftFront = hardwareMap.get(DcMotor.class, "left_front");
+		this.rightRear = hardwareMap.get(DcMotor.class, "right_rear");
+		this.leftRear = hardwareMap.get(DcMotor.class, "left_rear");
 
-		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+		this.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		this.rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+		this.leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
-		imu = opMode.hardwareMap.get(IMU.class, "imu");
-		imu.initialize(
+		this.rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		this.rocket = hardwareMap.get(Servo.class, "rocket");
+
+		this.rocket.setDirection(Servo.Direction.FORWARD);
+
+		this.rocket.setPosition(this.rocketPosition);
+
+		this.imu = hardwareMap.get(IMU.class, "imu");
+		this.imu.initialize(
 			new IMU.Parameters(
 				new RevHubOrientationOnRobot(
-					RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-					RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+					RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+					RevHubOrientationOnRobot.UsbFacingDirection.UP
 				)
 			)
 		);
-		imu.resetYaw();
+		this.imu.resetYaw();
 	}
 }

@@ -8,20 +8,34 @@ import org.opencv.core.Scalar;
 
 @Config
 public class config {
+	// Movement
 	public final double SPEED = 0.35d;
+	public final double STRAFE = 0.25d;
 	public final double TURN = 0.15d;
 
-	private final double COUNTS_PER_MOTOR_REV = 28d;
-	private final double DRIVE_GEAR_REDUCTION = 10d;
+	private final int TICKS_PER_MOTOR_REV = 28;
+	private final double DRIVE_GEAR_REDUCTION = 10.5d;
 	public final double WHEEL_RADIUS_CM = 4.8d;
-	public final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (2d * WHEEL_RADIUS_CM * Math.PI);
+	public final double COUNTS_PER_CM = (TICKS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (2d * WHEEL_RADIUS_CM * Math.PI);
 
-	public double P_GAIN = 0.02d;
-	public double I_GAIN = 0.001d;
-	public double D_GAIN = 0.04d;
+	public final double P_GAIN = 0.02d;
+	public final double I_GAIN = 0.001d;
+	public final double D_GAIN = 0.04d;
 
-	public double HEADING_THRESHOLD = 0.5d;
+	public final double HEADING_THRESHOLD = 0.5d;
 
+	// Mechanism
+	public final double ARM_POWER = 0.5d;
+	private final int TICKS_PER_MOTOR_REV_ARM = 4;
+	private final double GEAR_REDUCTION = 30d / 125d;
+	public final double GEAR_RADIUS_CM = 4.328d;
+	public final double COUNTS_PER_ANGLE = (TICKS_PER_MOTOR_REV_ARM * GEAR_REDUCTION / 3.46d) / (2d * GEAR_RADIUS_CM * Math.PI / 360d);
+	public final double WRIST_GROUND = 0d;
+	public final double WRIST_SCORE = 0.45d;
+	public final double CLAW_OPEN = 0d;
+	public final double CLAW_CLOSE = 0.3d;
+
+	// Camera
 	public final int CAMERA_WIDTH = 320;
 	public final int CAMERA_HEIGHT = 240;
 	public final Scalar RED_HSV_LOW1_BOUNDARY = new Scalar(0d, 100d, 20d);

@@ -1,43 +1,41 @@
 package org.firstinspires.ftc.teamcode.main;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class mechanism {
-	private final LinearOpMode opMode;
 	private final config _config = new config();
 
 	private DcMotor rightArm;
 	private DcMotor leftArm;
 	private DcMotor lift;
 
-	private Servo hand;
+	private Servo wrist;
 	private Servo rightClaw;
 	private Servo leftClaw;
 
-	private Servo rocket;
+	private double armPower = 0d;
+	private double liftPower = 0d;
 
-	private double handPosition = _config.HAND_SCORE;
+	private int armPosition = 0;
+	private int liftPosition = 0;
+
+	private double wristPosition = _config.WRIST_SCORE;
 	private double rightClawPosition = _config.CLAW_OPEN;
 	private double leftClawPosition = _config.CLAW_OPEN;
 
-	private double rocketPosition = _config.ROCKET_CLOSED;
 
-//	private boolean hang = false;
-
-
-	public mechanism(final LinearOpMode _opMode) {
-		opMode = _opMode;
-	}
-
-	public void run() {
-		double armPower = opMode.gamepad2.left_stick_y *
-			(opMode.gamepad2.left_trigger >= 0.4d ? _config.ARM_BOOST : _config.ARM_SPEED);
-		double liftPower = opMode.gamepad2.right_stick_y * _config.LIFT_SPEED;
-		int armPosition = (rightArm.getCurrentPosition() + leftArm.getCurrentPosition()) / 2;
-		int liftPosition = lift.getCurrentPosition();
+	public void run(final Gamepad gamepad) {
+		armPower = gamepad.left_stick_y *
+			(gamepad.left_trigger >= 0.4d ? this._config.ARM_BOOST : this._config.ARM_SPEED);
+		liftPower = gamepad.right_stick_y * this._config.LIFT_SPEED;
+		armPosition = (this.rightArm.getCurrentPosition() + this.leftArm.getCurrentPosition()) / 2;
+		liftPosition = this.lift.getCurrentPosition();
 
 //		if (Math.abs(armPower) == 0d && lastArmPower != armPower) {
 //			rightArm.setTargetPosition(armPosition);
@@ -55,91 +53,83 @@ public class mechanism {
 
 
 //		double handOffset = liftPosition / 10000d;
-		if (opMode.gamepad2.x) handPosition = _config.HAND_SCORE;
-		else if (opMode.gamepad2.a) handPosition = _config.HAND_GROUND; // + handOffset;
-		else if (opMode.gamepad2.b) handPosition = _config.HAND_MID;
+		if (gamepad.x) this.wristPosition = this._config.WRIST_SCORE;
+		else if (gamepad.a) this.wristPosition = this._config.WRIST_GROUND; // + handOffset;
+		else if (gamepad.b) this.wristPosition = this._config.WRIST_MID;
 
+		this.rightClawPosition = this._config.CLAW_OPEN;
+		this.leftClawPosition = this._config.CLAW_OPEN;
 
-		if (opMode.gamepad2.right_trigger > 0.4d) {
-			rightClawPosition = _config.CLAW_CLOSE;
-			leftClawPosition = _config.CLAW_CLOSE;
-		} else if (opMode.gamepad2.dpad_right)
-			rightClawPosition = _config.CLAW_CLOSE;
-		else if (opMode.gamepad2.dpad_left)
-			leftClawPosition = _config.CLAW_CLOSE;
-		else {
-			rightClawPosition = _config.CLAW_OPEN;
-			leftClawPosition = _config.CLAW_OPEN;
+		if (gamepad.right_trigger > 0.4d) {
+			this.rightClawPosition = this._config.CLAW_CLOSE;
+			this.leftClawPosition = this._config.CLAW_CLOSE;
 		}
 
+		if (gamepad.dpad_right)
+			this.rightClawPosition = this._config.CLAW_CLOSE;
+		else if (gamepad.dpad_left)
+			this.leftClawPosition = this._config.CLAW_CLOSE;
+//		else {
+//
+//		}
 
-		if (opMode.gamepad1.a && opMode.gamepad1.x)
-			rocketPosition = _config.ROCKET_LAUNCHED;
+//		if (gamepad.dpad_up) hang = true;
+//		else if (gamepad.dpad_down) hang = false;
 
-
-//		if (opMode.gamepad2.dpad_up) hang = true;
-//		else if (opMode.gamepad2.dpad_down) hang = false;
-
-		rightArm.setPower(armPower);
-		leftArm.setPower(armPower);
-		lift.setPower(liftPower);
+		this.rightArm.setPower(this.armPower);
+		this.leftArm.setPower(this.armPower);
+		this.lift.setPower(this.liftPower);
 
 		//		lift.setPower(hang ? 0.0566d : liftPower);
 
-		hand.setPosition(handPosition);
-		rightClaw.setPosition(rightClawPosition);
-		leftClaw.setPosition(leftClawPosition);
-		rocket.setPosition(rocketPosition);
-
-		opMode.telemetry.addLine("Mechanism");
-		opMode.telemetry.addData("Arm: ", armPower);
-		opMode.telemetry.addData("Arm position: ", armPosition);
-		opMode.telemetry.addData("Lift: ", liftPower);
-		opMode.telemetry.addData("Lift position: ", liftPosition);
-		opMode.telemetry.addData("Hand: ", handPosition);
-		opMode.telemetry.addData("Right claw: ", rightClawPosition);
-		opMode.telemetry.addData("Left claw: ", leftClawPosition);
-//		opMode.telemetry.addData("Hand offset: ", handOffset);
-		opMode.telemetry.addData("Rocket: ", rocketPosition);
-		opMode.telemetry.addLine();
+		this.wrist.setPosition(this.wristPosition);
+		this.rightClaw.setPosition(this.rightClawPosition);
+		this.leftClaw.setPosition(this.leftClawPosition);
 	}
 
-	public void init() {
-		rightArm = opMode.hardwareMap.get(DcMotor.class, "right_arm");
-		leftArm = opMode.hardwareMap.get(DcMotor.class, "left_arm");
-		lift = opMode.hardwareMap.get(DcMotor.class, "lift");
+	public void telemetry(Telemetry telemetry) {
+		telemetry.addLine("Mechanism");
+		telemetry.addData("Arm: ", this.armPower);
+		telemetry.addData("Arm position: ", this.armPosition);
+		telemetry.addData("Lift: ", this.liftPower);
+		telemetry.addData("Lift position: ", this.liftPosition);
+		telemetry.addData("Wrist: ", this.wristPosition);
+		telemetry.addData("Right claw: ", this.rightClawPosition);
+		telemetry.addData("Left claw: ", this.leftClawPosition);
+		telemetry.addLine();
+	}
 
-		hand = opMode.hardwareMap.get(Servo.class, "hand");
-		rightClaw = opMode.hardwareMap.get(Servo.class, "right_claw");
-		leftClaw = opMode.hardwareMap.get(Servo.class, "left_claw");
+	public void init(final HardwareMap hardwareMap) {
+		this.rightArm = hardwareMap.get(DcMotor.class, "right_arm");
+		this.leftArm = hardwareMap.get(DcMotor.class, "left_arm");
+		this.lift = hardwareMap.get(DcMotor.class, "lift");
 
-		rocket = opMode.hardwareMap.get(Servo.class, "rocket");
+		this.wrist = hardwareMap.get(Servo.class, "wrist");
+		this.rightClaw = hardwareMap.get(Servo.class, "right_claw");
+		this.leftClaw = hardwareMap.get(Servo.class, "left_claw");
 
-		rightArm.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
-		lift.setDirection(DcMotorSimple.Direction.FORWARD);
+		this.rightArm.setDirection(DcMotorSimple.Direction.FORWARD);
+		this.leftArm.setDirection(DcMotorSimple.Direction.REVERSE);
+		this.lift.setDirection(DcMotorSimple.Direction.FORWARD);
 
-		rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		this.rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		this.leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-		rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		this.leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-		hand.setDirection(Servo.Direction.FORWARD);
-		rightClaw.setDirection(Servo.Direction.FORWARD);
-		leftClaw.setDirection(Servo.Direction.REVERSE);
+		this.rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-		rocket.setDirection(Servo.Direction.FORWARD);
+		this.wrist.setDirection(Servo.Direction.FORWARD);
+		this.rightClaw.setDirection(Servo.Direction.FORWARD);
+		this.leftClaw.setDirection(Servo.Direction.REVERSE);
 
-		hand.setPosition(handPosition);
-		rightClaw.setPosition(leftClawPosition);
-		leftClaw.setPosition(rightClawPosition);
-
-		rocket.setPosition(rocketPosition);
+		this.wrist.setPosition(this.wristPosition);
+		this.rightClaw.setPosition(this.leftClawPosition);
+		this.leftClaw.setPosition(this.rightClawPosition);
 	}
 }
