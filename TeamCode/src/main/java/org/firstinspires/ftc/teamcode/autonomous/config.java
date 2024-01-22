@@ -10,7 +10,7 @@ import org.opencv.core.Scalar;
 public class config {
 	// Movement
 	public final double SPEED = 0.35d;
-	public final double STRAFE = 0.25d;
+	public final double STRAFE = 0.35d;
 	public final double TURN = 0.15d;
 
 	private final int TICKS_PER_MOTOR_REV = 28;

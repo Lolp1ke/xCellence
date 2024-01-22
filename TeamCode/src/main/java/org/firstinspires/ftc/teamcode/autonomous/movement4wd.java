@@ -26,6 +26,8 @@ public class movement4wd {
 
 	private IMU imu;
 
+	private double turn;
+
 	private double headingError = 0d;
 	private double lastError = 0d;
 	private double totalError = 0d;
@@ -35,7 +37,6 @@ public class movement4wd {
 	}
 
 	public void forward(final double distance, final double heading) {
-		if (!opMode.opModeIsActive()) return;
 		int target = (int) (distance * _config.COUNTS_PER_CM);
 
 		setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -45,21 +46,19 @@ public class movement4wd {
 		setPower(_config.SPEED);
 
 		while (opMode.opModeIsActive() && isBusy()) {
-			double turn = PIDControl(heading);
+			turn = PIDControl(heading);
 
-			if (distance < 0)
-				turn *= -1.0d;
+//			if (distance < 0)
+//				turn *= -1.0d;
 
 			setPower(_config.SPEED + turn, _config.SPEED - turn, _config.SPEED + turn, _config.SPEED - turn);
 		}
 
 		setPower(0);
-//		opMode.sleep(1000);
+		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 	}
 
-	public void strafe(double distance, final double heading) {
-		if (!opMode.opModeIsActive()) return;
-//		distance += distance > 0 ? 20d : -20d;
+	public void strafe(double distance, final int heading) {
 		int target = (int) (distance * _config.COUNTS_PER_CM);
 
 		setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -67,22 +66,19 @@ public class movement4wd {
 
 		setTargetPosition(target, -target, -target, target);
 		setPower(_config.STRAFE, -_config.STRAFE, -_config.STRAFE, _config.STRAFE);
-//		setPower(_config.SPEED);
 
 		while (opMode.opModeIsActive() && isBusy()) {
-			double turn = PIDControl(heading, _config.STRAFE, _config.P_GAIN + 0.05d, _config.I_GAIN + 0.05d, _config.D_GAIN + 0.05d);
+			turn = PIDControl(heading, _config.STRAFE, _config.P_GAIN, _config.I_GAIN, _config.D_GAIN);
 
 //			if (distance < 0)
 //				turn *= -1.0d;
-
-			opMode.telemetry.addData("Turn: ", turn);
-			opMode.telemetry.update();
 
 			setPower(_config.STRAFE + turn, -_config.STRAFE - turn, -_config.STRAFE - turn, _config.STRAFE + turn);
 		}
 
 		setPower(0);
-//		opMode.sleep(1000);
+		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		rotate(heading);
 	}
 
 	public void left(final double distance, final int heading) {
@@ -110,32 +106,37 @@ public class movement4wd {
 	}
 
 	public void rotate(int target) {
-//		resetHeading();
 		setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		target *= -1;
-		target -= target > 0 ? 6 : -6;
-		double headingDifference = target - getHeading();
+//		ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+//		timer.reset();
+//		target *= -1;
+//		target -= target > 0 ? 6 : -6;
+		double headingDifference = (target - getHeading());
 
-		while (headingDifference > 180d) headingDifference -= 360d;
-		while (headingDifference <= -180d) headingDifference += 360d;
+		while (opMode.opModeIsActive()
+//			&& timer.time() < 5d
+			&& (Math.abs(headingDifference) > _config.HEADING_THRESHOLD)) {
+			headingDifference = (target - getHeading());
 
-		while (opMode.opModeIsActive() && (Math.abs(headingDifference) > _config.HEADING_THRESHOLD)) {
-			headingDifference = AngleUnit.normalizeDegrees((target) - getHeading());
+			turn = -PIDControl(target, _config.TURN, 0.005d, 0.0d, 0.0d);
 
-			double turnPower = Range.clip(PIDControl(headingDifference, true), -_config.TURN, _config.TURN);
+//			if (headingDifference < 0) turnPower *= -1d;
 
-			setPower(turnPower, -turnPower, turnPower, -turnPower);
+			telemetry(opMode.telemetry);
+			opMode.telemetry.update();
+			setPower(-turn, turn, -turn, turn);
 		}
 
 		setPower(0);
+//		opMode.sleep(500);
 	}
 
 	private double PIDControl(final double heading) {
 		headingError = heading - getHeading();
 
-		while (headingError > 360d) headingError -= 360d; // 180
-		while (headingError <= -360d) headingError += 360d;
+		while (headingError > 180d) headingError -= 360d;
+		while (headingError <= -180d) headingError += 360d;
 
 		double finalError = headingError * _config.P_GAIN + totalError * _config.I_GAIN + (headingError - lastError) * _config.D_GAIN;
 
@@ -160,9 +161,6 @@ public class movement4wd {
 	private double PIDControl(final double HEADING, final double MAX_SPEED, final double P,
 		final double I, final double D) {
 		headingError = HEADING - getHeading();
-
-		while (headingError > 180d) headingError -= 360d;
-		while (headingError <= -180d) headingError += 360d;
 
 		double finalError = headingError * P + totalError * I + (headingError - lastError) * D;
 
@@ -225,8 +223,20 @@ public class movement4wd {
 		telemetry.addData("HeadingError: ", headingError);
 		telemetry.addData("Last error: ", lastError);
 		telemetry.addData("Total error: ", totalError);
+		telemetry.addData("Turn power: ", turn);
 
+		telemetry.addLine("Velocity");
 		telemetry.addData("Right rear: ", rightRear.getVelocity());
+		telemetry.addData("Left rear: ", leftRear.getVelocity());
+		telemetry.addData("Right front: ", rightFront.getVelocity());
+		telemetry.addData("Left front: ", leftFront.getVelocity());
+
+
+		telemetry.addLine("Current position");
+		telemetry.addData("Right rear: ", rightRear.getCurrentPosition());
+		telemetry.addData("Left rear: ", leftRear.getCurrentPosition());
+		telemetry.addData("Right front: ", rightFront.getCurrentPosition());
+		telemetry.addData("Left front: ", leftFront.getCurrentPosition());
 
 		telemetry.addLine("Tolerance");
 		telemetry.addData("Right rear: ", rightRear.getTargetPositionTolerance());

@@ -7,7 +7,7 @@ public class config {
 	// - Movement config
 	public final double SPEED = 0.4d;
 	public final double ACCELERATION = 0.7d;
-	public final double DECELERATION = 0.3d;
+	public final double DECELERATION = 0.25d;
 
 	// - Mechanism config
 	// - - Arm
