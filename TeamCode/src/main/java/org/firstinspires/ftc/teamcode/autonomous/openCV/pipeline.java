@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.autonomous.openCV;
 
-import org.firstinspires.ftc.teamcode.autonomousOld.config;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.autonomous.config;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -15,13 +14,6 @@ public class pipeline extends OpenCvPipeline {
 
 	private final Mat output = new Mat();
 
-	private final Rect CENTER_RECT = new Rect(
-		new Point(_config.CENTER_X_POS - _config.RECT_SIZE, _config.CENTER_Y_POS - _config.RECT_SIZE),
-		new Point(_config.CENTER_X_POS + _config.RECT_SIZE,
-			_config.CENTER_Y_POS + _config.RECT_SIZE));
-	private final Rect LEFT_RECT = new Rect(
-		new Point(_config.LEFT_X_PIS - _config.RECT_SIZE, _config.LEFT_Y_POS - _config.RECT_SIZE),
-		new Point(_config.LEFT_X_PIS + _config.RECT_SIZE, _config.LEFT_Y_POS + _config.RECT_SIZE));
 
 	public double centerConfidence = 0d;
 	public double leftConfidence = 0d;
@@ -52,8 +44,8 @@ public class pipeline extends OpenCvPipeline {
 		}
 
 		Imgproc.cvtColor(full, output, Imgproc.COLOR_GRAY2RGB);
-		Imgproc.rectangle(output, CENTER_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
-		Imgproc.rectangle(output, LEFT_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
+		Imgproc.rectangle(output, _config.CENTER_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
+		Imgproc.rectangle(output, _config.LEFT_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
 
 		setLocation();
 
@@ -61,16 +53,22 @@ public class pipeline extends OpenCvPipeline {
 		return output;
 	}
 
-	public void setLocation() {
+	private void setLocation() {
 		final double CONFIDENCE = 30d;
-
-		centerConfidence = Core.mean(new Mat(output, CENTER_RECT)).val[0] / 255d * 100d;
-		leftConfidence = Core.mean(new Mat(output, LEFT_RECT)).val[0] / 255d * 100d;
+		centerConfidence = Core.mean(new Mat(output, _config.CENTER_RECT)).val[0] / 255d * 100d;
+		leftConfidence = Core.mean(new Mat(output, _config.LEFT_RECT)).val[0] / 255d * 100d;
 
 		if (centerConfidence > leftConfidence && centerConfidence > CONFIDENCE)
 			location = 2;
 		else if (leftConfidence > centerConfidence && leftConfidence > CONFIDENCE)
 			location = 1;
 		else location = 3;
+	}
+
+	public void telemetry(Telemetry telemetry) {
+		telemetry.addLine("Location data");
+		telemetry.addData("Current location: ", location);
+		telemetry.addData("Center: ", centerConfidence);
+		telemetry.addData("Left: ", leftConfidence);
 	}
 }

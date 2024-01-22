@@ -21,6 +21,17 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace = 'com.qualcomm.ftcrobotcontroller'
+
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+dependencies {
+    implementation 'org.ftclib.ftclib:core:2.1.1'
+//     the following is optional if you want vision
+//    implementation 'org.ftclib.ftclib:vision:2.1.0'
 }
 
 apply from: '../build.dependencies.gradle'
+

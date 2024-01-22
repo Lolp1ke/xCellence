@@ -10,23 +10,25 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 @TeleOp(name = "main", group = "!xCellence")
 public class main extends LinearOpMode {
-	private final movement2wd _movement2wd = new movement2wd(this);
-	private final mechanism _mechanism = new mechanism(this);
+	private final movement4wd _movement4wd = new movement4wd();
+	private final mechanism _mechanism = new mechanism();
 
 
 	@Override
 	public void runOpMode() {
-		_movement2wd.init();
-		_mechanism.init();
+		_movement4wd.init(hardwareMap);
+		_mechanism.init(hardwareMap);
 
 		telemetry.addData("Status: ", "vroom vroom");
 		telemetry.update();
 
 		waitForStart();
 		while (opModeIsActive()) {
-			_movement2wd.car();
-			_mechanism.run();
+			_movement4wd.run(gamepad1);
+			_mechanism.run(gamepad2);
 
+			_movement4wd.telemetry(telemetry);
+			_mechanism.telemetry(telemetry);
 			telemetry.update();
 		}
 	}

@@ -12,28 +12,23 @@ import java.util.List;
 
 public class tag {
 	private final LinearOpMode opMode;
-
-	private AprilTagProcessor aprilTag;
-	private VisionPortal visionPortal;
-
-	private boolean targetFound = false;
-	private AprilTagDetection detectedTag = null;
-
-	public boolean isInited = false;
-
-	private int tagID;
 	private final double DISTANCE_TO_TAG = 2d;
-
+	public boolean isInited = false;
 	public double drive = 0d;
 	public double turn = 0d;
-
+	private AprilTagProcessor aprilTag;
+	private VisionPortal visionPortal;
+	private boolean targetFound = false;
+	private AprilTagDetection detectedTag = null;
+	private int tagID;
+	
 	public tag(final LinearOpMode _opMode) {
 		opMode = _opMode;
 	}
-
+	
 	public void run() {
 		targetFound = false;
-
+		
 		List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 		for (AprilTagDetection detection : currentDetections) {
 			if (detection.metadata != null) {
@@ -46,18 +41,18 @@ public class tag {
 				}
 			}
 		}
-
+		
 		if (targetFound) {
 			opMode.telemetry.addData("Found", "ID %d (%s)", detectedTag.id, detectedTag.metadata.name);
 			opMode.telemetry.addData("Range", "%5.1f cm", detectedTag.ftcPose.range * 2.54);
 			opMode.telemetry.addData("Bearing", "%3.0f degrees", detectedTag.ftcPose.bearing);
-
+			
 			double rangeError = (detectedTag.ftcPose.range * 2.54 - DISTANCE_TO_TAG);
 			double headingError = detectedTag.ftcPose.bearing;
-
+			
 			drive = Range.clip(rangeError * 0.02, -0.5d, 0.5d);
 			turn = Range.clip(headingError * 0.01, -0.25d, 0.25d);
-
+			
 			opMode.telemetry.addData("Drive: ", drive);
 			opMode.telemetry.addData("Turn: ", turn);
 		} else {
@@ -65,18 +60,14 @@ public class tag {
 			turn = 0d;
 		}
 	}
-
+	
 	public void init(final int targetTagID) {
-		aprilTag = new AprilTagProcessor
-			.Builder()
-			.build();
-		aprilTag.setDecimation(2);
-
-		visionPortal = new VisionPortal
-			.Builder()
-			.setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1")).addProcessor(aprilTag)
-			.build();
-
+		aprilTag = new AprilTagProcessor.Builder().build();
+		aprilTag.setDecimation(1);
+		
+		visionPortal = new VisionPortal.Builder().setCamera(
+				opMode.hardwareMap.get(WebcamName.class, "Webcam 1")).addProcessor(aprilTag).build();
+		
 		tagID = targetTagID;
 		isInited = true;
 	}

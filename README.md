@@ -1,4 +1,4 @@
-# First Tech Challenge CenterStage
+# First Tech Challenge
 
 ### Team name: xCellence
 
