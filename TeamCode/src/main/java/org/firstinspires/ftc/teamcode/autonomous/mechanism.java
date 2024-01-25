@@ -44,6 +44,9 @@ public class mechanism {
 
 		this.wrist.setPosition(_config.WRIST_SCORE);
 		this.opMode.sleep(500);
+
+		this.leftClaw.setPosition(_config.CLAW_CLOSE);
+		this.opMode.sleep(300);
 	}
 
 	public void yellow() {
@@ -52,10 +55,12 @@ public class mechanism {
 		this.rightClaw.setPosition(this._config.CLAW_OPEN);
 
 		this.arm(-175);
+
+		this.rightClaw.setPosition(this._config.CLAW_CLOSE);
 	}
 
 	private boolean isBusy() {
-		return this.rightArm.isBusy() || this.leftArm.isBusy();
+		return this.rightArm.isBusy() && this.leftArm.isBusy();
 	}
 
 	private void setMode(final DcMotor.RunMode runMode) {

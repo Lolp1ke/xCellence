@@ -92,7 +92,7 @@ public class movement2wd {
 
 		oldError = headingError;
 		errorSum += headingError;
-		return Range.clip(headingError * _config.P_GAIN + errorSum * _config.I_GAIN + (headingError - oldError) * _config.D_GAIN, -1, 1);
+		return Range.clip(headingError * _config.P_DRIVE_GAIN + errorSum * _config.I_DRIVE_GAIN + (headingError - oldError) * _config.D_DRIVE_GAIN, -1, 1);
 	}
 
 	private void sendTelemetry(final boolean straight) {

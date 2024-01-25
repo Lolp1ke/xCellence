@@ -15,6 +15,7 @@ public class pipeline extends OpenCvPipeline {
 	private final Mat output = new Mat();
 
 
+	public double rightConfidence = 0d;
 	public double centerConfidence = 0d;
 	public double leftConfidence = 0d;
 	public int location = 3;
@@ -44,6 +45,7 @@ public class pipeline extends OpenCvPipeline {
 		}
 
 		Imgproc.cvtColor(full, output, Imgproc.COLOR_GRAY2RGB);
+		Imgproc.rectangle(output, _config.RIGHT_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
 		Imgproc.rectangle(output, _config.CENTER_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
 		Imgproc.rectangle(output, _config.LEFT_RECT, isRed ? new Scalar(255d, 0d, 0d) : new Scalar(0d, 0d, 255d));
 
@@ -55,19 +57,22 @@ public class pipeline extends OpenCvPipeline {
 
 	private void setLocation() {
 		final double CONFIDENCE = 30d;
+		rightConfidence = Core.mean(new Mat(output, _config.RIGHT_RECT)).val[0] / 255d * 100d;
 		centerConfidence = Core.mean(new Mat(output, _config.CENTER_RECT)).val[0] / 255d * 100d;
 		leftConfidence = Core.mean(new Mat(output, _config.LEFT_RECT)).val[0] / 255d * 100d;
 
-		if (centerConfidence > leftConfidence && centerConfidence > CONFIDENCE)
+		if (rightConfidence > centerConfidence && rightConfidence > leftConfidence && rightConfidence > CONFIDENCE)
+			location = 3;
+		else if (centerConfidence > rightConfidence && centerConfidence > leftConfidence && centerConfidence > CONFIDENCE)
 			location = 2;
-		else if (leftConfidence > centerConfidence && leftConfidence > CONFIDENCE)
+		else if (leftConfidence > rightConfidence && leftConfidence > centerConfidence && leftConfidence > CONFIDENCE)
 			location = 1;
-		else location = 3;
 	}
 
-	public void telemetry(Telemetry telemetry) {
+	public void telemetry(final Telemetry telemetry) {
 		telemetry.addLine("Location data");
 		telemetry.addData("Current location: ", location);
+		telemetry.addData("Right: ", rightConfidence);
 		telemetry.addData("Center: ", centerConfidence);
 		telemetry.addData("Left: ", leftConfidence);
 	}
