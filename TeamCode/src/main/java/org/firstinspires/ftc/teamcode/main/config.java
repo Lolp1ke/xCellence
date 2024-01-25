@@ -9,6 +9,12 @@ public class config {
 	public final double ACCELERATION = 0.7d;
 	public final double DECELERATION = 0.25d;
 
+	public final double P_DRIVE_GAIN = 0.02d;
+	public final double I_DRIVE_GAIN = 0.001d;
+	public final double D_DRIVE_GAIN = 0.04d;
+
+	public final double HEADING_THRESHOLD = 1.5d;
+
 	// - Mechanism config
 	// - - Arm
 	public final double ARM_SPEED = 0.55d;

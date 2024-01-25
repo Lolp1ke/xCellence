@@ -31,16 +31,12 @@ public class close extends LinearOpMode {
 		_openCV.cameraOff();
 		int location = _openCV._pipeline.location;
 
-//		if (location == 1)
-//			left();
-//		else if (location == 2)
-//			center();
-//		else if (location == 3)
-//			right();
-
-//		right();
-//		center();
-		left();
+		if (location == 1)
+			left();
+		else if (location == 2)
+			center();
+		else if (location == 3)
+			right();
 
 		while (opModeIsActive()) {
 		}
@@ -52,13 +48,12 @@ public class close extends LinearOpMode {
 
 		_movement4wd.forward(15, -90);
 		_movement4wd.forward(-10, -90);
-		_movement4wd.rotate(-90);
-
 		_mechanism.purple();
+
 		_movement4wd.forward(-90, -90);
 		_movement4wd.strafe(-33, -90);
-
 		_mechanism.yellow();
+
 		_movement4wd.strafe(-40, -90);
 		_movement4wd.forward(-25, -90);
 	}
@@ -68,7 +63,7 @@ public class close extends LinearOpMode {
 		_movement4wd.forward(-15, 0);
 		_mechanism.purple();
 
-		_movement4wd.strafe(-60, 0);
+		_movement4wd.strafe(-80, 0);
 		_movement4wd.rotate(-90);
 		_mechanism.yellow();
 
@@ -88,6 +83,5 @@ public class close extends LinearOpMode {
 		_mechanism.yellow();
 		_movement4wd.strafe(-50, -90);
 		_movement4wd.forward(-30, -90);
-
 	}
 }

@@ -12,10 +12,15 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utils.motorUtil;
+
+import java.util.Map;
 
 public class movement4wd {
 	private final LinearOpMode opMode;
 	private final config _config = new config();
+
+	private motorUtil motors;
 
 	private DcMotorEx rightRear;
 	private DcMotorEx leftRear;
@@ -42,72 +47,67 @@ public class movement4wd {
 	public void forward(final double DISTANCE, final int HEADING) {
 		int target = (int) (DISTANCE * _config.COUNTS_PER_CM);
 
-		setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		motors.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motors.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-		setTargetPosition(target);
-		setPower(_config.SPEED);
+		motors.setTargetPosition(target);
+		motors.setPower(_config.SPEED);
 
 		PIDReset();
-		while (opMode.opModeIsActive() && isBusy()) {
+		while (opMode.opModeIsActive() && motors.isBusy()) {
 			turn = PIDControl(HEADING, _config.SPEED, _config.P_DRIVE_GAIN, _config.I_DRIVE_GAIN, _config.D_DRIVE_GAIN);
 
 			if (DISTANCE < 0)
 				turn *= -1.0d;
-
-//			if (_config.SPEED + turn < 0.1d)
-//				break;
 
 			rightRearPower = _config.SPEED + turn;
 			leftRearPower = _config.SPEED - turn;
 			rightFrontPower = _config.SPEED + turn;
 			leftFrontPower = _config.SPEED - turn;
 
-			setPower(rightRearPower, leftRearPower, rightFrontPower, leftFrontPower);
+			motors.setPower(rightRearPower, leftRearPower, rightFrontPower, leftFrontPower);
 			telemetry(opMode.telemetry);
 		}
 
-		setPower(0);
+		motors.setPower(0);
 		rotate(HEADING);
 	}
 
-	public void strafe(final double distance, final int heading) {
-		int target = (int) (distance * _config.COUNTS_PER_CM);
+	public void strafe(final double DISTANCE, final int HEADING) {
+		int target = (int) (DISTANCE * _config.COUNTS_PER_CM);
 
-		setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		motors.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motors.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-		setTargetPosition(target, -target, -target, target);
-		setPower(_config.STRAFE, -_config.STRAFE, -_config.STRAFE, _config.STRAFE);
+		motors.setTargetPosition(target, -target, -target, target);
+		motors.setPower(_config.STRAFE, -_config.STRAFE, -_config.STRAFE, _config.STRAFE);
 
 		PIDReset();
-		while (opMode.opModeIsActive() && isBusy()) {
-			turn = PIDControl(heading, _config.STRAFE,
+		while (opMode.opModeIsActive() && motors.isBusy()) {
+			turn = PIDControl(HEADING, _config.STRAFE,
 				_config.P_STRAFE_GAIN, _config.I_STRAFE_GAIN, _config.D_STRAFE_GAIN);
 
-			if (distance < 0)
+			if (DISTANCE < 0)
 				turn *= -1.0d;
-
-//			if (_config.STRAFE + Math.abs(turn) < 0.1d)
-//				break;
 
 			rightRearPower = _config.STRAFE + turn;
 			leftRearPower = -_config.SPEED - turn;
 			rightFrontPower = -_config.STRAFE - turn;
 			leftFrontPower = _config.STRAFE + turn;
 
-			setPower(rightRearPower, leftRearPower, rightFrontPower, leftFrontPower);
+			motors.setPower(rightRearPower, leftRearPower, rightFrontPower, leftFrontPower);
 			telemetry(opMode.telemetry);
 		}
 
-		setPower(0);
-		rotate(heading);
+		motors.setPower(0);
+		rotate(HEADING);
 	}
 
-	public void rotate(final int target) {
-		setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		double headingDifference = target - getHeading();
+	public void rotate(final int TARGET) {
+		motors.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+		double headingDifference = TARGET - getHeading();
 		ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 		timer.reset();
 
@@ -115,17 +115,15 @@ public class movement4wd {
 		while (opMode.opModeIsActive()
 			&& timer.time() < 4d
 			&& (Math.abs(headingDifference) > _config.HEADING_THRESHOLD)) {
-			headingDifference = target - getHeading();
+			headingDifference = TARGET - getHeading();
 
-			turn = PIDControl(target, _config.TURN, _config.P_ROTATE_GAIN, _config.I_ROTATE_GAIN, _config.D_ROTATE_GAIN);
+			turn = PIDControl(TARGET, _config.TURN, _config.P_ROTATE_GAIN, _config.I_ROTATE_GAIN, _config.D_ROTATE_GAIN);
 
-//			if (headingDifference < 0) turnPower *= -1d;
-
-			setPower(turn, -turn, turn, -turn);
+			motors.setPower(turn, -turn, turn, -turn);
 			telemetry(opMode.telemetry);
 		}
 
-		setPower(0);
+		motors.setPower(0);
 	}
 
 	private double PIDControl(final double HEADING, final double MAX_SPEED, final double P,
@@ -156,9 +154,9 @@ public class movement4wd {
 		imu.resetYaw();
 	}
 
-	private boolean isBusy() {
-		return rightRear.isBusy() && leftRear.isBusy() && rightFront.isBusy() && leftFront.isBusy();
-	}
+//	private boolean isBusy() {
+//		return rightRear.isBusy() && leftRear.isBusy() && rightFront.isBusy() && leftFront.isBusy();
+//	}
 
 	private void setMode(final DcMotor.RunMode runMode) {
 		rightRear.setMode(runMode);
@@ -203,6 +201,7 @@ public class movement4wd {
 		telemetry.addData("Heading error: ", headingError);
 		telemetry.addData("Last error: ", lastError);
 		telemetry.addData("Total error: ", totalError);
+		telemetry.addLine();
 
 		telemetry.addLine("Power");
 		telemetry.addData("Right rear: ", rightRearPower);
@@ -210,12 +209,16 @@ public class movement4wd {
 		telemetry.addData("Right front: ", rightFrontPower);
 		telemetry.addData("Left front: ", leftFrontPower);
 		telemetry.addData("Turn power: ", turn);
+		telemetry.addLine();
 
 		telemetry.addLine("Current position");
-		telemetry.addData("Right rear: ", rightRear.getCurrentPosition());
-		telemetry.addData("Left rear: ", leftRear.getCurrentPosition());
-		telemetry.addData("Right front: ", rightFront.getCurrentPosition());
-		telemetry.addData("Left front: ", leftFront.getCurrentPosition());
+		for (Map.Entry<Integer, Integer> entry : motors.getCurrentPositions().entrySet()) {
+			telemetry.addData(String.valueOf(entry.getKey()), entry.getValue());
+		}
+//		telemetry.addData("Right rear: ", rightRear.getCurrentPosition());
+//		telemetry.addData("Left rear: ", leftRear.getCurrentPosition());
+//		telemetry.addData("Right front: ", rightFront.getCurrentPosition());
+//		telemetry.addData("Left front: ", leftFront.getCurrentPosition());
 
 //		telemetry.addLine("Velocity");
 //		telemetry.addData("Right rear: ", rightRear.getVelocity());
@@ -233,22 +236,41 @@ public class movement4wd {
 	}
 
 	public void init(final HardwareMap hardwareMap) {
-		rightRear = hardwareMap.get(DcMotorEx.class, "right_rear");
-		leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
-		rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
-		leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
+//		rightRear = hardwareMap.get(DcMotorEx.class, "right_rear");
+//		leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
+//		rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
+//		leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
 
-		rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-		rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		motors = new motorUtil(
+			rightRear, leftRear,
+			rightFront, leftFront
+		);
 
-		rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		motors.init(hardwareMap,
+			"right_rear", "left_rear",
+			"right_front", "left_front"
+		);
 
-		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motors.setDirection(
+			DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE,
+			DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE
+		);
+
+//		rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+//		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+//		rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+//		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
+		motors.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
+
+//		rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//		leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//		leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		motors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+//		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 		imu = hardwareMap.get(IMU.class, "imu");
 		imu.initialize(

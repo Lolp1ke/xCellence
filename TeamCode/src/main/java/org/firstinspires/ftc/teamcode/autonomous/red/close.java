@@ -79,7 +79,7 @@ public class close extends LinearOpMode {
 	}
 
 	private void left() {
-		_movement4wd.forward(80, 0);
+		_movement4wd.forward(70, 0);
 		_movement4wd.rotate(90);
 
 		_movement4wd.forward(15, 90);
@@ -87,10 +87,10 @@ public class close extends LinearOpMode {
 		_mechanism.purple();
 
 		_movement4wd.strafe(10, 90);
-		_movement4wd.forward(-50, 90);
+		_movement4wd.forward(-70, 90);
 		_mechanism.yellow();
 
-		_movement4wd.strafe(20, 90);
-		_movement4wd.forward(-30, 90);
+		_movement4wd.strafe(30, 90);
+		_movement4wd.forward(-25, 90);
 	}
 }

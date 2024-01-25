@@ -15,10 +15,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class movement4wd {
 	private final config _config = new config();
 
-	private DcMotor rightFront;
-	private DcMotor leftFront;
 	private DcMotor rightRear;
 	private DcMotor leftRear;
+	private DcMotor rightFront;
+	private DcMotor leftFront;
 
 	private Servo rocket;
 
@@ -28,7 +28,18 @@ public class movement4wd {
 	private double leftRearPower = 0d;
 	private double rightFrontPower = 0d;
 	private double leftFrontPower = 0d;
-	private double speedMultiplier = 1d;
+
+	private double speedMultiplier = _config.SPEED;
+
+	private double headingError = 0d;
+	private double lastError = 0d;
+	private double totalError = 0d;
+	private double fix = 0d;
+
+	private double targetHeading = 0d;
+	private boolean holdHeading = false;
+	private boolean holdPressed = false;
+	private boolean lastHoldPressed = false;
 
 	private double rocketPosition = this._config.ROCKET_CLOSED;
 
@@ -84,28 +95,65 @@ public class movement4wd {
 		double cos = Math.cos(angle - Math.PI / 4);
 		double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-		this.rightFrontPower = (power * sin / max - turn) * this.speedMultiplier;
-		this.leftFrontPower = (power * cos / max + turn) * this.speedMultiplier;
-		this.rightRearPower = (power * cos / max - turn) * this.speedMultiplier;
-		this.leftRearPower = (power * sin / max + turn) * this.speedMultiplier;
+		this.rightRearPower = (power * cos / max - turn);
+		this.leftRearPower = (power * sin / max + turn);
+		this.rightFrontPower = (power * sin / max - turn);
+		this.leftFrontPower = (power * cos / max + turn);
 
-		this.rightFrontPower = Range.clip(this.rightFrontPower, -1d, 1d);
-		this.leftFrontPower = Range.clip(this.leftFrontPower, -1d, 1d);
-		this.rightRearPower = Range.clip(this.rightRearPower, -1d, 1d);
-		this.leftRearPower = Range.clip(this.leftRearPower, -1d, 1d);
+		if ((this.holdPressed = gamepad.b) && !this.lastHoldPressed) {
+			this.targetHeading = this.getHeading();
+			this.holdHeading = !this.holdHeading;
+		}
+		this.lastHoldPressed = this.holdPressed;
 
+		if (this.holdHeading)
+			this.fix = this.PIDControl(this.targetHeading, _config.SPEED,
+				_config.P_DRIVE_GAIN, _config.I_DRIVE_GAIN, _config.D_DRIVE_GAIN);
+		else {
+			this.PIDReset();
+			this.fix = 0d;
+		}
+
+		this.rightRearPower += this.fix;
+		this.leftRearPower -= this.fix;
+		this.rightFrontPower += this.fix;
+		this.leftFrontPower -= this.fix;
+
+		this.rightRearPower = Range.clip(this.rightRearPower, -this.speedMultiplier, this.speedMultiplier);
+		this.leftRearPower = Range.clip(this.leftRearPower, -this.speedMultiplier, this.speedMultiplier);
+		this.rightFrontPower = Range.clip(this.rightFrontPower, -this.speedMultiplier, this.speedMultiplier);
+		this.leftFrontPower = Range.clip(this.leftFrontPower, -this.speedMultiplier, this.speedMultiplier);
 
 		if (gamepad.a && gamepad.x)
 			this.rocketPosition = this._config.ROCKET_LAUNCHED;
 
 		this.rocket.setPosition(this.rocketPosition);
 
-		this.rightFront.setPower(this.rightFrontPower);
-		this.leftFront.setPower(this.leftFrontPower);
 		this.rightRear.setPower(this.rightRearPower);
 		this.leftRear.setPower(this.leftRearPower);
+		this.rightFront.setPower(this.rightFrontPower);
+		this.leftFront.setPower(this.leftFrontPower);
 	}
 
+	private double PIDControl(final double HEADING, final double MAX_SPEED, final double P,
+		final double I, final double D) {
+		this.headingError = HEADING - this.getHeading();
+
+		while (this.headingError > 180d) this.headingError -= 360d;
+		while (this.headingError <= -180d) this.headingError += 360d;
+
+		double finalError = this.headingError * P + this.totalError * I + (this.headingError - this.lastError) * D;
+
+		this.lastError = this.headingError;
+		this.totalError += this.headingError;
+		return Range.clip(finalError, -MAX_SPEED, MAX_SPEED);
+	}
+
+	private void PIDReset() {
+		this.headingError = 0d;
+		this.lastError = 0d;
+		this.totalError = 0d;
+	}
 
 	private double getHeading() {
 		return this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -118,11 +166,25 @@ public class movement4wd {
 	public void telemetry(final Telemetry telemetry) {
 		telemetry.addLine("Movement");
 		telemetry.addData("Speed multiplier: ", this.speedMultiplier);
-		telemetry.addData("Heading: ", this.getHeading());
 		telemetry.addData("Right front", this.rightFrontPower);
 		telemetry.addData("Left front", this.leftFrontPower);
 		telemetry.addData("Right rear", this.rightRearPower);
 		telemetry.addData("Left rear", this.leftRearPower);
+		telemetry.addData("Fix: ", this.fix);
+		telemetry.addLine();
+
+		telemetry.addLine("Heading");
+		telemetry.addData("Current: ", this.getHeading());
+		telemetry.addData("Target: ", this.targetHeading);
+		telemetry.addData("Hold: ", this.holdHeading);
+		telemetry.addLine();
+
+		telemetry.addLine("Error");
+		telemetry.addData("Heading: ", this.headingError);
+		telemetry.addData("Last: ", this.lastError);
+		telemetry.addData("Total: ", this.totalError);
+		telemetry.addLine();
+
 		telemetry.addData("Rocket status: ", this.rocketPosition == this._config.ROCKET_LAUNCHED ? "Launched" : "Waiting");
 		telemetry.addLine();
 	}
