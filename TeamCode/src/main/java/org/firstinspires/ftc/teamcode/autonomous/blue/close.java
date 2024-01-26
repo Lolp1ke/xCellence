@@ -14,6 +14,7 @@ public class close extends LinearOpMode {
 	private final movement4wd _movement4wd = new movement4wd(this);
 	private final mechanism _mechanism = new mechanism(this);
 
+
 	@Override
 	public void runOpMode() {
 		_openCV.init();
@@ -43,15 +44,15 @@ public class close extends LinearOpMode {
 	}
 
 	private void right() {
-		_movement4wd.forward(70, 0);
+		_movement4wd.forward(65, 0);
 		_movement4wd.rotate(-90);
 
 		_movement4wd.forward(15, -90);
-		_movement4wd.forward(-10, -90);
+		_movement4wd.forward(-15, -90);
 		_mechanism.purple();
 
-		_movement4wd.forward(-90, -90);
-		_movement4wd.strafe(-33, -90);
+		_movement4wd.strafe(-10, -90);
+		_movement4wd.forward(-70, -90);
 		_mechanism.yellow();
 
 		_movement4wd.strafe(-40, -90);
@@ -59,16 +60,18 @@ public class close extends LinearOpMode {
 	}
 
 	private void center() {
-		_movement4wd.forward(85, 0);
+		_movement4wd.forward(75, 0);
 		_movement4wd.forward(-15, 0);
 		_mechanism.purple();
 
-		_movement4wd.strafe(-80, 0);
+		_movement4wd.forward(-10, 0);
 		_movement4wd.rotate(-90);
+		_movement4wd.forward(-75, -90);
+		_movement4wd.strafe(-10, -90);
 		_mechanism.yellow();
 
-		_movement4wd.strafe(-30, -90);
-		_movement4wd.forward(-30, -90);
+		_movement4wd.strafe(-70, -90);
+		_movement4wd.forward(-20, -90);
 	}
 
 	private void left() {

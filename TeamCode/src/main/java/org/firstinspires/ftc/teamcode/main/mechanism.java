@@ -26,8 +26,8 @@ public class mechanism {
 	private int liftPosition = 0;
 
 	private double wristPosition = _config.WRIST_SCORE;
-	private double rightClawPosition = _config.CLAW_OPEN;
-	private double leftClawPosition = _config.CLAW_OPEN;
+	private double rightClawPosition = _config.CLAW_CLOSE;
+	private double leftClawPosition = _config.CLAW_CLOSE;
 
 
 	public void run(final Gamepad gamepad) {

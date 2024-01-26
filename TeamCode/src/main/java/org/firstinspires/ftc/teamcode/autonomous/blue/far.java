@@ -13,12 +13,19 @@ public class far extends LinearOpMode {
 	private final movement4wd _movement4wd = new movement4wd(this);
 	private final mechanism _mechanism = new mechanism(this);
 
+
 	@Override
 	public void runOpMode() {
 		_openCV.init();
 
 		_movement4wd.init(hardwareMap);
 		_mechanism.init(hardwareMap);
+
+		while (opModeInInit()) {
+			_openCV.telemetry(telemetry);
+			_openCV._pipeline.telemetry(telemetry);
+			telemetry.update();
+		}
 
 		waitForStart();
 		_openCV.cameraOff();
@@ -36,7 +43,7 @@ public class far extends LinearOpMode {
 	}
 
 	private void right() {
-		_movement4wd.forward(70, 0);
+		_movement4wd.forward(65, 0);
 		_movement4wd.rotate(-90);
 
 		_movement4wd.forward(15, -90);
@@ -49,33 +56,36 @@ public class far extends LinearOpMode {
 
 		_movement4wd.strafe(-40, -90);
 		_movement4wd.forward(-25, -90);
+
 	}
 
 	private void center() {
-		_movement4wd.forward(120, 0);
+		_movement4wd.forward(105, 0);
 		_movement4wd.rotate(180);
 		_mechanism.purple();
 
-		_movement4wd.strafe(180, 180);
+		_movement4wd.forward(-15, 180);
 		_movement4wd.rotate(-90);
-		_movement4wd.strafe(50, -90);
 
+		_movement4wd.forward(-180, -90);
+		_movement4wd.strafe(70, -90);
 		_mechanism.yellow();
-		_movement4wd.strafe(-50, -90);
+
+		_movement4wd.strafe(50, -90);
 		_movement4wd.forward(-30, -90);
 	}
 
 	private void left() {
-		_movement4wd.forward(80, 0);
+		_movement4wd.forward(65, 0);
 		_movement4wd.rotate(-90);
 		_movement4wd.forward(-50, -90);
 
 		_mechanism.purple();
 		_movement4wd.forward(-150, -90);
-		_movement4wd.strafe(-20, -90);
+		_movement4wd.strafe(25, -90);
 
 		_mechanism.yellow();
-		_movement4wd.strafe(-50, -90);
-		_movement4wd.forward(-30, -90);
+		_movement4wd.strafe(40, -90);
+		_movement4wd.forward(-27, -90);
 	}
 }

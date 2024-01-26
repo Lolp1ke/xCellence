@@ -86,7 +86,7 @@ public class movement4wd {
 
 		double x = gamepad.left_stick_x;
 		double y = -gamepad.left_stick_y;
-		double turn = gamepad.right_stick_x;
+		double turn = this.holdHeading ? 0d : gamepad.right_stick_x;
 
 		double angle = Math.atan2(y, x);
 		double power = Math.hypot(x, y);
@@ -107,8 +107,8 @@ public class movement4wd {
 		this.lastHoldPressed = this.holdPressed;
 
 		if (this.holdHeading)
-			this.fix = this.PIDControl(this.targetHeading, _config.SPEED,
-				_config.P_DRIVE_GAIN, _config.I_DRIVE_GAIN, _config.D_DRIVE_GAIN);
+			this.fix = this.PIDControl(this.targetHeading, this._config.SPEED,
+				this._config.P_DRIVE_GAIN, this._config.I_DRIVE_GAIN, this._config.D_DRIVE_GAIN);
 		else {
 			this.PIDReset();
 			this.fix = 0d;
@@ -207,7 +207,7 @@ public class movement4wd {
 
 		this.rocket = hardwareMap.get(Servo.class, "rocket");
 
-		this.rocket.setDirection(Servo.Direction.FORWARD);
+		this.rocket.setDirection(Servo.Direction.REVERSE);
 
 		this.rocket.setPosition(this.rocketPosition);
 

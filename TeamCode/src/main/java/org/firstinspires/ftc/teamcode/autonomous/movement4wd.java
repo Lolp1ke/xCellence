@@ -70,6 +70,7 @@ public class movement4wd {
 		}
 
 		motors.setPower(0);
+		opMode.sleep(300);
 		rotate(HEADING);
 	}
 
@@ -100,6 +101,7 @@ public class movement4wd {
 		}
 
 		motors.setPower(0);
+		opMode.sleep(200);
 		rotate(HEADING);
 	}
 
@@ -124,6 +126,7 @@ public class movement4wd {
 		}
 
 		motors.setPower(0);
+		opMode.sleep(200);
 	}
 
 	private double PIDControl(final double HEADING, final double MAX_SPEED, final double P,

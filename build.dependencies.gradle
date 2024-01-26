@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    maven { url = 'https://maven.brott.dev/' }
+//    maven { url = 'https://maven.brott.dev/' } // Roadrunner
 }
 
 dependencies {
@@ -19,10 +19,10 @@ dependencies {
     runtimeOnly 'org.tensorflow:tensorflow-lite:2.12.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation('com.acmerobotics.dashboard:dashboard:0.4.12') {
-        exclude group: 'org.firstinspires.ftc'
-    }
+//    implementation('com.acmerobotics.dashboard:dashboard:0.4.12') {
+//        exclude group: 'org.firstinspires.ftc'
+//    }
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.12'
+//    implementation 'com.acmerobotics.dashboard:dashboard:0.4.12' // Roadrunner
 }
 

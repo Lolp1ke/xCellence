@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.acmerobotics.dashboard.config.Config;
-
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
-@Config
 public class config {
 	// Movement
 	public final double SPEED = 0.4d;
 	public final double STRAFE = 0.35d;
-	public final double TURN = 0.25d;
+	public final double TURN = 0.2d;
 
 	private final int TICKS_PER_MOTOR_REV = 28;
 	private final double DRIVE_GEAR_REDUCTION = 10.5d;
@@ -28,8 +25,8 @@ public class config {
 	public final double D_STRAFE_GAIN = 0.04d;
 
 	public final double P_ROTATE_GAIN = 0.01d;
-	public final double I_ROTATE_GAIN = 0.0005d;
-	public final double D_ROTATE_GAIN = 0.02d;
+	public final double I_ROTATE_GAIN = 0d; // 0.0005
+	public final double D_ROTATE_GAIN = 0d; // 0.02
 
 	public final double HEADING_THRESHOLD = 1d;
 
