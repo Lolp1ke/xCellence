@@ -7,7 +7,7 @@ import org.opencv.core.Scalar;
 public class config {
 	// Movement
 	public final double SPEED = 0.4d;
-	public final double STRAFE = 0.35d;
+	public final double STRAFE = 0.45d;
 	public final double TURN = 0.2d;
 
 	private final int TICKS_PER_MOTOR_REV = 28;
@@ -24,11 +24,11 @@ public class config {
 	public final double I_STRAFE_GAIN = 0.001d;
 	public final double D_STRAFE_GAIN = 0.04d;
 
-	public final double P_ROTATE_GAIN = 0.01d;
+	public final double P_ROTATE_GAIN = 0.015d;
 	public final double I_ROTATE_GAIN = 0d; // 0.0005
 	public final double D_ROTATE_GAIN = 0d; // 0.02
 
-	public final double HEADING_THRESHOLD = 1d;
+	public final double HEADING_THRESHOLD = 1.5d;
 
 	// Mechanism
 	public final double ARM_POWER = 0.5d;

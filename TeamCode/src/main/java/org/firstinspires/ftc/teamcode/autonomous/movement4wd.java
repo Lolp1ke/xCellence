@@ -70,8 +70,8 @@ public class movement4wd {
 		}
 
 		motors.setPower(0);
-		opMode.sleep(300);
-		rotate(HEADING);
+		opMode.sleep(100);
+		rotate(HEADING, 1d);
 	}
 
 	public void strafe(final double DISTANCE, final int HEADING) {
@@ -101,11 +101,15 @@ public class movement4wd {
 		}
 
 		motors.setPower(0);
-		opMode.sleep(200);
-		rotate(HEADING);
+		opMode.sleep(300);
+		rotate(HEADING, 1d);
 	}
 
 	public void rotate(final int TARGET) {
+		rotate(TARGET, 4d);
+	}
+
+	public void rotate(final int TARGET, final double TIMER) {
 		motors.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		motors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -115,7 +119,7 @@ public class movement4wd {
 
 		PIDReset();
 		while (opMode.opModeIsActive()
-			&& timer.time() < 4d
+			&& timer.time() < TIMER
 			&& (Math.abs(headingDifference) > _config.HEADING_THRESHOLD)) {
 			headingDifference = TARGET - getHeading();
 
@@ -126,7 +130,7 @@ public class movement4wd {
 		}
 
 		motors.setPower(0);
-		opMode.sleep(200);
+//		opMode.sleep(200);
 	}
 
 	private double PIDControl(final double HEADING, final double MAX_SPEED, final double P,
@@ -156,10 +160,6 @@ public class movement4wd {
 	public void resetHeading() {
 		imu.resetYaw();
 	}
-
-//	private boolean isBusy() {
-//		return rightRear.isBusy() && leftRear.isBusy() && rightFront.isBusy() && leftFront.isBusy();
-//	}
 
 	private void setMode(final DcMotor.RunMode runMode) {
 		rightRear.setMode(runMode);
@@ -218,22 +218,6 @@ public class movement4wd {
 		for (Map.Entry<Integer, Integer> entry : motors.getCurrentPositions().entrySet()) {
 			telemetry.addData(String.valueOf(entry.getKey()), entry.getValue());
 		}
-//		telemetry.addData("Right rear: ", rightRear.getCurrentPosition());
-//		telemetry.addData("Left rear: ", leftRear.getCurrentPosition());
-//		telemetry.addData("Right front: ", rightFront.getCurrentPosition());
-//		telemetry.addData("Left front: ", leftFront.getCurrentPosition());
-
-//		telemetry.addLine("Velocity");
-//		telemetry.addData("Right rear: ", rightRear.getVelocity());
-//		telemetry.addData("Left rear: ", leftRear.getVelocity());
-//		telemetry.addData("Right front: ", rightFront.getVelocity());
-//		telemetry.addData("Left front: ", leftFront.getVelocity());
-
-//		telemetry.addLine("Tolerance");
-//		telemetry.addData("Right rear: ", rightRear.getTargetPositionTolerance());
-//		telemetry.addData("Left rear: ", leftRear.getTargetPositionTolerance());
-//		telemetry.addData("Right front: ", rightFront.getTargetPositionTolerance());
-//		telemetry.addData("Left front: ", leftFront.getTargetPositionTolerance());
 
 		telemetry.update();
 	}

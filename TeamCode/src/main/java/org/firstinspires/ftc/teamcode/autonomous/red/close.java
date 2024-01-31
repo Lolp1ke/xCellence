@@ -32,7 +32,7 @@ public class close extends LinearOpMode {
 		_openCV.cameraOff();
 		_movement4wd.resetHeading();
 
-		sleep(13000);
+//		sleep(13000);
 
 		int location = _openCV._pipeline.location;
 
@@ -43,9 +43,9 @@ public class close extends LinearOpMode {
 		else if (location == 3)
 			right();
 
-//		left();
-//		center();
 //		right();
+//		center();
+//		left();
 
 		while (opModeIsActive()) {
 		}
@@ -54,30 +54,34 @@ public class close extends LinearOpMode {
 	private void right() {
 		_movement4wd.forward(65, 0);
 		_movement4wd.rotate(90);
-		_movement4wd.forward(-45, 90);
+		_movement4wd.forward(-47, 90);
 
 		_mechanism.purple();
 		_movement4wd.strafe(-30, 90);
-		_movement4wd.forward(-50, 90);
+		_movement4wd.forward(-35, 90);
 
 		_mechanism.yellow();
-		_movement4wd.strafe(60, 90);
-		_movement4wd.forward(-30, 90);
+		_movement4wd.strafe(80, 90);
+//		_movement4wd.forward(-7, 90);
+
+		_mechanism.arm(-100);
 	}
 
 	private void center() {
-		_movement4wd.forward(75, 0);
-		_movement4wd.forward(-15, 0);
+		_movement4wd.forward(73, 0);
+		_movement4wd.forward(-10, 0);
 		_mechanism.purple();
 
 		_movement4wd.forward(-10, 0);
 		_movement4wd.rotate(90);
-		_movement4wd.forward(-75, 90);
+		_movement4wd.forward(-84, 90);
 		_movement4wd.strafe(10, 90);
-		_mechanism.yellow();
 
-		_movement4wd.strafe(70, 90);
+		_mechanism.yellow();
+		_movement4wd.strafe(72, 90);
 		_movement4wd.forward(-20, 90);
+
+		_mechanism.arm(-100);
 	}
 
 	private void left() {
@@ -85,14 +89,16 @@ public class close extends LinearOpMode {
 		_movement4wd.rotate(90);
 
 		_movement4wd.forward(15, 90);
-		_movement4wd.forward(-15, 90);
+		_movement4wd.forward(-14, 90);
 		_mechanism.purple();
 
 		_movement4wd.strafe(10, 90);
-		_movement4wd.forward(-70, 90);
+		_movement4wd.forward(-85, 90);
 		_mechanism.yellow();
 
-		_movement4wd.strafe(40, 90);
-		_movement4wd.forward(-25, 90);
+		_movement4wd.strafe(55, 90);
+		_movement4wd.forward(-7, 90);
+
+		_mechanism.arm(-100);
 	}
 }

@@ -53,25 +53,50 @@ public class movement4wd {
 		double x = gamepad.left_stick_x;
 		double rx = gamepad.right_stick_x;
 
-		if (gamepad.a) {
+		if (gamepad.a)
 			this.resetHeading();
-		}
 
 		double heading = -Math.toRadians(this.getHeading());
+
+		if ((this.holdPressed = gamepad.b) && !this.lastHoldPressed) {
+			this.targetHeading = -Math.toDegrees(heading);
+			this.holdHeading = !this.holdHeading;
+			this.PIDReset();
+		}
+//		else this.holdHeading = false;
+		this.lastHoldPressed = this.holdPressed;
+
+		if (this.holdHeading)
+			this.fix = this.PIDControl(this.targetHeading, this.speedMultiplier,
+				this._config.P_DRIVE_GAIN, this._config.I_DRIVE_GAIN, this._config.D_DRIVE_GAIN);
+		else
+			this.fix = 0d;
+
 
 		double rotX = x * Math.cos(heading) - y * Math.sin(heading);
 		double rotY = x * Math.sin(heading) + y * Math.cos(heading);
 
-		double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+//		double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+		double denominator = 1d;
 		this.rightRearPower = (rotY + rotX - rx) / denominator;
 		this.leftRearPower = (rotY - rotX + rx) / denominator;
 		this.rightFrontPower = (rotY - rotX - rx) / denominator;
 		this.leftFrontPower = (rotY + rotX + rx) / denominator;
 
-		this.rightRearPower *= this.speedMultiplier;
-		this.leftRearPower *= this.speedMultiplier;
-		this.rightFrontPower *= this.speedMultiplier;
-		this.leftFrontPower *= this.speedMultiplier;
+		this.rightRearPower += this.fix;
+		this.leftRearPower -= this.fix;
+		this.rightFrontPower += this.fix;
+		this.leftFrontPower -= this.fix;
+
+		this.rightRearPower = Range.clip(this.rightRearPower, -this.speedMultiplier, this.speedMultiplier);
+		this.leftRearPower = Range.clip(this.leftRearPower, -this.speedMultiplier, this.speedMultiplier);
+		this.rightFrontPower = Range.clip(this.rightFrontPower, -this.speedMultiplier, this.speedMultiplier);
+		this.leftFrontPower = Range.clip(this.leftFrontPower, -this.speedMultiplier, this.speedMultiplier);
+
+//		this.rightRearPower *= this.speedMultiplier;
+//		this.leftRearPower *= this.speedMultiplier;
+//		this.rightFrontPower *= this.speedMultiplier;
+//		this.leftFrontPower *= this.speedMultiplier;
 
 		this.rightRear.setPower(this.rightRearPower);
 		this.leftRear.setPower(this.leftRearPower);
@@ -79,7 +104,7 @@ public class movement4wd {
 		this.leftFront.setPower(this.leftFrontPower);
 	}
 
-	public void run(final Gamepad gamepad) {
+	public void robotCentric(final Gamepad gamepad) {
 		boolean isBoosted = gamepad.right_bumper;
 		boolean isSlowed = gamepad.left_bumper;
 		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
@@ -103,16 +128,15 @@ public class movement4wd {
 		if ((this.holdPressed = gamepad.b) && !this.lastHoldPressed) {
 			this.targetHeading = this.getHeading();
 			this.holdHeading = !this.holdHeading;
+			this.PIDReset();
 		}
 		this.lastHoldPressed = this.holdPressed;
 
 		if (this.holdHeading)
 			this.fix = this.PIDControl(this.targetHeading, this._config.SPEED,
 				this._config.P_DRIVE_GAIN, this._config.I_DRIVE_GAIN, this._config.D_DRIVE_GAIN);
-		else {
-			this.PIDReset();
+		else
 			this.fix = 0d;
-		}
 
 		this.rightRearPower += this.fix;
 		this.leftRearPower -= this.fix;

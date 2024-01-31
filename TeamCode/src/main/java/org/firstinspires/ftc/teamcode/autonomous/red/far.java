@@ -53,43 +53,70 @@ public class far extends LinearOpMode {
 		_movement4wd.forward(-45, 90);
 
 		_mechanism.purple();
-		_movement4wd.forward(-150, 90);
-		_movement4wd.strafe(-25, 90);
+		_movement4wd.forward(-60, 90);
+		_movement4wd.rotate(45);
 
-		_mechanism.yellow();
-		_movement4wd.strafe(-40, 90);
-		_movement4wd.forward(-27, 90);
+		_movement4wd.forward(-84, 45);
+		_movement4wd.rotate(-90);
+		_movement4wd.forward(40, -90);
+
+		_mechanism.openRightClaw();
+
+//		_movement4wd.forward(-150, 90);
+//		_movement4wd.strafe(-25, 90);
+//
+//		_mechanism.yellow();
+//		_movement4wd.strafe(-40, 90);
+//		_movement4wd.forward(-27, 90);
 	}
 
 	private void center() {
 		_movement4wd.forward(115, 0);
-		_movement4wd.rotate(180);
+		_movement4wd.forward(-15, 0);
 		_mechanism.purple();
 
-		_movement4wd.forward(-15, 180);
-		_movement4wd.rotate(90);
+		_movement4wd.forward(-90, 0);
+		_movement4wd.rotate(-90);
+		_movement4wd.forward(210, -90);
 
-		_movement4wd.forward(-180, 90);
-		_movement4wd.strafe(-70, 90);
-		_mechanism.yellow();
+		_mechanism.openRightClaw();
 
-		_movement4wd.strafe(50, 90);
-		_movement4wd.forward(-30, 90);
+//		_movement4wd.forward(115, 0);?
+//		_movement4wd.rotate(180);
+//		_mechanism.purple();
+//
+//		_movement4wd.forward(-15, 180);
+//		_movement4wd.rotate(90);
+//
+//		_movement4wd.forward(-180, 90);
+//		_movement4wd.strafe(-70, 90);
+//		_mechanism.yellow();
+//
+//		_movement4wd.strafe(50, 90);
+//		_movement4wd.forward(-30, 90);
 	}
 
 	private void left() {
 		_movement4wd.forward(63, 0);
 		_movement4wd.rotate(90);
+		_movement4wd.strafe(-63, 90);
 
-		_movement4wd.forward(15, 90);
-		_movement4wd.forward(-15, 90);
-		_mechanism.purple();
+		_movement4wd.forward(-210, 90);
+		_movement4wd.rotate(-90);
+		_mechanism.openRightClaw();
 
-		_movement4wd.forward(-200, 90);
-		_movement4wd.strafe(33, 90);
-		_mechanism.yellow();
-
-		_movement4wd.strafe(40, 90);
-		_movement4wd.forward(-25, 90);
+//		_movement4wd.forward(63, 0);
+//		_movement4wd.rotate(90);
+//
+//		_movement4wd.forward(15, 90);
+//		_movement4wd.forward(-15, 90);
+//		_mechanism.purple();
+//
+//		_movement4wd.forward(-200, 90);
+//		_movement4wd.strafe(33, 90);
+//		_mechanism.yellow();
+//
+//		_movement4wd.strafe(40, 90);
+//		_movement4wd.forward(-25, 90);
 	}
 }

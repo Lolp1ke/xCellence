@@ -54,9 +54,20 @@ public class mechanism {
 
 		this.rightClaw.setPosition(this._config.CLAW_OPEN);
 
-		this.arm(-175);
+		this.arm(-70);
 
 		this.rightClaw.setPosition(this._config.CLAW_CLOSE);
+	}
+
+	public void openRightClaw() {
+		this.wrist.setPosition(this._config.WRIST_GROUND);
+		this.opMode.sleep(500);
+
+		this.rightClaw.setPosition(this._config.CLAW_OPEN);
+		this.opMode.sleep(500);
+
+		this.wrist.setPosition(this._config.WRIST_SCORE);
+		this.opMode.sleep(300);
 	}
 
 	private boolean isBusy() {
