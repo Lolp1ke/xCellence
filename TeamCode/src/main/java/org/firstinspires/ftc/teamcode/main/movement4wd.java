@@ -41,6 +41,8 @@ public class movement4wd {
 	private boolean holdPressed = false;
 	private boolean lastHoldPressed = false;
 
+	private double lastRx = 0d;
+
 	private double rocketPosition = this._config.ROCKET_CLOSED;
 
 
@@ -56,15 +58,23 @@ public class movement4wd {
 		if (gamepad.a)
 			this.resetHeading();
 
-		double heading = -Math.toRadians(this.getHeading());
+		double heading = -this.getHeading(AngleUnit.RADIANS);
 
-		if ((this.holdPressed = gamepad.b) && !this.lastHoldPressed) {
-			this.targetHeading = -Math.toDegrees(heading);
-			this.holdHeading = !this.holdHeading;
+		if (rx == 0 && this.lastRx != rx) {
+			this.holdHeading = true;
+			this.targetHeading = -this.getHeading(AngleUnit.RADIANS);
 			this.PIDReset();
+		} else if (rx != 0) {
+			this.holdHeading = false;
 		}
+		this.lastRx = rx;
+
+//		if ((this.holdPressed = gamepad.b) && !this.lastHoldPressed) {
+//			this.targetHeading = -Math.toDegrees(heading);
+//			this.holdHeading = !this.holdHeading;
+//			this.PIDReset();
+//		}
 //		else this.holdHeading = false;
-		this.lastHoldPressed = this.holdPressed;
 
 		if (this.holdHeading)
 			this.fix = this.PIDControl(this.targetHeading, this.speedMultiplier,
@@ -72,16 +82,13 @@ public class movement4wd {
 		else
 			this.fix = 0d;
 
-
 		double rotX = x * Math.cos(heading) - y * Math.sin(heading);
 		double rotY = x * Math.sin(heading) + y * Math.cos(heading);
 
-//		double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-		double denominator = 1d;
-		this.rightRearPower = (rotY + rotX - rx) / denominator;
-		this.leftRearPower = (rotY - rotX + rx) / denominator;
-		this.rightFrontPower = (rotY - rotX - rx) / denominator;
-		this.leftFrontPower = (rotY + rotX + rx) / denominator;
+		this.rightRearPower = (rotY + rotX - rx);
+		this.leftRearPower = (rotY - rotX + rx);
+		this.rightFrontPower = (rotY - rotX - rx);
+		this.leftFrontPower = (rotY + rotX + rx);
 
 		this.rightRearPower += this.fix;
 		this.leftRearPower -= this.fix;
@@ -92,11 +99,6 @@ public class movement4wd {
 		this.leftRearPower = Range.clip(this.leftRearPower, -this.speedMultiplier, this.speedMultiplier);
 		this.rightFrontPower = Range.clip(this.rightFrontPower, -this.speedMultiplier, this.speedMultiplier);
 		this.leftFrontPower = Range.clip(this.leftFrontPower, -this.speedMultiplier, this.speedMultiplier);
-
-//		this.rightRearPower *= this.speedMultiplier;
-//		this.leftRearPower *= this.speedMultiplier;
-//		this.rightFrontPower *= this.speedMultiplier;
-//		this.leftFrontPower *= this.speedMultiplier;
 
 		this.rightRear.setPower(this.rightRearPower);
 		this.leftRear.setPower(this.leftRearPower);
@@ -181,6 +183,10 @@ public class movement4wd {
 
 	private double getHeading() {
 		return this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+	}
+
+	private double getHeading(final AngleUnit angleUnit) {
+		return this.imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
 	}
 
 	private void resetHeading() {

@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-//    maven { url = 'https://maven.brott.dev/' } // Roadrunner
+    maven { url = 'https://maven.brott.dev/' } // Roadrunner
 }
 
 dependencies {
@@ -23,6 +23,6 @@ dependencies {
 //        exclude group: 'org.firstinspires.ftc'
 //    }
 
-//    implementation 'com.acmerobotics.dashboard:dashboard:0.4.12' // Roadrunner
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.12' // Roadrunner
 }
 
