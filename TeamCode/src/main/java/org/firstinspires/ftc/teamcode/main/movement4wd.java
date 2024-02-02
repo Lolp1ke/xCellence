@@ -47,9 +47,10 @@ public class movement4wd {
 
 
 	public void fieldCentric(final Gamepad gamepad) {
-		boolean isBoosted = gamepad.right_bumper;
+//		boolean isBoosted = gamepad.right_bumper;
 		boolean isSlowed = gamepad.left_bumper;
-		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
+//		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
+		this.speedMultiplier = isSlowed ? this._config.DECELERATION : this._config.SPEED;
 
 		double y = -gamepad.left_stick_y;
 		double x = gamepad.left_stick_x;
@@ -107,9 +108,10 @@ public class movement4wd {
 	}
 
 	public void robotCentric(final Gamepad gamepad) {
-		boolean isBoosted = gamepad.right_bumper;
+//		boolean isBoosted = gamepad.right_bumper;
 		boolean isSlowed = gamepad.left_bumper;
-		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
+//		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
+		this.speedMultiplier = isSlowed ? this._config.DECELERATION : this._config.SPEED;
 
 		double x = gamepad.left_stick_x;
 		double y = -gamepad.left_stick_y;

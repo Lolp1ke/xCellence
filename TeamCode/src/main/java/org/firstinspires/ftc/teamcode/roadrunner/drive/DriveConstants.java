@@ -33,7 +33,7 @@ public class DriveConstants {
 	 * from DriveVelocityPIDTuner.
 	 */
 	public static final boolean RUN_USING_ENCODER = true;
-	public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+	public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.02d, 0.001d, 0.04d,
 		getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
 	/*
@@ -44,8 +44,8 @@ public class DriveConstants {
 	 * angular distances although most angular parameters are wrapped in Math.toRadians() for
 	 * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
 	 */
-	public static double WHEEL_RADIUS = 3.7d; // in
-	public static double GEAR_RATIO = 12d; // output (wheel) speed / input (motor) speed
+	public static double WHEEL_RADIUS = 1.889764d; // in
+	public static double GEAR_RATIO = 1d; // output (wheel) speed / input (motor) speed
 	public static double TRACK_WIDTH = 15.2d; // in
 
 	/*
@@ -74,9 +74,9 @@ public class DriveConstants {
 	 * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
 	 */
 	public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-		RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+		RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
 	public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-		RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+		RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
 
 	public static double encoderTicksToInches(double ticks) {

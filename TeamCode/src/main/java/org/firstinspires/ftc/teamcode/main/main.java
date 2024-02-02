@@ -13,8 +13,6 @@ public class main extends LinearOpMode {
 	private final movement4wd _movement4wd = new movement4wd();
 	private final mechanism _mechanism = new mechanism();
 
-	private boolean isFieldCentric = false;
-
 
 	@Override
 	public void runOpMode() {
@@ -23,13 +21,6 @@ public class main extends LinearOpMode {
 
 		telemetry.addData("Status: ", "vroom vroom");
 		telemetry.update();
-
-		while (opModeInInit()) {
-			if (gamepad1.dpad_up)
-				isFieldCentric = true;
-			if (gamepad1.dpad_down)
-				isFieldCentric = false;
-		}
 
 		waitForStart();
 		while (opModeIsActive()) {

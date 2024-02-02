@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.main;
 
 public class config {
 	// - Movement config
-	public final double SPEED = 0.4d;
+	public final double SPEED = 0.7d;
 	public final double ACCELERATION = 0.7d;
-	public final double DECELERATION = 0.25d;
+	public final double DECELERATION = 0.3d;
 
 	public final double P_DRIVE_GAIN = 0.02d;
 	public final double I_DRIVE_GAIN = 0.001d;
