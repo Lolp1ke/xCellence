@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.autonomous.config;
+import org.firstinspires.ftc.teamcode.oldAutonomous.config;
 
 @TeleOp(name = "PID Tuner", group = "test")
 public class pid extends LinearOpMode {

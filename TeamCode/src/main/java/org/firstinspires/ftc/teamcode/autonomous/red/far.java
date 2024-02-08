@@ -1,122 +1,70 @@
 package org.firstinspires.ftc.teamcode.autonomous.red;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.autonomous.mechanism;
-import org.firstinspires.ftc.teamcode.autonomous.movement4wd;
 import org.firstinspires.ftc.teamcode.autonomous.openCV.openCV;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
-@Autonomous(name = "Red far", group = "!!!RED")
 public class far extends LinearOpMode {
-	private final openCV _openCV = new openCV(this, true);
-	private final movement4wd _movement4wd = new movement4wd(this);
-	private final mechanism _mechanism = new mechanism(this);
+	private final openCV openCV = new openCV(true);
+	private final SampleMecanumDrive movement;
 
+	private far() {
+		this.movement = new SampleMecanumDrive(hardwareMap);
+		this.movement.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.movement.setPoseEstimate(new Pose2d());
+	}
 
 	@Override
 	public void runOpMode() {
-		_openCV.init();
-
-		_movement4wd.init(hardwareMap);
-		_mechanism.init(hardwareMap);
+		this.openCV.init(hardwareMap);
 
 		while (opModeInInit()) {
-			_openCV.telemetry(telemetry);
-			_openCV._pipeline.telemetry(telemetry);
+			this.openCV.telemetry(telemetry);
+			this.openCV.pipeline.telemetry(telemetry);
+
 			telemetry.update();
 		}
 
 		waitForStart();
-		_openCV.cameraOff();
-		int location = _openCV._pipeline.location;
+		this.openCV.cameraOff(telemetry);
+		final int location = this.openCV.pipeline.location;
 
-		if (location == 1)
-			left();
-		else if (location == 2)
-			center();
-		else if (location == 3)
-			right();
+		switch (location) {
+			case 1:
+				this.left();
+				break;
 
-//		left();
-//		center();
-//		right();
+			case 2:
+				this.center();
+				break;
 
+			default:
+				this.right();
+				break;
+		}
 
 		while (opModeIsActive()) {
 		}
 	}
 
 	private void right() {
-		_movement4wd.forward(63, 0);
-		_movement4wd.rotate(90);
-		_movement4wd.forward(-45, 90);
-
-		_mechanism.purple();
-		_movement4wd.forward(-60, 90);
-		_movement4wd.rotate(45);
-
-		_movement4wd.forward(-84, 45);
-		_movement4wd.rotate(-90);
-		_movement4wd.forward(40, -90);
-
-		_mechanism.openRightClaw();
-
-//		_movement4wd.forward(-150, 90);
-//		_movement4wd.strafe(-25, 90);
-//
-//		_mechanism.yellow();
-//		_movement4wd.strafe(-40, 90);
-//		_movement4wd.forward(-27, 90);
+		this.movement.followTrajectorySequence(
+			this.movement.trajectorySequenceBuilder(new Pose2d())
+				.forward(30)
+				.splineTo(new Vector2d(10, 10), 0)
+				.setReversed(true)
+				.splineTo(new Vector2d(0, 0), 0)
+				.build()
+		);
 	}
 
 	private void center() {
-		_movement4wd.forward(115, 0);
-		_movement4wd.forward(-15, 0);
-		_mechanism.purple();
-
-		_movement4wd.forward(-90, 0);
-		_movement4wd.rotate(-90);
-		_movement4wd.forward(210, -90);
-
-		_mechanism.openRightClaw();
-
-//		_movement4wd.forward(115, 0);?
-//		_movement4wd.rotate(180);
-//		_mechanism.purple();
-//
-//		_movement4wd.forward(-15, 180);
-//		_movement4wd.rotate(90);
-//
-//		_movement4wd.forward(-180, 90);
-//		_movement4wd.strafe(-70, 90);
-//		_mechanism.yellow();
-//
-//		_movement4wd.strafe(50, 90);
-//		_movement4wd.forward(-30, 90);
 	}
 
 	private void left() {
-		_movement4wd.forward(63, 0);
-		_movement4wd.rotate(90);
-		_movement4wd.strafe(-63, 90);
-
-		_movement4wd.forward(-210, 90);
-		_movement4wd.rotate(-90);
-		_mechanism.openRightClaw();
-
-//		_movement4wd.forward(63, 0);
-//		_movement4wd.rotate(90);
-//
-//		_movement4wd.forward(15, 90);
-//		_movement4wd.forward(-15, 90);
-//		_mechanism.purple();
-//
-//		_movement4wd.forward(-200, 90);
-//		_movement4wd.strafe(33, 90);
-//		_mechanism.yellow();
-//
-//		_movement4wd.strafe(40, 90);
-//		_movement4wd.forward(-25, 90);
 	}
 }
