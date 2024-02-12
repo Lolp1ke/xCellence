@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.main;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class config {
 	// - Movement config
 	public final double SPEED = 0.7d;

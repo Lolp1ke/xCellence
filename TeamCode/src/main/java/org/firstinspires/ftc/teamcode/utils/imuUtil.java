@@ -9,13 +9,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class imuUtil {
 	private IMU imu;
 
-	public imuUtil(final IMU imu) {
-		this.imu = imu;
+	public imuUtil(final HardwareMap HARDWARE_MAP) {
+		this.imu = HARDWARE_MAP.get(IMU.class, "imu");
 	}
 
-	public void init(final HardwareMap hardwareMap, String deviceName) {
-		this.imu = hardwareMap.get(IMU.class, deviceName);
-	}
+//	public void init(final HardwareMap hardwareMap, String deviceName) {
+//		this.imu = hardwareMap.get(IMU.class, deviceName);
+//	}
 
 	public double getHeading() {
 		return this.getHeading(AngleUnit.DEGREES);

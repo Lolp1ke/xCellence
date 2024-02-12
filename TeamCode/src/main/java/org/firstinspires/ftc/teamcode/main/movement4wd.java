@@ -37,7 +37,7 @@ public class movement4wd {
 	private double fix = 0d;
 
 	private double targetHeading = 0d;
-	private boolean holdHeading = false;
+	private boolean holdHeading = true;
 	private boolean holdPressed = false;
 	private boolean lastHoldPressed = false;
 
@@ -50,7 +50,7 @@ public class movement4wd {
 //		boolean isBoosted = gamepad.right_bumper;
 		boolean isSlowed = gamepad.left_bumper;
 //		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
-		this.speedMultiplier = isSlowed ? this._config.DECELERATION : this._config.SPEED;
+		this.speedMultiplier = isSlowed ? this._config.DECELERATION : (this._config.SPEED + 0.2d);
 
 		double y = -gamepad.left_stick_y;
 		double x = gamepad.left_stick_x;
@@ -78,7 +78,7 @@ public class movement4wd {
 //		else this.holdHeading = false;
 
 		if (this.holdHeading)
-			this.fix = this.PIDControl(this.targetHeading, this.speedMultiplier,
+			this.fix = this.PIDControl(Math.toDegrees(-this.targetHeading), this.speedMultiplier,
 				this._config.P_DRIVE_GAIN, this._config.I_DRIVE_GAIN, this._config.D_DRIVE_GAIN);
 		else
 			this.fix = 0d;
@@ -90,6 +90,9 @@ public class movement4wd {
 		this.leftRearPower = (rotY - rotX + rx);
 		this.rightFrontPower = (rotY - rotX - rx);
 		this.leftFrontPower = (rotY + rotX + rx);
+
+//		if (this.fix > -0.2d) this.fix = -0.2d;
+//		else if (this.fix < 0.2d) this.fix = 0.2d;
 
 		this.rightRearPower += this.fix;
 		this.leftRearPower -= this.fix;
@@ -193,6 +196,7 @@ public class movement4wd {
 
 	private void resetHeading() {
 		this.imu.resetYaw();
+		this.targetHeading = 0d;
 	}
 
 	public void telemetry(final Telemetry telemetry) {
@@ -204,6 +208,8 @@ public class movement4wd {
 		telemetry.addData("Left rear", this.leftRearPower);
 		telemetry.addData("Fix: ", this.fix);
 		telemetry.addLine();
+
+		telemetry.addData("Last rx: ", lastRx);
 
 		telemetry.addLine("Heading");
 		telemetry.addData("Current: ", this.getHeading());
