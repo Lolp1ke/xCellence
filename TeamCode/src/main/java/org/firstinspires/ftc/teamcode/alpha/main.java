@@ -5,17 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "new main (STILL IN TEST)", group = "test")
 public class main extends LinearOpMode {
-	private final movement4wd movement4wd;
-	private final mechanism mechanism;
+	private movement4wd movement4wd;
+	private mechanism mechanism;
 
-
-	private main() {
-		this.movement4wd = new movement4wd(hardwareMap);
-		this.mechanism = new mechanism(hardwareMap);
-	}
 
 	@Override
 	public void runOpMode() {
+		this.movement4wd = new movement4wd(hardwareMap);
+		this.mechanism = new mechanism(hardwareMap);
+
 		waitForStart();
 		while (opModeIsActive()) {
 			this.movement4wd.run(gamepad1);

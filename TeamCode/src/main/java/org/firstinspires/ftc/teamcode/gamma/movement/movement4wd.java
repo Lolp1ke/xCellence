@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.alpha;
+package org.firstinspires.ftc.teamcode.gamma.movement;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
@@ -15,13 +14,13 @@ import org.firstinspires.ftc.teamcode.utils.imuUtil;
 import org.firstinspires.ftc.teamcode.utils.motorUtil;
 import org.firstinspires.ftc.teamcode.utils.pid;
 
-public class movement4wd {
-	private final config config = new config();
-	private final VoltageSensor BATTERY_VOLTAGE_SENSOR;
-
+public class movement4wd extends config {
 	private final motorUtil motorUtil;
 	private final imuUtil imuUtil;
 	private final pid pid;
+
+	private final VoltageSensor batteryVoltageSensor;
+
 
 	private double rightRearPower = 0d;
 	private double leftRearPower = 0d;
@@ -33,65 +32,53 @@ public class movement4wd {
 	private double targetHeading = 0d;
 	private double lastTurn = 0d;
 
-	private double speedMultiplier = this.config.SPEED;
-
-	private enum DRIVE_MODE {
-		FIELD,
-		ROBOT
-	}
+	private double speedMultiplier = SPEED;
 
 	private DRIVE_MODE driveMode = DRIVE_MODE.ROBOT;
 
 	public movement4wd(final HardwareMap HARDWARE_MAP) {
-//		this.motorUtil = new motorUtil(
-//			HARDWARE_MAP,
-//			"right_rear",
-//			"left_rear",
-//			"right_front",
-//			"left_front"
-//		);
+		this.batteryVoltageSensor = HARDWARE_MAP.voltageSensor.iterator().next();
 
-//		this.motorUtil.init(HARDWARE_MAP, );
 
 		this.motorUtil = new motorUtil(
-			HARDWARE_MAP.get(DcMotorEx.class, "right_rear"),
-			HARDWARE_MAP.get(DcMotorEx.class, "left_rear"),
-			HARDWARE_MAP.get(DcMotorEx.class, "right_front"),
-			HARDWARE_MAP.get(DcMotorEx.class, "left_front")
+			HARDWARE_MAP.get(DcMotorEx.class, "right_rear")
 		);
 
-		this.imuUtil = new imuUtil(HARDWARE_MAP);
+		this.motorUtil.setDirection(
+			DcMotorEx.Direction.FORWARD,
+			DcMotorEx.Direction.REVERSE,
+			DcMotorEx.Direction.FORWARD,
+			DcMotorEx.Direction.REVERSE
+		);
+
+		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+		this.motorUtil.setZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+		this.motorUtil.setVelocityPIDFCoefficients(
+			P_VELOCITY_GAIN,
+			I_VELOCITY_GAIN,
+			D_VELOCITY_GAIN,
+			F_VELOCITY_GAIN,
+			this.batteryVoltageSensor.getVoltage()
+		);
+
+
+		this.imuUtil = new imuUtil(
+			HARDWARE_MAP.get(IMU.class, "imu")
+		);
+
 		this.imuUtil.initialize(
 			RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
 			RevHubOrientationOnRobot.UsbFacingDirection.UP
 		);
 
-		this.BATTERY_VOLTAGE_SENSOR = HARDWARE_MAP.voltageSensor.iterator().next();
 
 		this.pid = new pid(
-			this.config.P_VELOCITY_GAIN,
-			this.config.I_VELOCITY_GAIN,
-			this.config.D_VELOCITY_GAIN,
-			this.config.PID_MAX_SPEED
-		);
-
-		this.motorUtil.setDirection(
-			DcMotorSimple.Direction.FORWARD,
-			DcMotorSimple.Direction.REVERSE,
-			DcMotorSimple.Direction.FORWARD,
-			DcMotorSimple.Direction.REVERSE
-		);
-
-		this.motorUtil.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		this.motorUtil.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-		this.motorUtil.setVelocityPIDFCoefficients(
-			this.config.P_VELOCITY_GAIN,
-			this.config.I_VELOCITY_GAIN,
-			this.config.D_VELOCITY_GAIN,
-			this.config.F_VELOCITY_GAIN,
-			this.BATTERY_VOLTAGE_SENSOR.getVoltage()
+			P_HEADING_GAIN,
+			I_HEADING_GAIN,
+			D_HEADING_GAIN,
+			PID_MAX_SPEED
 		);
 	}
 
@@ -106,9 +93,9 @@ public class movement4wd {
 		else this.fieldCentric(GAMEPAD);
 	}
 
-	public void robotCentric(final Gamepad GAMEPAD) {
+	private void robotCentric(final Gamepad GAMEPAD) {
 		this.speedMultiplier = GAMEPAD.left_bumper ?
-			this.config.DECELERATION : this.config.SPEED;
+			DECELERATION : SPEED;
 
 		double x = GAMEPAD.left_stick_x;
 		double y = -GAMEPAD.left_stick_y;
@@ -125,6 +112,17 @@ public class movement4wd {
 		this.leftRearPower = (power * sin / max + turn);
 		this.rightFrontPower = (power * sin / max - turn);
 		this.leftFrontPower = (power * cos / max + turn);
+
+		if (turn == 0 && this.lastTurn != turn) {
+			this.holdHeading = true;
+			this.targetHeading = -this.imuUtil.getHeading(AngleUnit.RADIANS);
+			this.pid.reset();
+		} else if (turn != 0) this.holdHeading = false;
+		this.lastTurn = turn;
+
+		if (this.holdHeading)
+			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.getHeading());
+		else this.fix = 0d;
 
 		this.rightRearPower += this.fix;
 		this.leftRearPower -= this.fix;
@@ -144,29 +142,25 @@ public class movement4wd {
 		);
 	}
 
-	public void fieldCentric(final Gamepad GAMEPAD) {
+	private void fieldCentric(final Gamepad GAMEPAD) {
 		double x = GAMEPAD.left_stick_x;
 		double y = -GAMEPAD.left_stick_y;
 		double turn = GAMEPAD.right_stick_x;
 
 		double heading = -this.imuUtil.getHeading(AngleUnit.RADIANS);
 
-		if (GAMEPAD.a)
-			this.imuUtil.reset();
+		if (GAMEPAD.a) this.imuUtil.reset();
 
 		if (turn == 0 && this.lastTurn != turn) {
 			this.holdHeading = true;
 			this.targetHeading = -this.imuUtil.getHeading(AngleUnit.RADIANS);
 			this.pid.reset();
-		} else if (turn != 0) {
-			this.holdHeading = false;
-		}
+		} else if (turn != 0) this.holdHeading = false;
 		this.lastTurn = turn;
 
 		if (this.holdHeading)
 			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.getHeading());
-		else
-			this.fix = 0d;
+		else this.fix = 0d;
 
 		double rotX = x * Math.cos(heading) - y * Math.sin(heading);
 		double rotY = x * Math.sin(heading) + y * Math.cos(heading);
@@ -213,26 +207,5 @@ public class movement4wd {
 		TELEMETRY.addLine();
 
 		TELEMETRY.addLine();
-	}
-
-	public void init(final HardwareMap HARDWARE_MAP) {
-		this.motorUtil.setDirection(
-			DcMotorSimple.Direction.FORWARD,
-			DcMotorSimple.Direction.REVERSE,
-			DcMotorSimple.Direction.FORWARD,
-			DcMotorSimple.Direction.REVERSE
-		);
-
-		this.motorUtil.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		this.motorUtil.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-		this.motorUtil.setVelocityPIDFCoefficients(
-			this.config.P_VELOCITY_GAIN,
-			this.config.I_VELOCITY_GAIN,
-			this.config.D_VELOCITY_GAIN,
-			this.config.F_VELOCITY_GAIN,
-			this.BATTERY_VOLTAGE_SENSOR.getVoltage()
-		);
 	}
 }

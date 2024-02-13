@@ -1,21 +1,24 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class servoUtil {
 	private final List<Servo> servos;
 
 
-	public servoUtil(final HardwareMap HARDWARE_MAP, final String... DEVICES_NAME) {
-		this.servos = Collections.emptyList();
-
-		for (final String DEVICE_NAME : DEVICES_NAME)
-			this.servos.add(HARDWARE_MAP.get(Servo.class, DEVICE_NAME));
+	public servoUtil(final Servo... SERVOS) {
+		this.servos = Arrays.asList(SERVOS);
 	}
+
+//	public servoUtil(final HardwareMap HARDWARE_MAP, final String... DEVICES_NAME) {
+//		this.servos = Collections.emptyList();
+//
+//		for (final String DEVICE_NAME : DEVICES_NAME)
+//			this.servos.add(HARDWARE_MAP.get(Servo.class, DEVICE_NAME));
+//	}
 
 	public void setDirection(final Servo.Direction... DIRECTIONS) {
 		for (int i = 0; i < this.servos.size(); i++)

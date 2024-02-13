@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.alpha;
+package org.firstinspires.ftc.teamcode.gamma.mechanism;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,17 +14,15 @@ import org.firstinspires.ftc.teamcode.utils.servoUtil;
 
 import java.util.HashMap;
 
-public class mechanism {
-	private final config config = new config();
-
+public class mechanism extends config {
 	private final motorUtil motorUtil;
 	private final servoUtil servoUtil;
 
 	private double armPower = 0d;
 	private double liftPower = 0d;
 
-	private double armSpeedMultiplier = this.config.ARM_SPEED;
-	private double liftSpeedMultiplier = this.config.LIFT_SPEED;
+	private double armSpeedMultiplier = ARM_SPEED;
+	private double liftSpeedMultiplier = LIFT_SPEED;
 
 	private int armPosition = 0;
 	private int liftPosition = 0;
@@ -35,18 +33,11 @@ public class mechanism {
 	private double lastRT = 0d;
 	private double lastLT = 0d;
 
-	private double rightClawPosition = this.config.CLAW_CLOSE;
-	private double leftClawPosition = this.config.CLAW_CLOSE;
-	private double wristPosition = this.config.WRIST_SCORE;
+	private double rightClawPosition = CLAW_CLOSE;
+	private double leftClawPosition = CLAW_CLOSE;
+	private double wristPosition = WRIST_SCORE;
 
 	public mechanism(final HardwareMap HARDWARE_MAP) {
-//		this.motorUtil = new motorUtil(
-//			HARDWARE_MAP,
-//			"right_arm",
-//			"left_arm",
-//			"lift"
-//		);
-
 		this.motorUtil = new motorUtil(
 			HARDWARE_MAP.get(DcMotorEx.class, "right_arm"),
 			HARDWARE_MAP.get(DcMotorEx.class, "left_arm"),
@@ -63,6 +54,7 @@ public class mechanism {
 
 		this.motorUtil.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
 		this.servoUtil = new servoUtil(
 			HARDWARE_MAP.get(Servo.class, "right_claw"),
 			HARDWARE_MAP.get(Servo.class, "left_claw"),
@@ -74,13 +66,6 @@ public class mechanism {
 			Servo.Direction.REVERSE,
 			Servo.Direction.FORWARD
 		);
-
-//		this.servoUtil = new servoUtil(
-//			HARDWARE_MAP,
-//			"right_claw",
-//			"left_claw",
-//			"wrist"
-//		);
 	}
 
 	public void run(final Gamepad GAMEPAD) {
@@ -94,7 +79,6 @@ public class mechanism {
 
 		if (this.armPower == 0 && this.lastArmPower != this.armPower)
 			this.armTargetPosition = this.armPosition;
-
 		else if (this.armPower == 0) {
 			this.motorUtil.setTargetPosition(
 				this.armTargetPosition,
@@ -105,16 +89,17 @@ public class mechanism {
 				DcMotor.RunMode.RUN_TO_POSITION,
 				DcMotor.RunMode.RUN_TO_POSITION
 			);
-
-//			this.motorUtil.setPower(
-//				this.armPower,
-//				this.armPower
-//			);
 		} else this.motorUtil.setMode(
 			DcMotor.RunMode.RUN_USING_ENCODER,
 			DcMotor.RunMode.RUN_USING_ENCODER
 		);
 		this.lastArmPower = this.armPower;
+
+		if (GAMEPAD.right_bumper) this.armSpeedMultiplier = ARM_BOOST;
+		else this.armSpeedMultiplier = ARM_SPEED;
+
+		if (GAMEPAD.left_bumper) this.liftSpeedMultiplier = LIFT_SPEED;
+		else this.liftSpeedMultiplier = LIFT_BOOST;
 
 		Range.clip(this.armPower, -this.armSpeedMultiplier, this.armSpeedMultiplier);
 		Range.clip(this.liftPower, -this.liftSpeedMultiplier, this.liftSpeedMultiplier);
@@ -130,27 +115,27 @@ public class mechanism {
 			this.liftPower
 		);
 
-		double rt = GAMEPAD.right_trigger;
-		double lt = GAMEPAD.left_trigger;
+
+		final double rt = GAMEPAD.right_trigger;
+		final double lt = GAMEPAD.left_trigger;
 
 		if (rt == 0 && this.lastRT != rt)
-			this.rightClawPosition = this.rightClawPosition == this.config.CLAW_CLOSE
-				? this.config.CLAW_OPEN
-				: this.config.CLAW_CLOSE;
+			this.rightClawPosition = this.rightClawPosition == CLAW_CLOSE
+				? CLAW_OPEN
+				: CLAW_CLOSE;
 
 
 		if (lt == 0 && this.lastLT != lt)
-			this.leftClawPosition = this.leftClawPosition == this.config.CLAW_CLOSE
-				? this.config.CLAW_OPEN
-				: this.config.CLAW_CLOSE;
-
+			this.leftClawPosition = this.leftClawPosition == CLAW_CLOSE
+				? CLAW_OPEN
+				: CLAW_CLOSE;
 
 		this.lastRT = rt;
 		this.lastLT = lt;
 
-		if (GAMEPAD.x) this.wristPosition = this.config.WRIST_SCORE;
-		else if (GAMEPAD.a) this.wristPosition = this.config.WRIST_GROUND;
-		else if (GAMEPAD.b) this.wristPosition = this.config.WRIST_MID;
+		if (GAMEPAD.x) this.wristPosition = WRIST_SCORE;
+		else if (GAMEPAD.a) this.wristPosition = WRIST_GROUND;
+		else if (GAMEPAD.b) this.wristPosition = WRIST_MID;
 
 		this.servoUtil.setPosition(
 			this.rightClawPosition,
@@ -163,6 +148,11 @@ public class mechanism {
 		TELEMETRY.addLine("Power");
 		TELEMETRY.addData("Arm: ", this.armPower);
 		TELEMETRY.addData("Lift: ", this.liftPower);
+		TELEMETRY.addLine();
+
+		TELEMETRY.addLine("Speed multipliers");
+		TELEMETRY.addData("Arm: ", this.armSpeedMultiplier);
+		TELEMETRY.addData("Lift: ", this.liftSpeedMultiplier);
 		TELEMETRY.addLine();
 
 		TELEMETRY.addLine("Positions");

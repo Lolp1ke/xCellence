@@ -9,6 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class imuUtil {
 	private IMU imu;
 
+	public imuUtil(final IMU IMU) {
+		this.imu = IMU;
+	}
+
 	public imuUtil(final HardwareMap HARDWARE_MAP) {
 		this.imu = HARDWARE_MAP.get(IMU.class, "imu");
 	}

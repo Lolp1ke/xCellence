@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,12 +16,12 @@ public class motorUtil {
 		this.motors = Arrays.asList(motors);
 	}
 
-	public motorUtil(final HardwareMap HARDWARE_MAP, final String... DEVICES_NAME) {
-		this.motors = Collections.emptyList();
-
-		for (final String DEVICE_NAME : DEVICES_NAME)
-			this.motors.add(HARDWARE_MAP.get(DcMotorEx.class, DEVICE_NAME));
-	}
+//	public motorUtil(final HardwareMap HARDWARE_MAP, final String... DEVICES_NAME) {
+//		this.motors = Collections.emptyList();
+//
+//		for (final String DEVICE_NAME : DEVICES_NAME)
+//			this.motors.add(HARDWARE_MAP.get(DcMotorEx.class, DEVICE_NAME));
+//	}
 
 	public void init(final HardwareMap HARDWARE_MAP, final String... DEVICE_NAMES) {
 		for (int i = 0; i < this.motors.size(); i++)
@@ -72,13 +70,13 @@ public class motorUtil {
 
 	}
 
-	public void setDirection(final DcMotorSimple.Direction DIRECTION) {
+	public void setDirection(final DcMotorEx.Direction DIRECTION) {
 		for (final DcMotorEx motor : this.motors)
 			motor.setDirection(DIRECTION);
 
 	}
 
-	public void setDirection(final DcMotorSimple.Direction... DIRECTIONS) {
+	public void setDirection(final DcMotorEx.Direction... DIRECTIONS) {
 		for (int i = 0; i < DIRECTIONS.length; i++)
 			this.motors.get(i).setDirection(DIRECTIONS[i]);
 
