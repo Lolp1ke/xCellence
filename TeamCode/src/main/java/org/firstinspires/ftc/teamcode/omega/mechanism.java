@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.oldAutonomous;
+package org.firstinspires.ftc.teamcode.omega;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;

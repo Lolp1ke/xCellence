@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.gamma.movement;
 
 import com.acmerobotics.dashboard.config.Config;
 
-@Config("Movement config (gamma)")
+@Config("Movement config")
 public class config {
 	protected final static double SPEED = 0.7d;
 	protected final static double DECELERATION = 0.4d;

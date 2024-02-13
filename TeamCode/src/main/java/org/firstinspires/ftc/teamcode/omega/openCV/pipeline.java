@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.oldAutonomous.openCV;
+package org.firstinspires.ftc.teamcode.omega.openCV;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.oldAutonomous.config;
+import org.firstinspires.ftc.teamcode.omega.config;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;

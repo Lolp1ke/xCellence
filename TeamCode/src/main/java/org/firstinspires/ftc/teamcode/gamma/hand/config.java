@@ -1,15 +1,9 @@
-package org.firstinspires.ftc.teamcode.gamma.mechanism;
+package org.firstinspires.ftc.teamcode.gamma.hand;
 
 import com.acmerobotics.dashboard.config.Config;
 
-@Config("Config mechanism (gamma)")
+@Config("Hand config")
 public class config {
-	protected final static double ARM_SPEED = 0.55d;
-	protected final static double ARM_BOOST = 0.8d;
-
-	protected final static double LIFT_SPEED = 0.75d;
-	protected final static double LIFT_BOOST = 0.9d;
-
 	protected final static double WRIST_GROUND = 0d;
 	protected final static double WRIST_MID = 0.1d;
 	protected final static double WRIST_SCORE = 0.45d;

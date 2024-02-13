@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.oldAutonomous.red;
+package org.firstinspires.ftc.teamcode.omega.red;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.oldAutonomous.mechanism;
-import org.firstinspires.ftc.teamcode.oldAutonomous.movement4wd;
-import org.firstinspires.ftc.teamcode.oldAutonomous.openCV.openCV;
+import org.firstinspires.ftc.teamcode.omega.mechanism;
+import org.firstinspires.ftc.teamcode.omega.movement4wd;
+import org.firstinspires.ftc.teamcode.omega.openCV.openCV;
 
 @Autonomous(name = "Red Close", group = "!!!RED")
 public class close extends LinearOpMode {

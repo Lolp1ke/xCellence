@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.oldAutonomous;
+package org.firstinspires.ftc.teamcode.omega;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

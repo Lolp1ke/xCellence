@@ -1,22 +1,17 @@
-package org.firstinspires.ftc.teamcode.gamma.mechanism;
+package org.firstinspires.ftc.teamcode.gamma.arm;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.motorUtil;
-import org.firstinspires.ftc.teamcode.utils.servoUtil;
 
 import java.util.HashMap;
 
-public class mechanism extends config {
+public class arm extends config {
 	private final motorUtil motorUtil;
-	private final servoUtil servoUtil;
 
 	private double armPower = 0d;
 	private double liftPower = 0d;
@@ -30,14 +25,7 @@ public class mechanism extends config {
 	private double lastArmPower = 0d;
 	private int armTargetPosition = 0;
 
-	private double lastRT = 0d;
-	private double lastLT = 0d;
-
-	private double rightClawPosition = CLAW_CLOSE;
-	private double leftClawPosition = CLAW_CLOSE;
-	private double wristPosition = WRIST_SCORE;
-
-	public mechanism(final HardwareMap HARDWARE_MAP) {
+	public arm(final HardwareMap HARDWARE_MAP) {
 		this.motorUtil = new motorUtil(
 			HARDWARE_MAP.get(DcMotorEx.class, "right_arm"),
 			HARDWARE_MAP.get(DcMotorEx.class, "left_arm"),
@@ -45,27 +33,14 @@ public class mechanism extends config {
 		);
 
 		this.motorUtil.setDirection(
-			DcMotorSimple.Direction.FORWARD,
-			DcMotorSimple.Direction.REVERSE,
-			DcMotorSimple.Direction.FORWARD
+			DcMotorEx.Direction.FORWARD,
+			DcMotorEx.Direction.REVERSE,
+			DcMotorEx.Direction.FORWARD
 		);
 
-		this.motorUtil.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-		this.motorUtil.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-		this.servoUtil = new servoUtil(
-			HARDWARE_MAP.get(Servo.class, "right_claw"),
-			HARDWARE_MAP.get(Servo.class, "left_claw"),
-			HARDWARE_MAP.get(Servo.class, "wrist")
-		);
-
-		this.servoUtil.setDirection(
-			Servo.Direction.FORWARD,
-			Servo.Direction.REVERSE,
-			Servo.Direction.FORWARD
-		);
+		this.motorUtil.setZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior.BRAKE);
 	}
 
 	public void run(final Gamepad GAMEPAD) {
@@ -86,12 +61,12 @@ public class mechanism extends config {
 			);
 
 			this.motorUtil.setMode(
-				DcMotor.RunMode.RUN_TO_POSITION,
-				DcMotor.RunMode.RUN_TO_POSITION
+				DcMotorEx.RunMode.RUN_TO_POSITION,
+				DcMotorEx.RunMode.RUN_TO_POSITION
 			);
 		} else this.motorUtil.setMode(
-			DcMotor.RunMode.RUN_USING_ENCODER,
-			DcMotor.RunMode.RUN_USING_ENCODER
+			DcMotorEx.RunMode.RUN_USING_ENCODER,
+			DcMotorEx.RunMode.RUN_USING_ENCODER
 		);
 		this.lastArmPower = this.armPower;
 
@@ -114,34 +89,6 @@ public class mechanism extends config {
 			this.armPower,
 			this.liftPower
 		);
-
-
-		final double rt = GAMEPAD.right_trigger;
-		final double lt = GAMEPAD.left_trigger;
-
-		if (rt == 0 && this.lastRT != rt)
-			this.rightClawPosition = this.rightClawPosition == CLAW_CLOSE
-				? CLAW_OPEN
-				: CLAW_CLOSE;
-
-
-		if (lt == 0 && this.lastLT != lt)
-			this.leftClawPosition = this.leftClawPosition == CLAW_CLOSE
-				? CLAW_OPEN
-				: CLAW_CLOSE;
-
-		this.lastRT = rt;
-		this.lastLT = lt;
-
-		if (GAMEPAD.x) this.wristPosition = WRIST_SCORE;
-		else if (GAMEPAD.a) this.wristPosition = WRIST_GROUND;
-		else if (GAMEPAD.b) this.wristPosition = WRIST_MID;
-
-		this.servoUtil.setPosition(
-			this.rightClawPosition,
-			this.leftClawPosition,
-			this.wristPosition
-		);
 	}
 
 	public void telemetry(final Telemetry TELEMETRY) {
@@ -159,12 +106,6 @@ public class mechanism extends config {
 		TELEMETRY.addData("Arm: ", this.armPosition);
 		TELEMETRY.addData("Lift: ", this.liftPosition);
 		TELEMETRY.addData("Arm target: ", this.armTargetPosition);
-		TELEMETRY.addLine();
-
-		TELEMETRY.addLine("Servos");
-		TELEMETRY.addData("Right claw: ", this.rightClawPosition);
-		TELEMETRY.addData("Left claw: ", this.leftClawPosition);
-		TELEMETRY.addData("Wrist: ", this.wristPosition);
 		TELEMETRY.addLine();
 	}
 }
