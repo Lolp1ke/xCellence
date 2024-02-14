@@ -21,11 +21,11 @@ public class imuUtil {
 //		this.imu = hardwareMap.get(IMU.class, deviceName);
 //	}
 
-	public double getHeading() {
-		return this.getHeading(AngleUnit.DEGREES);
+	public double get() {
+		return this.get(AngleUnit.DEGREES);
 	}
 
-	public double getHeading(final AngleUnit angleUnit) {
+	public double get(final AngleUnit angleUnit) {
 		return this.imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
 	}
 

@@ -1,0 +1,38 @@
+package org.firstinspires.ftc.teamcode.sigma;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.sigma.arm.arm;
+import org.firstinspires.ftc.teamcode.sigma.hand.hand;
+import org.firstinspires.ftc.teamcode.sigma.movement.movement;
+import org.firstinspires.ftc.teamcode.sigma.rocket.rocket;
+
+public class main extends LinearOpMode {
+	private movement movement;
+	private arm arm;
+	private hand hand;
+	private rocket rocket;
+
+	@Override
+	public void runOpMode() {
+		this.movement = new movement(this.hardwareMap);
+		this.arm = new arm(this.hardwareMap);
+		this.hand = new hand(this.hardwareMap);
+		this.rocket = new rocket(this.hardwareMap);
+
+		this.waitForStart();
+		while (this.opModeIsActive()) {
+			this.movement.run(this.gamepad1);
+			this.arm.run(this.gamepad2);
+			this.hand.run(this.gamepad2);
+			this.rocket.run(this.gamepad1);
+
+
+			this.movement.telemetry(this.telemetry);
+			this.arm.telemetry(this.telemetry);
+			this.hand.telemetry(this.telemetry);
+			this.rocket.telemetry(this.telemetry);
+			this.telemetry.update();
+		}
+	}
+}

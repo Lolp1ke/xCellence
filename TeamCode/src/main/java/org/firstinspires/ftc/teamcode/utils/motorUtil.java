@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class motorUtil {
-	private final List<DcMotorEx> motors;
+	public final List<DcMotorEx> motors;
 
 	public motorUtil(final DcMotorEx... motors) {
 		this.motors = Arrays.asList(motors);
@@ -26,6 +26,14 @@ public class motorUtil {
 	public void init(final HardwareMap HARDWARE_MAP, final String... DEVICE_NAMES) {
 		for (int i = 0; i < this.motors.size(); i++)
 			this.motors.set(i, HARDWARE_MAP.get(DcMotorEx.class, DEVICE_NAMES[i]));
+	}
+
+	public boolean isBusy(final int N) {
+		for (int i = 0; i < N - 1; i++)
+			if (!this.motors.get(i).isBusy()) return false;
+
+
+		return true;
 	}
 
 	public boolean isBusy() {

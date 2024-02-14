@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.gamma.arm;
+package org.firstinspires.ftc.teamcode.sigma.arm;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -95,7 +95,7 @@ public class arm extends config {
 		this.armPower = Range.clip(this.armPower, -this.armSpeedMultiplier, this.armSpeedMultiplier);
 		this.liftPower = Range.clip(this.liftPower, -this.liftSpeedMultiplier, this.liftSpeedMultiplier);
 
-		HashMap<Integer, Integer> positions = this.motorUtil.getCurrentPositions();
+		final HashMap<Integer, Integer> positions = this.motorUtil.getCurrentPositions();
 
 		this.armPosition = (positions.get(0) + positions.get(1)) / 2;
 		this.liftPosition = positions.get(2);
@@ -107,12 +107,16 @@ public class arm extends config {
 		);
 	}
 
+
 	public void telemetry(final Telemetry TELEMETRY) {
 		TELEMETRY.addLine("Arm");
+
+		TELEMETRY.addLine("Temp logs");
 		TELEMETRY.addLine(String.valueOf(this.isBusy));
 		TELEMETRY.addLine(this.motorUtil.motors.get(0).getMode().name());
 		TELEMETRY.addLine(String.valueOf(this.motorUtil.motors.get(0).getTargetPositionTolerance()));
 		TELEMETRY.addLine(String.valueOf(this.armTargetPosition - this.armPosition));
+		TELEMETRY.addLine();
 
 		TELEMETRY.addLine("Power");
 		TELEMETRY.addData("Arm: ", this.armPower);

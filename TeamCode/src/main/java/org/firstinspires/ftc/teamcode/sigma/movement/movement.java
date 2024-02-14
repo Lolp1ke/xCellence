@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.gamma.movement;
+package org.firstinspires.ftc.teamcode.sigma.movement;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,12 +14,13 @@ import org.firstinspires.ftc.teamcode.utils.imuUtil;
 import org.firstinspires.ftc.teamcode.utils.motorUtil;
 import org.firstinspires.ftc.teamcode.utils.pid;
 
-public class movement4wd extends config {
+public class movement extends config {
 	private final motorUtil motorUtil;
-	private final imuUtil imuUtil;
 	private final pid pid;
+	private final imuUtil imuUtil;
 
 
+	private double speedMultiplier = SPEED;
 	private double rightRearPower = 0d;
 	private double leftRearPower = 0d;
 	private double rightFrontPower = 0d;
@@ -30,13 +31,10 @@ public class movement4wd extends config {
 	private double targetHeading;
 	private double lastTurn = 0d;
 
-	private double speedMultiplier = SPEED;
-
 	private DRIVE_MODE driveMode = DRIVE_MODE.ROBOT;
 
-	public movement4wd(final HardwareMap HARDWARE_MAP) {
-		final VoltageSensor batteryVoltageSensor = HARDWARE_MAP.voltageSensor.iterator().next();
-
+	public movement(final HardwareMap HARDWARE_MAP) {
+		final VoltageSensor voltageSensor = HARDWARE_MAP.voltageSensor.iterator().next();
 
 		this.motorUtil = new motorUtil(
 			HARDWARE_MAP.get(DcMotorEx.class, "right_rear"),
@@ -45,6 +43,10 @@ public class movement4wd extends config {
 			HARDWARE_MAP.get(DcMotorEx.class, "left_front")
 		);
 
+		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+		this.motorUtil.setZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 		this.motorUtil.setDirection(
 			DcMotorEx.Direction.FORWARD,
 			DcMotorEx.Direction.REVERSE,
@@ -52,27 +54,20 @@ public class movement4wd extends config {
 			DcMotorEx.Direction.REVERSE
 		);
 
-		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-		this.motorUtil.setZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
 		this.motorUtil.setVelocityPIDFCoefficients(
 			P_VELOCITY_GAIN,
 			I_VELOCITY_GAIN,
 			D_VELOCITY_GAIN,
 			F_VELOCITY_GAIN,
-			batteryVoltageSensor.getVoltage()
+			voltageSensor.getVoltage()
 		);
 
 
-		this.imuUtil = new imuUtil(
-			HARDWARE_MAP.get(IMU.class, "imu")
-		);
+		this.imuUtil = new imuUtil(HARDWARE_MAP.get(IMU.class, "imu"));
 		this.imuUtil.initialize(
 			RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
 			RevHubOrientationOnRobot.UsbFacingDirection.UP
 		);
-
 		this.imuUtil.reset();
 		this.targetHeading = -this.imuUtil.get(AngleUnit.RADIANS);
 
@@ -100,21 +95,16 @@ public class movement4wd extends config {
 		this.speedMultiplier = GAMEPAD.left_bumper ?
 			DECELERATION : SPEED;
 
-		double x = GAMEPAD.left_stick_x;
-		double y = -GAMEPAD.left_stick_y;
-		double turn = GAMEPAD.right_stick_x;
+		final double x = GAMEPAD.left_stick_x;
+		final double y = -GAMEPAD.left_stick_y;
+		final double turn = GAMEPAD.right_stick_x;
 
-		double angle = Math.atan2(y, x);
-		double power = Math.hypot(x, y);
+		final double angle = Math.atan2(y, x);
+		final double power = Math.hypot(x, y);
 
-		double sin = Math.sin(angle - Math.PI / 4);
-		double cos = Math.cos(angle - Math.PI / 4);
-		double max = Math.max(Math.abs(sin), Math.abs(cos));
-
-		this.rightRearPower = (power * cos / max - turn);
-		this.leftRearPower = (power * sin / max + turn);
-		this.rightFrontPower = (power * sin / max - turn);
-		this.leftFrontPower = (power * cos / max + turn);
+		final double sin = Math.sin(angle - Math.PI / 4);
+		final double cos = Math.cos(angle - Math.PI / 4);
+		final double max = Math.max(Math.abs(sin), Math.abs(cos));
 
 		if (turn == 0 && this.lastTurn != turn) {
 			this.holdHeading = true;
@@ -127,10 +117,12 @@ public class movement4wd extends config {
 			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.get());
 		else this.fix = 0d;
 
-		this.rightRearPower += this.fix;
-		this.leftRearPower -= this.fix;
-		this.rightFrontPower += this.fix;
-		this.leftFrontPower -= this.fix;
+		this.fix = this.fix > -0.1d && this.fix < 0.1d ? 0 : this.fix;
+
+		this.rightRearPower = power * cos / max - turn + this.fix;
+		this.leftRearPower = power * sin / max + turn - this.fix;
+		this.rightFrontPower = power * sin / max - turn + this.fix;
+		this.leftFrontPower = power * cos / max + turn - this.fix;
 
 		this.rightRearPower = Range.clip(this.rightRearPower, -this.speedMultiplier, this.speedMultiplier);
 		this.leftRearPower = Range.clip(this.leftRearPower, -this.speedMultiplier, this.speedMultiplier);
@@ -146,11 +138,14 @@ public class movement4wd extends config {
 	}
 
 	private void fieldCentric(final Gamepad GAMEPAD) {
-		double x = GAMEPAD.left_stick_x;
-		double y = -GAMEPAD.left_stick_y;
-		double turn = GAMEPAD.right_stick_x;
+		final double x = GAMEPAD.left_stick_x;
+		final double y = -GAMEPAD.left_stick_y;
+		final double turn = GAMEPAD.right_stick_x;
 
-		double heading = -this.imuUtil.get(AngleUnit.RADIANS);
+		this.speedMultiplier = GAMEPAD.left_bumper
+			? DECELERATION : SPEED;
+
+		final double heading = -this.imuUtil.get(AngleUnit.RADIANS);
 
 		if (GAMEPAD.a) {
 			this.imuUtil.reset();
@@ -168,18 +163,13 @@ public class movement4wd extends config {
 			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.get());
 		else this.fix = 0d;
 
-		double rotX = x * Math.cos(heading) - y * Math.sin(heading);
-		double rotY = x * Math.sin(heading) + y * Math.cos(heading);
+		final double rotX = x * Math.cos(heading) - y * Math.sin(heading);
+		final double rotY = x * Math.sin(heading) + y * Math.cos(heading);
 
-		this.rightRearPower = rotY + rotX - turn;
-		this.leftRearPower = rotY - rotX + turn;
-		this.rightFrontPower = rotY - rotX - turn;
-		this.leftFrontPower = rotY + rotX + turn;
-
-		this.rightRearPower += this.fix;
-		this.leftRearPower -= this.fix;
-		this.rightFrontPower += this.fix;
-		this.leftFrontPower -= this.fix;
+		this.rightRearPower = rotY + rotX - turn + this.fix;
+		this.leftRearPower = rotY - rotX + turn - this.fix;
+		this.rightFrontPower = rotY - rotX - turn + this.fix;
+		this.leftFrontPower = rotY + rotX + turn - this.fix;
 
 		this.rightRearPower = Range.clip(this.rightRearPower, -this.speedMultiplier, this.speedMultiplier);
 		this.leftRearPower = Range.clip(this.leftRearPower, -this.speedMultiplier, this.speedMultiplier);
@@ -208,9 +198,12 @@ public class movement4wd extends config {
 		TELEMETRY.addData("Multiplier: ", this.speedMultiplier);
 		TELEMETRY.addLine();
 
-		TELEMETRY.addData("Hold heading: ", this.holdHeading);
-		TELEMETRY.addData("Target heading: ", this.targetHeading);
+		TELEMETRY.addLine("Heading");
+		TELEMETRY.addData("Hold: ", this.holdHeading);
+		TELEMETRY.addData("Target: ", this.targetHeading * 180d / Math.PI);
 		TELEMETRY.addLine();
+
+		this.pid.telemetry(TELEMETRY);
 
 		TELEMETRY.addLine();
 	}

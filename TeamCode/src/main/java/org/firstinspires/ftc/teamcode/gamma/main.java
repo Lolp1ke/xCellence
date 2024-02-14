@@ -16,20 +16,12 @@ public class main extends LinearOpMode {
 	private rocket rocket;
 
 
-	public main() {
-		super();
-
+	@Override
+	public void runOpMode() {
 		this.movement4wd = new movement4wd(this.hardwareMap);
 		this.arm = new arm(this.hardwareMap);
 		this.hand = new hand(this.hardwareMap);
 		this.rocket = new rocket(this.hardwareMap);
-	}
-
-	@Override
-	public void runOpMode() {
-//		this.movement4wd = new movement4wd(this.hardwareMap);
-//		this.arm = new arm(this.hardwareMap);
-//		this.hand = new hand(this.hardwareMap);
 
 		while (opModeInInit()) {
 			this.telemetry.addData("Status: ", "VROOM VROOM");
@@ -38,10 +30,10 @@ public class main extends LinearOpMode {
 
 		waitForStart();
 		while (opModeIsActive()) {
-			this.movement4wd.run(this.gamepad1);
+//			this.movement4wd.run(this.gamepad1);
 			this.arm.run(this.gamepad2);
-			this.hand.run(this.gamepad2);
-			this.rocket.run(this.gamepad1);
+//			this.hand.run(this.gamepad2);
+//			this.rocket.run(this.gamepad1);
 
 
 			this.movement4wd.telemetry(this.telemetry);
