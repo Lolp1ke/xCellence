@@ -89,7 +89,7 @@ public class arm extends config {
 		else this.liftSpeedMultiplier = LIFT_BOOST;
 
 		if (this.isBusy
-			&& Math.abs(this.armTargetPosition - this.armPosition) > this.ARM_TARGET_TOLERANCE
+			|| Math.abs(this.armTargetPosition - this.armPosition) > this.ARM_TARGET_TOLERANCE
 		) this.armPower = 0.7d;
 
 		this.armPower = Range.clip(this.armPower, -this.armSpeedMultiplier, this.armSpeedMultiplier);
