@@ -27,7 +27,7 @@ public class hand extends config {
 		this.servoUtil.setDirection(
 			Servo.Direction.FORWARD,
 			Servo.Direction.REVERSE,
-			Servo.Direction.FORWARD
+			Servo.Direction.REVERSE
 		);
 	}
 

@@ -117,7 +117,7 @@ public class movement extends config {
 			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.get());
 		else this.fix = 0d;
 
-		this.fix = this.fix > -0.1d && this.fix < 0.1d ? 0 : this.fix;
+		this.fix = this.fix > -0.3d && this.fix < 0.3d ? 0 : this.fix;
 
 		this.rightRearPower = power * cos / max - turn + this.fix;
 		this.leftRearPower = power * sin / max + turn - this.fix;
@@ -162,6 +162,8 @@ public class movement extends config {
 		if (this.holdHeading)
 			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.get());
 		else this.fix = 0d;
+
+		this.fix = this.fix > -0.3d && this.fix < 0.3d ? 0 : this.fix;
 
 		final double rotX = x * Math.cos(heading) - y * Math.sin(heading);
 		final double rotY = x * Math.sin(heading) + y * Math.cos(heading);

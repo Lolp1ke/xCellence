@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.sigma;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.sigma.arm.arm;
 import org.firstinspires.ftc.teamcode.sigma.hand.hand;
 import org.firstinspires.ftc.teamcode.sigma.movement.movement;
 import org.firstinspires.ftc.teamcode.sigma.rocket.rocket;
 
+@TeleOp(name = "main (sigma)", group = "test")
 public class main extends LinearOpMode {
 	private movement movement;
 	private arm arm;
@@ -23,7 +25,7 @@ public class main extends LinearOpMode {
 		this.waitForStart();
 		while (this.opModeIsActive()) {
 			this.movement.run(this.gamepad1);
-			this.arm.run(this.gamepad2);
+//			this.arm.run(this.gamepad2);
 			this.hand.run(this.gamepad2);
 			this.rocket.run(this.gamepad1);
 

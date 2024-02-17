@@ -21,7 +21,7 @@ public class servoUtil {
 //	}
 
 	public void setDirection(final Servo.Direction... DIRECTIONS) {
-		for (int i = 0; i < this.servos.size(); i++)
+		for (int i = 0; i < DIRECTIONS.length; i++)
 			this.servos.get(i).setDirection(DIRECTIONS[i]);
 	}
 
@@ -31,7 +31,7 @@ public class servoUtil {
 	}
 
 	public void setPosition(final double... POSITIONS) {
-		for (int i = 0; i < this.servos.size(); i++)
+		for (int i = 0; i < POSITIONS.length; i++)
 			this.servos.get(i).setPosition(POSITIONS[i]);
 	}
 

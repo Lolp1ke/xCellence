@@ -13,24 +13,24 @@ public class far extends LinearOpMode {
 	private final SampleMecanumDrive movement;
 
 	private far() {
-		this.movement = new SampleMecanumDrive(hardwareMap);
+		this.movement = new SampleMecanumDrive(this.hardwareMap);
 		this.movement.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		this.movement.setPoseEstimate(new Pose2d());
 	}
 
 	@Override
 	public void runOpMode() {
-		this.openCV.init(hardwareMap);
+		this.openCV.init(this.hardwareMap);
 
 		while (opModeInInit()) {
-			this.openCV.telemetry(telemetry);
-			this.openCV.pipeline.telemetry(telemetry);
+			this.openCV.telemetry(this.telemetry);
+			this.openCV.pipeline.telemetry(this.telemetry);
 
-			telemetry.update();
+			this.telemetry.update();
 		}
 
-		waitForStart();
-		this.openCV.cameraOff(telemetry);
+		this.waitForStart();
+		this.openCV.cameraOff(this.telemetry);
 		final int location = this.openCV.pipeline.location;
 
 		switch (location) {
@@ -47,7 +47,7 @@ public class far extends LinearOpMode {
 				break;
 		}
 
-		while (opModeIsActive()) {
+		while (this.opModeIsActive()) {
 		}
 	}
 
