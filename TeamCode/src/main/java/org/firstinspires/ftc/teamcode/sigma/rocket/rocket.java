@@ -31,6 +31,8 @@ public class rocket extends config {
 
 	public void telemetry(final Telemetry TELEMETRY) {
 		TELEMETRY.addLine("Rocket");
-		TELEMETRY.addData("Position: ", this.position);
+		TELEMETRY.addData("Position: ", "%.3f", this.position);
+
+		TELEMETRY.addLine();
 	}
 }

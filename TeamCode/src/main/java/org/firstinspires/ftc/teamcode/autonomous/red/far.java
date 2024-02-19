@@ -1,28 +1,41 @@
 package org.firstinspires.ftc.teamcode.autonomous.red;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.autonomous.arm.arm;
+import org.firstinspires.ftc.teamcode.autonomous.hand.hand;
 import org.firstinspires.ftc.teamcode.autonomous.openCV.openCV;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.sigma.hand.config;
 
+@Autonomous(name = "Red far", group = "!!!RED")
 public class far extends LinearOpMode {
-	private final openCV openCV = new openCV(true);
-	private final SampleMecanumDrive movement;
+	private openCV openCV;
+	private SampleMecanumDrive movement;
+	private arm mechanism;
+	private hand hand;
 
-	private far() {
-		this.movement = new SampleMecanumDrive(this.hardwareMap);
-		this.movement.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		this.movement.setPoseEstimate(new Pose2d());
-	}
 
 	@Override
 	public void runOpMode() {
-		this.openCV.init(this.hardwareMap);
+		this.openCV = new openCV(true, this.hardwareMap);
 
-		while (opModeInInit()) {
+
+		this.movement = new SampleMecanumDrive(this.hardwareMap);
+		this.movement.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		this.movement.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
+
+
+		this.mechanism = new arm(this.hardwareMap);
+
+
+		this.hand = new hand(this.hardwareMap);
+
+
+		while (this.opModeInInit()) {
 			this.openCV.telemetry(this.telemetry);
 			this.openCV.pipeline.telemetry(this.telemetry);
 
@@ -53,18 +66,49 @@ public class far extends LinearOpMode {
 
 	private void right() {
 		this.movement.followTrajectorySequence(
-			this.movement.trajectorySequenceBuilder(new Pose2d())
-				.forward(30)
-				.splineTo(new Vector2d(10, 10), 0)
-				.setReversed(true)
-				.splineTo(new Vector2d(0, 0), 0)
+			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
+				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(90)))
+				.forward(20)
+				.lineToSplineHeading(new Pose2d(24d, -90d, Math.toRadians(-90)))
+				.addTemporalMarker(() -> this.mechanism.move(100))
+				.back(10)
+				.lineToSplineHeading(new Pose2d(45d, -90d, Math.toRadians(0)))
 				.build()
 		);
 	}
 
 	private void center() {
+		this.movement.followTrajectorySequence(
+			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
+				.forward(45)
+				//.splineToSplineHeading(new Pose2d(), Math.toRadians(90))
+				// .lineToSplineHeading(new Pose2d())
+				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.OPEN))
+				.back(10)
+				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.CLOSE))
+				.splineToSplineHeading(new Pose2d(), Math.toRadians(90))
+				.forward(120)
+				.addTemporalMarker(() -> this.mechanism.move(100))
+				.forward(15)
+				.addTemporalMarker(() -> this.mechanism.move(-40))
+				.addTemporalMarker(() -> this.hand.claw(false, config.CLAW.OPEN))
+				.back(15)
+				.addTemporalMarker(() -> this.mechanism.move(-60))
+				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.CLOSE))
+				.strafeLeft(60)
+				.forward(25)
+				.build()
+		);
 	}
 
 	private void left() {
+		this.movement.followTrajectorySequence(
+			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
+				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(-90)))
+				.forward(20)
+
+				.build()
+
+		);
 	}
 }

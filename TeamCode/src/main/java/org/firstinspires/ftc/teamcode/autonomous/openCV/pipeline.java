@@ -17,7 +17,7 @@ public class pipeline extends OpenCvPipeline {
 	private double centerConfidence = 0d;
 	private double leftConfidence = 0d;
 
-	public int location = 0;
+	public int location = 3;
 
 	public pipeline(final boolean isRed) {
 		this.isRed = isRed;

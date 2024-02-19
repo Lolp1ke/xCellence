@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.omega.blue;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.omega.mechanism;
 import org.firstinspires.ftc.teamcode.omega.movement4wd;
 import org.firstinspires.ftc.teamcode.omega.openCV.openCV;
 
-@Autonomous(name = "Blue close", group = "!!!BLUE")
+@Disabled
+//@Autonomous(name = "Blue close", group = "!!!BLUE")
 public class close extends LinearOpMode {
 	private final openCV _openCV = new openCV(this, false);
 

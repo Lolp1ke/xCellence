@@ -31,7 +31,7 @@ public class movement extends config {
 	private double targetHeading;
 	private double lastTurn = 0d;
 
-	private DRIVE_MODE driveMode = DRIVE_MODE.ROBOT;
+	private DRIVE_MODE driveMode = DRIVE_MODE.FIELD;
 
 	public movement(final HardwareMap HARDWARE_MAP) {
 		final VoltageSensor voltageSensor = HARDWARE_MAP.voltageSensor.iterator().next();
@@ -163,7 +163,7 @@ public class movement extends config {
 			this.fix = this.pid.headingController(Math.toDegrees(-this.targetHeading), this.imuUtil.get());
 		else this.fix = 0d;
 
-		this.fix = this.fix > -0.3d && this.fix < 0.3d ? 0 : this.fix;
+		this.fix = this.fix > -0.15d && this.fix < 0.15d ? 0 : this.fix;
 
 		final double rotX = x * Math.cos(heading) - y * Math.sin(heading);
 		final double rotY = x * Math.sin(heading) + y * Math.cos(heading);
@@ -190,19 +190,19 @@ public class movement extends config {
 		TELEMETRY.addLine("Movement");
 
 		TELEMETRY.addLine("Power");
-		TELEMETRY.addData("Right rear: ", this.rightRearPower);
-		TELEMETRY.addData("Left rear: ", this.leftRearPower);
-		TELEMETRY.addData("Right front: ", this.rightFrontPower);
-		TELEMETRY.addData("Left front: ", this.leftFrontPower);
-		TELEMETRY.addData("Fix: ", this.fix);
+		TELEMETRY.addData("Right rear: ", "%.3f", this.rightRearPower);
+		TELEMETRY.addData("Left rear: ", "%.3f", this.leftRearPower);
+		TELEMETRY.addData("Right front: ", "%.3f", this.rightFrontPower);
+		TELEMETRY.addData("Left front: ", "%.3f", this.leftFrontPower);
+		TELEMETRY.addData("Fix: ", "%.3f", this.fix);
 		TELEMETRY.addLine();
 
-		TELEMETRY.addData("Multiplier: ", this.speedMultiplier);
+		TELEMETRY.addData("Multiplier: ", "%.3f", this.speedMultiplier);
 		TELEMETRY.addLine();
 
 		TELEMETRY.addLine("Heading");
 		TELEMETRY.addData("Hold: ", this.holdHeading);
-		TELEMETRY.addData("Target: ", this.targetHeading * 180d / Math.PI);
+		TELEMETRY.addData("Target: ", "%.3f", this.targetHeading * 180d / Math.PI);
 		TELEMETRY.addLine();
 
 		this.pid.telemetry(TELEMETRY);

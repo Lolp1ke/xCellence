@@ -15,9 +15,28 @@ public class openCV {
 	private OpenCvWebcam cvWebcam;
 	public final pipeline pipeline;
 
-	public openCV(final boolean isRed) {
+	public openCV(final boolean isRed, final HardwareMap HARDWARE_MAP) {
 		this.pipeline = new pipeline(isRed);
+
+		this.cvWebcam = OpenCvCameraFactory
+			.getInstance()
+			.createWebcam(HARDWARE_MAP.get(WebcamName.class, "Webcam 1"));
+
+		this.cvWebcam.setPipeline(this.pipeline);
+
+		this.cvWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+			@Override
+			public void onOpened() {
+				openCV.this.cvWebcam.startStreaming(openCV.this.config.CAMERA_WIDTH, openCV.this.config.CAMERA_HEIGHT,
+					OpenCvCameraRotation.UPRIGHT);
+			}
+
+			@Override
+			public void onError(final int errorCode) {
+			}
+		});
 	}
+
 
 	public void init(final HardwareMap hardwareMap) {
 		this.cvWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));

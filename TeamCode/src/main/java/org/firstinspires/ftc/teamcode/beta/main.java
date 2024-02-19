@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.beta;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 
+@Disabled
 @TeleOp(name = "detiler", group = "test")
 public class main extends LinearOpMode {
 	DcMotor rightRear, leftRear, rightFront, leftFront;

@@ -14,7 +14,7 @@ public class config {
 	public static double F_VELOCITY_GAIN = -9d;
 
 	public static double P_HEADING_GAIN = 0.02d;
-	public static double I_HEADING_GAIN = 0d;
+	public static double I_HEADING_GAIN = 0.001d;
 	public static double D_HEADING_GAIN = 0.04d;
 
 	public static double PID_MAX_SPEED = 0.5d;

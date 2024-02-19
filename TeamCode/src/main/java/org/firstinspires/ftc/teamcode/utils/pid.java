@@ -10,8 +10,8 @@ public class pid {
 	private final double D_GAIN;
 	private final double MAX_SPEED;
 
-	private final double THRESHOLD_ERROR = 1.5d;
-	private final double MAX_TOTAL_ERROR = 1000d;
+	private final double THRESHOLD_ERROR = 1d;
+	private final double MAX_TOTAL_ERROR = 100d;
 
 	private double currentError = 0d;
 	private double lastError = 0d;
@@ -32,10 +32,10 @@ public class pid {
 		this.MAX_SPEED = MAX_SPEED;
 	}
 
-	public double positionContoller(final double CURRENT, final double TARGET) {
+	public double positionController(final double CURRENT, final double TARGET) {
 		this.currentError = CURRENT - TARGET;
 
-		if (Math.abs(this.currentError) < this.THRESHOLD_ERROR) return 0d;
+		if (Math.abs(this.currentError) < 7) return 0d;
 
 		this.finalError = this.currentError * this.P_GAIN
 			+ this.totalError * this.I_GAIN
@@ -75,6 +75,7 @@ public class pid {
 		this.currentError = 0d;
 		this.lastError = 0d;
 		this.totalError = 0d;
+		this.finalError = 0d;
 	}
 
 	public void telemetry(final Telemetry telemetry) {
