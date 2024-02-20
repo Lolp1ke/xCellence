@@ -29,7 +29,7 @@ public class movement4wd {
 	private double rightFrontPower = 0d;
 	private double leftFrontPower = 0d;
 
-	private double speedMultiplier = _config.SPEED;
+	private double speedMultiplier = config.SPEED;
 
 	private double headingError = 0d;
 	private double lastError = 0d;
@@ -43,14 +43,14 @@ public class movement4wd {
 
 	private double lastRx = 0d;
 
-	private double rocketPosition = this._config.ROCKET_CLOSED;
+	private double rocketPosition = config.ROCKET_CLOSED;
 
 
 	public void fieldCentric(final Gamepad gamepad) {
 //		boolean isBoosted = gamepad.right_bumper;
 		boolean isSlowed = gamepad.left_bumper;
 //		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
-		this.speedMultiplier = isSlowed ? this._config.DECELERATION : (this._config.SPEED + 0.2d);
+		this.speedMultiplier = isSlowed ? config.DECELERATION : (config.SPEED + 0.2d);
 
 		double y = -gamepad.left_stick_y;
 		double x = gamepad.left_stick_x;
@@ -79,7 +79,7 @@ public class movement4wd {
 
 		if (this.holdHeading)
 			this.fix = this.PIDControl(Math.toDegrees(-this.targetHeading), this.speedMultiplier,
-				this._config.P_DRIVE_GAIN, this._config.I_DRIVE_GAIN, this._config.D_DRIVE_GAIN);
+				config.P_DRIVE_GAIN, config.I_DRIVE_GAIN, config.D_DRIVE_GAIN);
 		else
 			this.fix = 0d;
 
@@ -114,7 +114,7 @@ public class movement4wd {
 //		boolean isBoosted = gamepad.right_bumper;
 		boolean isSlowed = gamepad.left_bumper;
 //		this.speedMultiplier = isBoosted ? this._config.ACCELERATION : isSlowed ? this._config.DECELERATION : this._config.SPEED;
-		this.speedMultiplier = isSlowed ? this._config.DECELERATION : this._config.SPEED;
+		this.speedMultiplier = isSlowed ? config.DECELERATION : config.SPEED;
 
 		double x = gamepad.left_stick_x;
 		double y = -gamepad.left_stick_y;
@@ -140,8 +140,8 @@ public class movement4wd {
 		this.lastHoldPressed = this.holdPressed;
 
 		if (this.holdHeading)
-			this.fix = this.PIDControl(this.targetHeading, this._config.SPEED,
-				this._config.P_DRIVE_GAIN, this._config.I_DRIVE_GAIN, this._config.D_DRIVE_GAIN);
+			this.fix = this.PIDControl(this.targetHeading, config.SPEED,
+				config.P_DRIVE_GAIN, config.I_DRIVE_GAIN, config.D_DRIVE_GAIN);
 		else
 			this.fix = 0d;
 
@@ -156,7 +156,7 @@ public class movement4wd {
 		this.leftFrontPower = Range.clip(this.leftFrontPower, -this.speedMultiplier, this.speedMultiplier);
 
 		if (gamepad.a && gamepad.x)
-			this.rocketPosition = this._config.ROCKET_LAUNCHED;
+			this.rocketPosition = config.ROCKET_LAUNCHED;
 
 		this.rocket.setPosition(this.rocketPosition);
 
@@ -223,7 +223,7 @@ public class movement4wd {
 		telemetry.addData("Total: ", this.totalError);
 		telemetry.addLine();
 
-		telemetry.addData("Rocket status: ", this.rocketPosition == this._config.ROCKET_LAUNCHED ? "Launched" : "Waiting");
+		telemetry.addData("Rocket status: ", this.rocketPosition == config.ROCKET_LAUNCHED ? "Launched" : "Waiting");
 		telemetry.addLine();
 	}
 

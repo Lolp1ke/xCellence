@@ -24,7 +24,7 @@ public class hand {
 		boolean a = gamepad.a;
 
 
-		if (a == true && lastA != true) {
+		if (a && !lastA) {
 //			x++;
 			if (clawPosition == 0)
 				clawPosition = 1;

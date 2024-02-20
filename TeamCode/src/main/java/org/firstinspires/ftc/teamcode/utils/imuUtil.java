@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class imuUtil {
-	private IMU imu;
+	private final IMU imu;
 
 	public imuUtil(final IMU IMU) {
 		this.imu = IMU;

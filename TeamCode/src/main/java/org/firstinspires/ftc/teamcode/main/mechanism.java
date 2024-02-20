@@ -25,15 +25,15 @@ public class mechanism {
 	private int armPosition = 0;
 	private int liftPosition = 0;
 
-	private double wristPosition = _config.WRIST_SCORE;
-	private double rightClawPosition = _config.CLAW_CLOSE;
-	private double leftClawPosition = _config.CLAW_CLOSE;
+	private double wristPosition = config.WRIST_SCORE;
+	private double rightClawPosition = config.CLAW_CLOSE;
+	private double leftClawPosition = config.CLAW_CLOSE;
 
 
 	public void run(final Gamepad gamepad) {
 		armPower = gamepad.left_stick_y *
-			(gamepad.left_trigger >= 0.4d ? this._config.ARM_BOOST : this._config.ARM_SPEED);
-		liftPower = gamepad.right_stick_y * this._config.LIFT_SPEED;
+			(gamepad.left_trigger >= 0.4d ? config.ARM_BOOST : config.ARM_SPEED);
+		liftPower = gamepad.right_stick_y * config.LIFT_SPEED;
 		armPosition = (this.rightArm.getCurrentPosition() + this.leftArm.getCurrentPosition()) / 2;
 		liftPosition = this.lift.getCurrentPosition();
 
@@ -53,22 +53,22 @@ public class mechanism {
 
 
 //		double handOffset = liftPosition / 10000d;
-		if (gamepad.x) this.wristPosition = this._config.WRIST_SCORE;
-		else if (gamepad.a) this.wristPosition = this._config.WRIST_GROUND; // + handOffset;
-		else if (gamepad.b) this.wristPosition = this._config.WRIST_MID;
+		if (gamepad.x) this.wristPosition = config.WRIST_SCORE;
+		else if (gamepad.a) this.wristPosition = config.WRIST_GROUND; // + handOffset;
+		else if (gamepad.b) this.wristPosition = config.WRIST_MID;
 
-		this.rightClawPosition = this._config.CLAW_OPEN;
-		this.leftClawPosition = this._config.CLAW_OPEN;
+		this.rightClawPosition = config.CLAW_OPEN;
+		this.leftClawPosition = config.CLAW_OPEN;
 
 		if (gamepad.right_trigger > 0.4d) {
-			this.rightClawPosition = this._config.CLAW_CLOSE;
-			this.leftClawPosition = this._config.CLAW_CLOSE;
+			this.rightClawPosition = config.CLAW_CLOSE;
+			this.leftClawPosition = config.CLAW_CLOSE;
 		}
 
 		if (gamepad.dpad_right)
-			this.rightClawPosition = this._config.CLAW_CLOSE;
+			this.rightClawPosition = config.CLAW_CLOSE;
 		else if (gamepad.dpad_left)
-			this.leftClawPosition = this._config.CLAW_CLOSE;
+			this.leftClawPosition = config.CLAW_CLOSE;
 //		else {
 //
 //		}
