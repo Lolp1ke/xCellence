@@ -19,6 +19,7 @@ public class arm extends config {
 	private double armPower = 0d;
 	private double armFixPower = 0d;
 	private double liftPower = 0d;
+	private double liftFixPower = 0d;
 
 	private double armSpeedMultiplier = ARM_SPEED;
 	private double liftSpeedMultiplier = LIFT_SPEED;
@@ -28,8 +29,11 @@ public class arm extends config {
 
 	private double lastArmPower = 0d;
 	private int armTargetPosition = 0;
-	private final int ARM_TARGET_TOLERANCE = 5;
-	private boolean isBusy = false;
+
+	private double lastLiftPower = 0d;
+	private int liftTargetPosition = 0;
+
+	private final int TARGET_TOLERANCE = 5;
 
 	public arm(final HardwareMap HARDWARE_MAP) {
 		this.motorUtil = new motorUtil(
@@ -47,8 +51,6 @@ public class arm extends config {
 		this.motorUtil.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-		this.motorUtil.setTargetPositionToTolerance(this.ARM_TARGET_TOLERANCE);
-
 		this.motorUtil.setZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
@@ -56,7 +58,8 @@ public class arm extends config {
 			P_POSITION_GAIN,
 			I_POSITION_GAIN,
 			D_POSITION_GAIN,
-			MAX_GAIN_SPEED
+			MAX_GAIN_SPEED,
+			THRESHOLD_ERROR
 		);
 	}
 
@@ -66,20 +69,24 @@ public class arm extends config {
 		this.armPosition = (positions.get(0) + positions.get(1)) / 2;
 		this.liftPosition = positions.get(2);
 
-
 		this.armPower = GAMEPAD.left_stick_y;
 		this.liftPower = GAMEPAD.right_stick_y;
-		this.isBusy = this.motorUtil.isBusy(2);
 
 
 		if (this.armPower == 0 && this.lastArmPower != this.armPower)
 			this.armTargetPosition = this.armPosition;
 		else if (this.armPower == 0
-			|| Math.abs(this.armTargetPosition - this.armPosition) > this.ARM_TARGET_TOLERANCE
-		) {
-			this.armFixPower = this.pid.positionController(this.armPosition, this.armTargetPosition);
-		}
+			|| Math.abs(this.armTargetPosition - this.armPosition) > this.TARGET_TOLERANCE
+		) this.armFixPower = this.pid.positionController(this.armPosition, this.armTargetPosition);
 		this.lastArmPower = this.armPower;
+
+
+		if (this.liftPower == 0 && this.lastLiftPower != this.armPower)
+			this.liftTargetPosition = this.armPosition;
+		else if (this.liftPower == 0
+			|| Math.abs(this.liftTargetPosition - this.liftPosition) > this.TARGET_TOLERANCE
+		) this.liftFixPower = this.pid.positionController(this.liftPosition, this.liftTargetPosition);
+		this.lastLiftPower = this.liftPower;
 
 
 		if (GAMEPAD.right_bumper) this.armSpeedMultiplier = ARM_BOOST;
@@ -91,9 +98,10 @@ public class arm extends config {
 
 		this.armPower = Range.clip(this.armPower - this.armFixPower,
 			-this.armSpeedMultiplier, this.armSpeedMultiplier);
-		this.liftPower = Range.clip(this.liftPower, -this.liftSpeedMultiplier, this.liftSpeedMultiplier);
+		this.liftPower = Range.clip(this.liftPower - this.liftFixPower, -this.liftSpeedMultiplier, this.liftSpeedMultiplier);
 
 		this.armPower = this.armPower > -0.1d && this.armPower < 0.1d ? 0d : this.armPower;
+		this.liftPower = this.liftPower > -0.1d && this.liftPower < 0.1d ? 0d : this.liftPower;
 
 
 		this.motorUtil.setPower(
@@ -111,6 +119,7 @@ public class arm extends config {
 		TELEMETRY.addData("Arm: ", "%.3f", this.armPower);
 		TELEMETRY.addData("Arm fix ", "%.3f", this.armFixPower);
 		TELEMETRY.addData("Lift: ", "%.3f", this.liftPower);
+		TELEMETRY.addData("Lift fix: ", "%.3f", this.liftFixPower);
 		TELEMETRY.addLine();
 
 		this.pid.telemetry(TELEMETRY);
@@ -124,6 +133,7 @@ public class arm extends config {
 		TELEMETRY.addData("Arm: ", this.armPosition);
 		TELEMETRY.addData("Arm target: ", this.armTargetPosition);
 		TELEMETRY.addData("Lift: ", this.liftPosition);
+		TELEMETRY.addData("Lift target: ", this.liftTargetPosition);
 		TELEMETRY.addLine();
 
 		TELEMETRY.addLine();

@@ -15,5 +15,7 @@ public class config {
 	public static double P_POSITION_GAIN = 0.01d;
 	public static double I_POSITION_GAIN = 0.01d;
 	public static double D_POSITION_GAIN = 0.01d;
-	public static double MAX_GAIN_SPEED = 0.3d;
+
+	public static double MAX_GAIN_SPEED = 0.4d;
+	public static double THRESHOLD_ERROR = 8d;
 }

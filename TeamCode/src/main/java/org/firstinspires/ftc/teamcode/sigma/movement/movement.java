@@ -76,7 +76,8 @@ public class movement extends config {
 			P_HEADING_GAIN,
 			I_HEADING_GAIN,
 			D_HEADING_GAIN,
-			PID_MAX_SPEED
+			PID_MAX_SPEED,
+			THRESHOLD_ERROR
 		);
 	}
 

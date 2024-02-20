@@ -1,43 +1,26 @@
 package org.firstinspires.ftc.teamcode.beta;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.beta.hand.hand;
+import org.firstinspires.ftc.teamcode.beta.movement.movement;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "detiler", group = "test")
 public class main extends LinearOpMode {
-	DcMotor rightRear, leftRear, rightFront, leftFront;
-	double rightRearPower = 0;
-	double leftRearPower = 0;
+	movement movement;
+	hand hand;
 
-
+	@Override
 	public void runOpMode() {
-		rightRear = hardwareMap.get(DcMotor.class, "right_rear");
-		leftRear = hardwareMap.get(DcMotor.class, "left_rear");
-		rightFront = hardwareMap.get(DcMotor.class, "right_front");
-		leftFront = hardwareMap.get(DcMotor.class, "left_front");
-
-		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+		movement = new movement(hardwareMap);
+		hand = new hand(hardwareMap);
 
 		waitForStart();
 		while (opModeIsActive()) {
-			double y = -gamepad1.left_stick_y;
-			double x = gamepad1.right_stick_x;
-
-			rightRearPower = y - x;
-			leftRearPower = y + x;
-
-			rightRearPower = Range.clip(rightRearPower, -1, 1);
-			leftRearPower = Range.clip(leftRearPower, -1, 1);
-
-			rightRear.setPower(rightRearPower);
-			leftRear.setPower(leftRearPower);
-
+			movement.run(gamepad1);
+			hand.run(gamepad1);
 		}
 	}
 }

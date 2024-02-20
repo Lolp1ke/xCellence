@@ -10,7 +10,7 @@ public class pid {
 	private final double D_GAIN;
 	private final double MAX_SPEED;
 
-	private final double THRESHOLD_ERROR = 1d;
+	private final double THRESHOLD_ERROR;
 	private final double MAX_TOTAL_ERROR = 100d;
 
 	private double currentError = 0d;
@@ -23,19 +23,21 @@ public class pid {
 		final double P_GAIN,
 		final double I_GAIN,
 		final double D_GAIN,
-		final double MAX_SPEED
+		final double MAX_SPEED,
+		final double THRESHOLD_ERROR
 	) {
 		this.P_GAIN = P_GAIN;
 		this.I_GAIN = I_GAIN;
 		this.D_GAIN = D_GAIN;
 
 		this.MAX_SPEED = MAX_SPEED;
+		this.THRESHOLD_ERROR = THRESHOLD_ERROR;
 	}
 
 	public double positionController(final double CURRENT, final double TARGET) {
 		this.currentError = CURRENT - TARGET;
 
-		if (Math.abs(this.currentError) < 7) return 0d;
+		if (Math.abs(this.currentError) < this.THRESHOLD_ERROR) return 0d;
 
 		this.finalError = this.currentError * this.P_GAIN
 			+ this.totalError * this.I_GAIN

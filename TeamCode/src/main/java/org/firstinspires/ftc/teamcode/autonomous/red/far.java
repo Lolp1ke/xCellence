@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.sigma.hand.config;
 public class far extends LinearOpMode {
 	private openCV openCV;
 	private SampleMecanumDrive movement;
-	private arm mechanism;
+	private arm arm;
 	private hand hand;
 
 
@@ -29,7 +29,7 @@ public class far extends LinearOpMode {
 		this.movement.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
 
-		this.mechanism = new arm(this.hardwareMap);
+		this.arm = new arm(this.hardwareMap);
 
 
 		this.hand = new hand(this.hardwareMap);
@@ -67,13 +67,15 @@ public class far extends LinearOpMode {
 	private void right() {
 		this.movement.followTrajectorySequence(
 			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
-				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(90)))
-				.forward(20)
-				.lineToSplineHeading(new Pose2d(24d, -90d, Math.toRadians(-90)))
-				.addTemporalMarker(() -> this.mechanism.move(100))
+				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(-90)))
+				//.forward(20)
+				.addTemporalMarker(() -> this.hand.wrist(config.WRIST.GROUND))
 				.back(10)
-				.lineToSplineHeading(new Pose2d(45d, -90d, Math.toRadians(0)))
+				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.OPEN))
+				.addTemporalMarker(() -> this.arm.move(30))
+//				.forward()
 				.build()
+
 		);
 	}
 
@@ -88,12 +90,12 @@ public class far extends LinearOpMode {
 				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.CLOSE))
 				.splineToSplineHeading(new Pose2d(), Math.toRadians(90))
 				.forward(120)
-				.addTemporalMarker(() -> this.mechanism.move(100))
+				.addTemporalMarker(() -> this.arm.move(100))
 				.forward(15)
-				.addTemporalMarker(() -> this.mechanism.move(-40))
+				.addTemporalMarker(() -> this.arm.move(-40))
 				.addTemporalMarker(() -> this.hand.claw(false, config.CLAW.OPEN))
 				.back(15)
-				.addTemporalMarker(() -> this.mechanism.move(-60))
+				.addTemporalMarker(() -> this.arm.move(-60))
 				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.CLOSE))
 				.strafeLeft(60)
 				.forward(25)
@@ -104,11 +106,13 @@ public class far extends LinearOpMode {
 	private void left() {
 		this.movement.followTrajectorySequence(
 			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
-				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(-90)))
+				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(90)))
 				.forward(20)
-
+				.lineToSplineHeading(new Pose2d(24d, -90d, Math.toRadians(-90)))
+				.addTemporalMarker(() -> this.arm.move(100))
+				.back(10)
+				.lineToSplineHeading(new Pose2d(45d, -90d, Math.toRadians(0)))
 				.build()
-
 		);
 	}
 }

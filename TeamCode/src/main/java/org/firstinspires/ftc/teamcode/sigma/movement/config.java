@@ -18,6 +18,7 @@ public class config {
 	public static double D_HEADING_GAIN = 0.04d;
 
 	public static double PID_MAX_SPEED = 0.5d;
+	public static double THRESHOLD_ERROR = 1d;
 
 	protected enum DRIVE_MODE {
 		FIELD,
