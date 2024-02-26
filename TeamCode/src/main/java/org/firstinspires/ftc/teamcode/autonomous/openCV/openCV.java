@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous.openCV;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class openCV {
-	private final config config = new config();
+@Config("OpenCV config")
+public class openCV extends config {
 
 	private OpenCvWebcam cvWebcam;
 	public final pipeline pipeline;
@@ -27,8 +28,8 @@ public class openCV {
 		this.cvWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 			@Override
 			public void onOpened() {
-				openCV.this.cvWebcam.startStreaming(openCV.this.config.CAMERA_WIDTH, openCV.this.config.CAMERA_HEIGHT,
-					OpenCvCameraRotation.UPRIGHT);
+				openCV.this.cvWebcam.startStreaming(openCV.CAMERA_WIDTH, openCV.CAMERA_HEIGHT,
+					OpenCvCameraRotation.UPSIDE_DOWN);
 			}
 
 			@Override
@@ -45,7 +46,7 @@ public class openCV {
 		this.cvWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 			@Override
 			public void onOpened() {
-				openCV.this.cvWebcam.startStreaming(openCV.this.config.CAMERA_WIDTH, openCV.this.config.CAMERA_HEIGHT,
+				openCV.this.cvWebcam.startStreaming(openCV.CAMERA_WIDTH, openCV.CAMERA_HEIGHT,
 					OpenCvCameraRotation.UPRIGHT);
 			}
 

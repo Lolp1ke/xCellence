@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.sigma.hand.config;
+import org.firstinspires.ftc.teamcode.main.hand.config;
 import org.firstinspires.ftc.teamcode.utils.servoUtil;
 
 public class hand extends config {
@@ -46,6 +46,14 @@ public class hand extends config {
 		this.setPositions();
 	}
 
+	public void claw(final CLAW POSITION) {
+		this.rightClawPosition = POSITION == CLAW.OPEN ? CLAW_OPEN : CLAW_CLOSE;
+		this.leftClawPosition = POSITION == CLAW.OPEN ? CLAW_OPEN : CLAW_CLOSE;
+
+
+		this.setPositions();
+	}
+
 	public void wrist(final WRIST wrist) {
 		this.wrist = wrist;
 
@@ -56,6 +64,13 @@ public class hand extends config {
 			this.wristPosition = WRIST_GROUND;
 		else if (this.wrist == WRIST.MID)
 			this.wristPosition = WRIST_MID;
+
+		this.setPositions();
+	}
+
+	public void wrist(final double POSITION) {
+		this.wristPosition = POSITION;
+
 
 		this.setPositions();
 	}

@@ -29,11 +29,11 @@ public class motorUtil {
 	}
 
 	public boolean isBusy(final int N) {
-		for (int i = 0; i < N - 1; i++)
-			if (!this.motors.get(i).isBusy()) return false;
+//		for (int i = 0; i < N - 1; i++)
+//			if (!this.motors.get(i).isBusy()) return false;
 
 
-		return true;
+		return this.motors.get(N).isBusy();
 	}
 
 	public boolean isBusy() {
@@ -127,12 +127,21 @@ public class motorUtil {
 
 
 	public HashMap<Integer, Integer> getCurrentPositions() {
-		HashMap<Integer, Integer> currentPositions = new HashMap<>();
-
+		final HashMap<Integer, Integer> currentPositions = new HashMap<>();
 		for (final DcMotorEx motor : this.motors)
 			currentPositions.put(motor.getPortNumber(), motor.getCurrentPosition());
 
+
 		return currentPositions;
+	}
+
+	public HashMap<Integer, Double> getVelocities() {
+		final HashMap<Integer, Double> currentVelocities = new HashMap<>();
+		for (final DcMotorEx motor : this.motors)
+			currentVelocities.put(motor.getPortNumber(), motor.getVelocity(AngleUnit.DEGREES));
+
+
+		return currentVelocities;
 	}
 
 	public void setVelocityPIDFCoefficients(
@@ -143,11 +152,11 @@ public class motorUtil {
 		final double BATTERY_VOLTAGE
 	) {
 		for (final DcMotorEx motor : this.motors)
-			motor.setVelocityPIDFCoefficients(P, I, D, F * 12 / BATTERY_VOLTAGE);
+			motor.setVelocityPIDFCoefficients(P, I, D, F * 12d / BATTERY_VOLTAGE);
 	}
 
 	public void setVelocityPIDFCoefficients(
-		final List<Double> P,
+		final double[] P,
 		final List<Double> I,
 		final List<Double> D,
 		final List<Double> F,
@@ -155,10 +164,10 @@ public class motorUtil {
 	) {
 		for (int i = 0; i < this.motors.size(); i++)
 			this.motors.get(i).setVelocityPIDFCoefficients(
-				P.get(i),
+				P[i],
 				I.get(i),
 				D.get(i),
-				F.get(i) * 12 / BATTERY_VOLTAGE
+				F.get(i) * 12d / BATTERY_VOLTAGE
 			);
 	}
 }

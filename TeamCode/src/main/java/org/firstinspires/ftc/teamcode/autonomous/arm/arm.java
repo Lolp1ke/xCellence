@@ -7,9 +7,21 @@ import org.firstinspires.ftc.teamcode.utils.motorUtil;
 import org.firstinspires.ftc.teamcode.utils.pid;
 
 public class arm extends config {
-	private final motorUtil motorUtil;
+	private volatile motorUtil motorUtil;
+	private volatile DcMotorEx lift;
 
-	private final pid pid;
+	private volatile int angle = 0;
+
+	private volatile pid pid;
+
+//	@Override
+//	public void run() {
+//		this.move(this.angle);
+//	}
+//
+//	public void setAngle(final int ANGLE) {
+//		this.angle = ANGLE;
+//	}
 
 
 	public arm(final HardwareMap HARDWARE_MAP) {
@@ -17,32 +29,36 @@ public class arm extends config {
 			HARDWARE_MAP.get(DcMotorEx.class, "right_arm"),
 			HARDWARE_MAP.get(DcMotorEx.class, "left_arm")
 		);
-
 		this.motorUtil.setDirection(
 			DcMotorEx.Direction.FORWARD,
 			DcMotorEx.Direction.REVERSE
 		);
-
 		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
 		this.motorUtil.setZeroPowerBehaviour(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
+		this.lift = HARDWARE_MAP.get(DcMotorEx.class, "lift");
+		this.lift.setDirection(DcMotorEx.Direction.FORWARD);
+		this.lift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		this.lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+
 		this.pid = new pid(
-			0.02d,
+			0.1d,
 			0d,
 			0d,
-			0.3d
+			0.3d,
+			5
 		);
 	}
 
-	public void move(final int angle) {
-		final int target = -(int) (angle * COUNTS_PER_ANGLE);
+	public void move(final int ANGLE) {
+		final int TARGET = -(int) (ANGLE * COUNTS_PER_ANGLE);
 
 		this.motorUtil.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 		this.motorUtil.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-		this.motorUtil.setTargetPosition(target);
+		this.motorUtil.setTargetPosition(TARGET);
 		this.motorUtil.setPower(ARM_POWER);
 
 		while (this.motorUtil.isBusy()) ;
@@ -50,4 +66,16 @@ public class arm extends config {
 		this.motorUtil.setPower(0);
 	}
 
+
+	public void extend(final int TARGET) {
+		this.lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+		this.lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+		this.lift.setTargetPosition(TARGET);
+		this.lift.setPower(LIFT_POWER);
+
+		while (this.lift.isBusy()) ;
+
+		this.lift.setPower(0d);
+	}
 }

@@ -8,14 +8,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.autonomous.arm.arm;
 import org.firstinspires.ftc.teamcode.autonomous.hand.hand;
 import org.firstinspires.ftc.teamcode.autonomous.openCV.openCV;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.sigma.hand.config;
+import org.firstinspires.ftc.teamcode.main.hand.config;
+import org.firstinspires.ftc.teamcode.utils.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.utils.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "Red far", group = "!!!RED")
 public class far extends LinearOpMode {
 	private openCV openCV;
 	private SampleMecanumDrive movement;
-	private arm arm;
+	private volatile arm arm;
 	private hand hand;
 
 
@@ -33,6 +34,8 @@ public class far extends LinearOpMode {
 
 
 		this.hand = new hand(this.hardwareMap);
+		this.hand.wrist(config.WRIST.GROUND);
+		this.hand.claw(config.CLAW.CLOSE);
 
 
 		while (this.opModeInInit()) {
@@ -60,45 +63,56 @@ public class far extends LinearOpMode {
 				break;
 		}
 
-		while (this.opModeIsActive()) {
-		}
+		this.right();
 	}
 
 	private void right() {
-		this.movement.followTrajectorySequence(
-			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
-				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(-90)))
-				//.forward(20)
-				.addTemporalMarker(() -> this.hand.wrist(config.WRIST.GROUND))
-				.back(10)
-				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.OPEN))
-				.addTemporalMarker(() -> this.arm.move(30))
-//				.forward()
-				.build()
+//		this.movement.followTrajectorySequence(
+//			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
+//				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(-90d)))
+//				.addTemporalMarker(() -> this.hand.wrist(config.WRIST.GROUND))
+//				.back(10)
+//				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.OPEN))
+//				.lineToSplineHeading(new Pose2d(28d, -8d, Math.toRadians(90d)))
+//				.build()
+//		);
 
-		);
+		final TrajectorySequence backdrop = this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
+			.lineToSplineHeading(new Pose2d(28d, 0d, Math.toRadians(90d)))
+			.lineToLinearHeading(new Pose2d(28d, -25d, Math.toRadians(90d)))
+			.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.OPEN))
+			.addTemporalMarker(() -> this.hand.wrist(config.WRIST.SCORE))
+			.lineToLinearHeading(new Pose2d(28d, -80d, Math.toRadians(90d)))
+			.build();
+
+		this.movement.followTrajectorySequence(backdrop);
 	}
 
 	private void center() {
 		this.movement.followTrajectorySequence(
 			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
-				.forward(45)
-				//.splineToSplineHeading(new Pose2d(), Math.toRadians(90))
-				// .lineToSplineHeading(new Pose2d())
+				.lineToLinearHeading(new Pose2d(28d, 0d, 0d))
 				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.OPEN))
-				.back(10)
+				.lineToSplineHeading(new Pose2d(20d, 0d, 0d))
+				.lineToSplineHeading(new Pose2d(30d, 15d, Math.toRadians(90d)))
+				.addTemporalMarker(() -> {
+					this.arm.move(13);
+//					this.arm.setAngle(13);
+//					this.arm.start();
+				})
+				.lineToSplineHeading(new Pose2d(30d, 28d, Math.toRadians(90d)))
 				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.CLOSE))
-				.splineToSplineHeading(new Pose2d(), Math.toRadians(90))
-				.forward(120)
-				.addTemporalMarker(() -> this.arm.move(100))
-				.forward(15)
-				.addTemporalMarker(() -> this.arm.move(-40))
-				.addTemporalMarker(() -> this.hand.claw(false, config.CLAW.OPEN))
-				.back(15)
-				.addTemporalMarker(() -> this.arm.move(-60))
-				.addTemporalMarker(() -> this.hand.claw(true, config.CLAW.CLOSE))
-				.strafeLeft(60)
-				.forward(25)
+				.addTemporalMarker(() -> this.hand.wrist(config.WRIST.SCORE))
+				.lineToSplineHeading(new Pose2d(25d, -50d, Math.toRadians(-90d)))
+				.addTemporalMarker(() -> {
+					this.arm.move(40);
+//					this.arm.setAngle(40);
+//					this.arm.start();
+				})
+				.lineToSplineHeading(new Pose2d(25d, -83d, Math.toRadians(-90d)))
+				.addTemporalMarker(() -> this.hand.wrist(config.WRIST.MID))
+//				.lineToSplineHeading(new Pose2d(25d, -92d, Math.toRadians(-90d)))
+				.addTemporalMarker(() -> this.hand.claw(config.CLAW.OPEN))
 				.build()
 		);
 	}
@@ -106,12 +120,12 @@ public class far extends LinearOpMode {
 	private void left() {
 		this.movement.followTrajectorySequence(
 			this.movement.trajectorySequenceBuilder(new Pose2d(0d, 0d, 0d))
-				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(90)))
-				.forward(20)
-				.lineToSplineHeading(new Pose2d(24d, -90d, Math.toRadians(-90)))
+				.lineToSplineHeading(new Pose2d(28d, 5d, Math.toRadians(90d)))
+				.forward(20d)
+				.lineToSplineHeading(new Pose2d(24d, -90d, Math.toRadians(-90d)))
 				.addTemporalMarker(() -> this.arm.move(100))
-				.back(10)
-				.lineToSplineHeading(new Pose2d(45d, -90d, Math.toRadians(0)))
+				.back(10d)
+				.lineToSplineHeading(new Pose2d(45d, -90d, Math.toRadians(0d)))
 				.build()
 		);
 	}
